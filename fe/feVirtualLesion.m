@@ -23,7 +23,6 @@ if notDefined('display'),
 end
 if notDefined('refitConnectome'), refitConnectome = 0;end
 
-feOpenLocalCluster
 tic,fprintf('\n[%s] Performing the lesion (removing fascicles from the connectome)... ',mfilename)
 if ~islogical( fascicleIndices )
     nfibers = feGet(feNoLesion,'nfibers');
