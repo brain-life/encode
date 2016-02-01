@@ -26,24 +26,42 @@ if notDefined('refitConnectome'), refitConnectome = 0;end
 tic,fprintf('\n[%s] Performing the lesion (removing fascicles from the connectome)... ',mfilename)
 if ~islogical( fascicleIndices )
     nfibers = feGet(feNoLesion,'nfibers');
-    fascicles2keep = false(nfibers,1);
-    fascicles2keep(fascicleIndices) = true;
+    tract_indices = false(nfibers,1);
+    tract_indices(fascicleIndices) = true;
 else
-    fascicles2keep = fascicleIndices;
+    tract_indices = fascicleIndices;
 end
-feLesion = feConnectomeReduceFibers(feNoLesion, fascicles2keep );toc
+%feLesion = feConnectomeReduceFibers(feNoLesion, fascicles2keep );toc
 
+% Goal hereafter is to find the indices of the voxels of the fascicles 
+% (tract) we remove.
+%
 % Extract the fascicle out of the fiber group.
-fas = fgExtract(feGet(feNoLesion,'fibers img'), fascicleIndices, 'keep' );
-fasAcpc = fgExtract(feGet(feNoLesion,'fibers acpc'), fascicleIndices, 'keep' );
+%fas     = fgExtract(feGet(feNoLesion,'fibers img'),  fascicleIndices, 'keep' );
+%fasAcpc = fgExtract(feGet(feNoLesion,'fibers acpc'), fascicleIndices, 'keep' );
 
 % Get the cordinates of the fascicle we just deleted. These coordinates are
 % contained in the full connectome. We want to fin the indices in the M
 % matrix to the the voxels of the fascicle and keep only those voxels.
-tic, fprintf('\n[%s] Finding the voxels of fascicle... ',mfilename)
-fasCoords    = fefgGet(fas,'unique image coords');
-allCoords    = feGet(feNoLesion,   'roi coords');
-commonCoords = ismember(allCoords, fasCoords,  'rows'); toc
+tic, fprintf('\n[%s] Finding tract voxels and path neighborhood... ',mfilename)
+% inds has a list of (i,j) positions of nnz entries. Since we are interested in
+% locating voxels we need to look at the second column (j).
+% The first column of inds cods for the dictionary entries (atoms)
+voxel_ind = unique(find(feNoLesion.life.M.Phi(:,:, fascicleIndices )));
+
+% Find indices to the fascicles in the tract and path-neighborhood
+tract_and_pathn = [];
+for n=1:length(voxel_ind) % for each voxel crossed by tract, we search for other fascicles
+    voxel = voxel_ind(n);
+    if numel(size(feNoLesion.life.M.Phi)) == 2
+       [inds, ~] = find(feNoLesion.life.M.Phi(:,voxel,:));
+    else
+       [inds, ~] = find(feNoLesion.life.M.Phi(:,voxel,:));
+    end
+    % inds has a list of (i,k) positions of nnz entries in the slice. Since now we are interested in
+    % locating fibers we need to look at the second column (k).
+    tract_and_pathn = [tract_and_pathn; unique(inds(:,2))];
+end
 
 % Now: commonCoords contains the indices of the voxels to keep from feLesion,
 % these voxels are part of the connectome feNoLesion. So now we want to delete all
@@ -54,35 +72,23 @@ commonCoords = ismember(allCoords, fasCoords,  'rows'); toc
 % throught the left voxels in the ROI. We will use this subset of voxels
 % and fibers to test the quality of fit of the connectome at the location
 % where the feFN fascicle went through.
-tic,fprintf('\n[%s] Creating a lesioned connectome... ',mfilename)
-feLesion = feConnectomeReduceVoxels(feLesion,find(commonCoords));
+tic,fprintf('\n[%s] Creating a unlesioned FE structure reduced to the path neighborhood... ',mfilename)
+feNoLesion = feConnectomeReduceVoxels(feNoLesion, voxel_ind, tract_and_pathn);
 toc
 
-tic,fprintf('\n[%s] Creating an unleasioned path-neighborhood connectome... ',mfilename)
-[feNoLesion, indicesFibersKept]    = feConnectomeReduceVoxels(feNoLesion, find(commonCoords));
+tic,fprintf('\n[%s] Creating an leasioned FE structure path-neighborhood but no tract... ',mfilename)
+pathn_only = (length(fascicleIndices)+1:length(tract_and_pathn))';
+feLesion = feConnectomeReduceFibers(feNoLesion, pathn_only );
 toc
 
-tic,fprintf('\n[%s] Finding the pathneighborhood voxels... ',mfilename)
-% Here we return the indices of the fascicle in the newly resized connectome.
-newFascicleIndices = ismember(find(indicesFibersKept),...
-                              find(fascicleIndices),'rows');
-toc
-
-% Fit the connectomes unlesioned the leftover fibers.
-if refitConnectome
-    % Refit and install the fit.
-    tic, fprintf('\n[%s] Fitting connectome lesioned the fascicle... ',mfilename)
-    feLesion = feSet(feLesion,'fit', ...
-        feFitModel(feGet(feLesion,'Mfiber'),feGet(feLesion,'dsigdemeaned'), ...
-        'bbnnls'));toc
-    
-    tic, fprintf('\n[%s] Fitting connectome unlesioned the fascicle... ',mfilename)
-    feNoLesion    = feSet(feNoLesion,   'fit', ...
-        feFitModel(feGet(feNoLesion,'Mfiber'),   feGet(feNoLesion,'dsigdemeaned'), ...
-        'bbnnls'));toc
-end
+% Compute evidence using the RMSE
 se = feComputeEvidence((feGetRep(feNoLesion,'vox  rmse')),(feGetRep(feLesion, 'vox  rmse')));
    
+% Tract and path-neighborhood fascicles
+fasAcpc        = feGet(feNoLesion,'fibers acpc');
+fasAcpc.fibers = fasAcpc.fibers(1:length(fascicleIndices));
+pathn          = feGet(feLesion, 'fibers acpc');
+
 fig(1).name = sprintf('rmse_distributions_%s',mfilename);
 fig(1).h   = nan;
 fig(1).type = 'eps';
@@ -148,13 +154,12 @@ if display.tract
     [fig(3).h, fig(3).light] =  mbaDisplayConnectome(mbaFiberSplitLoops(fasAcpc.fibers),fig(3).h, [.1 .45 .95],'single',[],[],.2);
     view(-23,-23);delete(fig(3).light); fig(3).light = camlight('right');
         
-    tmp_fas = feGet(feNoLesion,'fibers acpc');
-    fibers2display = randsample(1:length(tmp_fas.fibers),ceil(0.01*length(tmp_fas.fibers)));
+    fibers2display = randsample(1:length(pathn.fibers),ceil(0.01*length(tmp_fas.fibers)));
     fig(4).name = sprintf('pathneighborhood_%s',mfilename);
     fig(4).h   = figure('name',fig(4).name,'color',[.1 .45 .95]);     
     fig(4).type = 'jpg';
     [fig(4).h, fig(4).light] =  mbaDisplayConnectome(mbaFiberSplitLoops(...
-        tmp_fas.fibers(fibers2display)),fig(4).h, [.95 .45 .1],'single',[],.6,.2);
+        pathn.fibers(fibers2display)),fig(4).h, [.95 .45 .1],'single',[],.6,.2);
     view(-23,-23);delete(fig(2).light); fig(4).light = camlight('right');
 
     % (2) The facicle with the pah neighborhood  

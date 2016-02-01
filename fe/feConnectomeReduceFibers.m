@@ -14,21 +14,10 @@ function [fe, removedFibers] = feConnectomeReduceFibers(fe, fibersToKeep)
 %   fibersToKeep = 1:50;
 %   feConnectomeReduceFibers(fe, fibersToKeep)
 %
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
-
-% Return the indices to the fibers removed from the connectome
-removedFibers = find(~fibersToKeep);
-
-%if all(fibersToKeep==0)
-%    fe.Mfiber = sparse(size(fe.Mfiber,1),size(fe.Mfiber,2));
-%else
-    % Delete fibers' columns from the model
-%    fe.Mfiber = fe.Mfiber(:,fibersToKeep);  
-%end
+% Copyright (2015-2016), Franco Pestilli, Indiana University, pestillifranco@gmail.com.
 
 % Keeping the fibers we want in the indicator function Phi
-fe.life.M.Phi = fe.life.M.Phi(:,:,find(fibersToKeep));
-
+fe.life.M.Phi = fe.life.M.Phi(:,:, find(fibersToKeep) );
 
 % Clear the fields that depend o the original fiber group. These are:
 % (1) The fit of the model.
@@ -57,7 +46,9 @@ else
         if   (all(unique(fibersToKeep) == [0, 1]'))
             fibersToKeep = find(fibersToKeep);end
     end
-    fe = feSet(fe,'fg img',fgExtract(feGet(fe,'fibers img'),fibersToKeep,'keep'));
+    fg = feGet(fe,'fibers img');
+    fg.fibers = fg.fibers(fibersToKeep);
+    fe = feSet(fe,'fg img',fg);
 end
 
 return

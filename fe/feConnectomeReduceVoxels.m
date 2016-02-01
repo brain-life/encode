@@ -1,4 +1,4 @@
-function [fe, indicesFibersKept] = feConnectomeReduceVoxels(fe,voxelsToKeep)
+function [fe, indicesFibersKept] = feConnectomeReduceVoxels(fe,voxelsToKeep, fibersToKeep)
 % Select the voxels to keep (extract) in a connectome matrix
 %
 %   [fe, indicesFibersKept] = feConnectomeReduceVoxels(fe,voxelToKeep)
@@ -11,23 +11,26 @@ function [fe, indicesFibersKept] = feConnectomeReduceVoxels(fe,voxelsToKeep)
 %
 %  Example:
 %
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
+% Copyright (2015-2016), Franco Pestilli, Indiana University, pestillifranco@gmail.com.
 
 % Get the indices to each voxels' signal --DON"T NEED
 % vxRows = feGet(fe,'voxelrows',voxelsToKeep);
 
 % Return only the mode and the signal for the voxels we want to keep
-fe.life.M.Phi = fe.life.M.Phi(:,voxelsToKeep,:);
+if (numel(size(fe.life.M.Phi)) == 2)
+   fe.life.M.Phi = fe.life.M.Phi(:,voxelsToKeep);
+else
+   fe.life.M.Phi = fe.life.M.Phi(:,voxelsToKeep, :);
+end
+
 fe.life.diffusion_signal_img  = fe.life.diffusion_signal_img(voxelsToKeep,:);
 
 % Set the new number of voxels, by indexing inside the roi and
 % returning it as an ROI.
-fe.roi.coords = feGet(fe,'roi coords subset',voxelsToKeep);
-
+fe.roi.coords = fe.roi.coords(voxelsToKeep,:);
 
 % Set the diffusion signal at 0 diffusion weighting (B0) for this voxel:
 fe.life.diffusion_S0_img = fe.life.diffusion_S0_img(voxelsToKeep);
-
 
 % Now remove signals for the second data set if it was loaded
 if isfield(fe,'rep')   
@@ -43,18 +46,7 @@ if isfield(fe,'rep')
     
 end
 
-% Now that we have removed some voxels from the model, we need to remove also
-% the fibers that do not go through the coordinates left in the roi of the model.
-% These fibers make no contribution to the signal in the voxels.
-% Find the unique fibers in the new ROI.
-fibersToKeep = feGet(fe,'uniquefibersindicesinroi'); % can we avoid for loop in feGet call?
-
-% Find the indices of the fibers that were deleted
-indicesFibersKept = zeros(size(feGet(fe,'fiber weights')));
-indicesFibersKept(fibersToKeep) = 1;
-
 % Remove the fibers of the fascicle from the fe.
 fe = feConnectomeReduceFibers(fe, fibersToKeep );
-
 
 return
