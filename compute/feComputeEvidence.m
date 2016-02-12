@@ -8,7 +8,7 @@ function se = feComputeEvidence(rmse1,rmse2)
 % - Jeffrey's Divergence
 % - The Eath Mover's distance
 %
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
+% Copyright (2016), Franco Pestilli, Indiana University, pestillifranco@gmail.com.
 
 % Prepare the distribution of errors and the histograms describing the
 % erros.
@@ -46,7 +46,6 @@ fprintf('[%s] Computing the Earth Mover''s distance... \n',mfilename)
 se.em.name = sprintf('Earth Mover''s distance: http://en.wikipedia.org/wiki/Earth_mover''s_distance');
 
 try
-%if (exist('emd_mex.m','file') == 2) % Using Rubinov c-code fastest
     pairwiseDist = zeros(size(se.lesion.xhist,2));
     for i=1:size(se.nolesion.xhist,2)
         for j=1:size(se.lesion.xhist,2)
@@ -54,7 +53,7 @@ try
         end
     end
     tmp_em = emd_mex(se.nolesion.hist,se.lesion.hist,pairwiseDist);
-catch ME %else
+catch ME
     fprintf('[%s] Cannot find compiled c-code for Earth Movers Distance.\nUsing the slower and less reliable MatLab implementation.',mfilename)
     [~,tmp_em] = emd(se.nolesion.xhist',se.lesion.xhist',se.nolesion.hist',se.lesion.hist',@gdf);
 end
@@ -65,7 +64,7 @@ clear tmp_emp
 % Strenght of evidence (effect size)
 fprintf('[%s] Computing the Strength of Evidence... \n',mfilename)
 se.s.name = sprintf('strength of evidence, d-prime: http://en.wikipedia.org/wiki/Effect_size');
-se.s.nboots = 5000; 
+se.s.nboots = 10000; 
 se.s.nmontecarlo = 5;
 se.s.nbins = 200;
 sizeunlesioned    = length(se.nolesion.rmse.all);
@@ -77,8 +76,8 @@ max_x = ceil( mean([se.lesion.rmse.all])   + mean([se.lesion.rmse.all])*.05);
 for inm = 1:se.s.nmontecarlo
     fprintf('.')
     parfor ibt = 1:se.s.nboots
-        nullDistributionW(ibt,inm)  = mean(randsample(se.nolesion.rmse.all,   sizeunlesioned,true));      
-        nullDistributionWO(ibt,inm) = mean(randsample(se.lesion.rmse.all,sizeunlesioned,true));
+        nullDistributionW(ibt,inm)  = median(randsample(se.nolesion.rmse.all,   sizeunlesioned,true));      
+        nullDistributionWO(ibt,inm) = median(randsample(se.lesion.rmse.all,sizeunlesioned,true));
     end
     
     % Distribution unlesioned
