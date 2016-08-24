@@ -8,7 +8,7 @@ function se = feComputeEvidence(rmse1,rmse2)
 % - Jeffrey's Divergence
 % - The Eath Mover's distance
 %
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
+% Copyright (2016), Franco Pestilli, Indiana University, frakkopesto@gmail.com.
 
 % Prepare the distribution of errors and the histograms describing the
 % erros.
