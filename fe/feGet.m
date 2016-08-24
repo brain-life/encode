@@ -407,8 +407,6 @@ function val = feGet(fe,param,varargin)
 % anatomyfile = feGet(fe, 't1 file')
 %
 % End of feGet.m parameters, 
-% 
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
    
 val = [];
 
