@@ -21,7 +21,7 @@ function [fg, kept] = feClipFibersToVolume(fg,coords,maxVolDist)
 % SEE ALSO: feClipFiberNodes.m, feConnectomePreprocess.m
 % 
 %
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
+% Copyright (2016), Franco Pestilli, Indiana University, frakkopesto@gmail.com.
 
 fibers    = fg.fibers;
 
