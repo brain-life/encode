@@ -13,7 +13,7 @@ function img = feReplaceImageValues(img,vals,coords,indexes)
 % example it helsp addressing the diffusion directions and not the b0
 % images in the data set. Default is 1:size(img,4).
 %
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
+% Copyright (2016), Franco Pestilli, Indiana University, frakkopesto@gmail.com.
 
 % If index is not passed, then copy the data into all of the slots in the
 % 4th dimension
