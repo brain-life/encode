@@ -35,7 +35,6 @@ function [fit, w, R2] = feFitModel_OLD(M,dSig,fitMethod)
 %
 % Example:
 %
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
 %
 % Notes about the LiFE model:
 %

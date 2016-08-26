@@ -190,9 +190,6 @@ function val = feGetRep(fe,param,varargin)
 % dims = feGetRep(fe, 'mapsize')
 %
 % End of feGetRep.m parameters, 
-% 
-%
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
 
 val = [];
 

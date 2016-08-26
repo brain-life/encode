@@ -191,8 +191,6 @@ function val = feGetRepOLD(fe,param,varargin)
 %
 % End of feGetRep.m parameters, 
 % 
-%
-% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
 
 val = [];
 
