@@ -407,7 +407,6 @@ function val = feGet(fe,param,varargin)
 % anatomyfile = feGet(fe, 't1 file')
 %
 % End of feGet.m parameters, 
-
    
 val = [];
 
@@ -1614,9 +1613,34 @@ switch param
   case 'nphi'
      val = fe.life.M.Nphi;     
   case 'ntheta'
-     val = fe.life.M.Ntheta;          
-     
-    
+     val = fe.life.M.Ntheta;    
+  case 'pathneighborhood'
+      disp('Serching for Path Neighborhood voxels indices ...')
+      % provides the indices of fibers that touch the same voxels where a
+      % provided tract exists
+      [inds, vals] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor      
+      % inds has a list of (i,j,k) positions of nnz entries. Since we are interested in
+      % locating voxels we need to look at the second column (j).
+      voxel_ind = unique(inds(:,2));      
+      % To find which other fibers crosses these voxels, we need to look at
+      % the the subtensor that corresponds to those voxels
+      % See following lines
+      [inds, vals] = find(fe.life.M.Phi(:,voxel_ind,:)); % find indices for nnz in the subtensor defined by voxel_ind
+      val = unique(inds(:,3)); % Fibers are the 3rd dimension in the subtensor
+      val = setdiff(val,varargin{1});
+      
+      % Find nnz weights indices and filter the obtained path neighborhood
+      w = fe.life.fit.weights;
+      ind_nnz = find(w);
+      val = intersect(ind_nnz,val);
+      
+    case 'coordsfromfibers'
+        disp('Serching roi from fibers ...');
+        [inds, vals] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor   
+        voxel_ind = unique(inds(:,2));  
+        val = feGet(fe,'roicoords');
+        val = val(voxel_ind,:);
+ 
   otherwise
     help('feGet')
     fprintf('[feGet] Unknown parameter << %s >>...\n',param);

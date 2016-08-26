@@ -1,7 +1,6 @@
 # life
 
-This version is the one used for the arxiv.org paper:
+This version is the current working copy to advance the coding and imrpove sharing to other groups.
 
-Caiafa and Pestilli Sparse multiway decomposition for analysis and modelling of diffusion imagign and tractogrpahy.
-
-http://arxiv.org/abs/1505.07170
+Franco Pestilli and Cesar Caiafa
+Copyright 2016

@@ -1,4 +1,4 @@
-function se = feComputeEvidence(rmse1,rmse2)
+function se = feComputeEvidence_norm(rmse1,rmse2)
 % Computes a series of distance metrics between two RMSE distribtions.
 %
 % Compute summary statistics on to characterize the lesion,:
@@ -18,8 +18,8 @@ se.nolesion.rmse.mean = mean(se.nolesion.rmse.all);
 se.lesion.rmse.mean   = mean(se.lesion.rmse.all);
 
 % Histograms
-se.xrange(1) = ceil(min([se.lesion.rmse.all se.nolesion.rmse.all]));
-se.xrange(2) = floor(max([se.lesion.rmse.all se.nolesion.rmse.all]));
+se.xrange(1) = min([se.lesion.rmse.all se.nolesion.rmse.all]);
+se.xrange(2) = max([se.lesion.rmse.all se.nolesion.rmse.all]);
 se.nbins     = 60;
 se.bins      = linspace(se.xrange(1),se.xrange(2),se.nbins);
 [se.lesion.hist,   se.lesion.xhist]   = hist(se.lesion.rmse.all,  se.bins);

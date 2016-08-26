@@ -1,4 +1,4 @@
-function fe = feConnectomeBuildModel(fe,Compute_matrix_M)
+function fe = feConnectomeBuildModel(fe)
 % Compute multiway decompositon model to predict directional diffusion in each voxel from fibers
 %
 %   fe = feConnectomeBuildModel(fe)
@@ -76,57 +76,7 @@ Phi = sptensor(Phi.subs,vals,size(Phi));
 
 fe = feSet(fe,'Indication Tensor',Phi);
 
-
-if Compute_matrix_M % This was introduced in order to compare OLD vs NEW LiFE
-    % Compute Large sparse matrix M (as in the old LiFE)
-    disp('Computing large and sparse matrix M (as in the old LiFE)')
-    
-    nBvecs       = feGet(fe,'nBvecs');
-    bvecs        = feGet(fe,'bvecs');  % bvecs
-    bvals        = feGet(fe,'bvals');  % bvals
-    nodeSig = zeros(nBvecs,nTotalNodes);
-
-    D = diag(fe.life.modelTensor); % diagonal matix with diffusivities
-    parfor j=1:nTotalNodes
-        disp(['Computing diffusion of node ',num2str(j),'/',num2str(nTotalNodes)]);
-        [Rot,~, ~] = svd(grad(:,j)); % Compute the eigen vectors of the kernel orientation 
-        Q = Rot*D*Rot';
-        nodeSig(:,j) = exp(- bvals .* diag(bvecs*Q*bvecs')); % Compute the signal contribution of a fiber in the kernel orientation divided S0
-        nodeSig(:,j) = nodeSig(:,j) - mean(nodeSig(:,j)); % demeaned signal
-    end
-
-    indi = zeros(nBvecs*nTotalNodes,1);
-    indj = zeros(nBvecs*nTotalNodes,1);
-    vals = zeros(nBvecs*nTotalNodes,1);
-
-    % Construction of nonzero indices of matrix M    
-    for node=1:nTotalNodes
-        disp(['Building matrix M, node ',num2str(node),'/',num2str(nTotalNodes)]);
-        indi((node-1)*nBvecs + 1 : node*nBvecs) = [(cols(node)-1)*nBvecs+1:cols(node)*nBvecs]';
-        indj((node-1)*nBvecs + 1 : node*nBvecs) = repmat(tubes(node),[nBvecs,1]);
-        vals((node-1)*nBvecs + 1 : node*nBvecs) = nodeSig(:,node);   
-    end
-    
-    % June 27/6/2015
-    clear nodeSig Phi rows cols tubes fibers grad voxel_coord
-
-    Mmatrix = sparse(indi, indj, vals);
-    kept_ind = zeros(length(roi_ind)*nBvecs,1);
-    for i=1:length(roi_ind)
-        disp(['Keeping voxels that are in ROI, voxel= ',num2str(i),'/',num2str(length(roi_ind))]);
-        kept_ind((i-1)*nBvecs+1:i*nBvecs) = (roi_ind(i)-1)*nBvecs + 1: roi_ind(i)*nBvecs;
-    end
-
-    Mmatrix = Mmatrix(kept_ind,:); % reduce Matrix
-    [indi,indj,vals]=find(Mmatrix);
-
-    vox = ceil(indi/nBvecs);
-    vals = vals.*S0(vox);
-    Mmatrix = sparse(indi,indj,vals);
-
-
-    fe.life.M.Mmatrix = Mmatrix;
-end
+clear 'A' 'vox' 'fib' 'vals'
 
 fprintf('took: %2.3fs.\n',toc)
 

@@ -1,13 +1,12 @@
-%function out = bbnnls_New(A, b, x0, opt)
-function out = bbnnls_GLNXA64(M, b, x0, opt)
+function out = bbnnls(M, b, x0, opt)
+% function out = bbnnls_New(A, b, x0, opt)
+% 
 % This is a modified version of BBNNLS code originally written by Suvrit Sra, Dongmin Kim
 % This version accept as parameter a factorization of matrix A which is a
 % structure M containing:
 %       1) The Dictionary M.DictSig;
 %       2) A sparse 3D array M.Phi with size [nFibers,nAtoms,Nvoxels]
 % The modification was written by C. Caiafa (2015)
-
-
 
 % BBNNLS   -- Solve NNLS problems via SBB
 % 
@@ -133,11 +132,8 @@ function [step out] = computeBBStep(A, b, out)
     gp = find(out.x == 0 & out.grad > 0);
     out.oldg(gp) = 0;
 
-    %Ag = A*out.oldg; % A*oldg
-    Ag = M_times_w(A,out.oldg); % A*oldg 
-    %Ag = M_times_w_LOOP_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,out.oldg,nTheta,nVoxels);
-    %Agn = M_times_w_par(A,out.oldg); % A*oldg 
-    
+    Ag = M_times_w(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,out.oldg,nTheta,nVoxels);
+    %Ag = M_times_w(A,out.oldg); % A*oldg 
     
     % HINT: In my experience, the falling alternating steps perform better
     if (mod(out.iter, 2) == 0)
@@ -147,15 +143,7 @@ function [step out] = computeBBStep(A, b, out)
         
         %Ag0 = Ag;
 %       Ag = A'*Ag;         
-       %Ag = Mtransp_times_b_NOloop(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]));
-       %Ag = Mtransp_times_b_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers); % MEX default compiler version
-       Ag = Mtransp_times_b_mex_v2015a_Intel(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers); % MEX Intel compiler version
-       %Ag = Mtransp_times_b_mex_oIcc_oMan(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers);
-       
-       %       Agn = Mtransp_times_b_new(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag0,[nTheta,nVoxels]));
-%       Ag = Mtransp_times_b_par(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers);
-%        Ag = Mtransp_times_b(A,Ag);
-        
+       Ag = Mtransp_times_b(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers); % MEX Intel compiler version
         Ag(gp) = 0;
         step = numer / (Ag' * Ag);
     end
@@ -168,22 +156,15 @@ function [f g] = funcGrad(A, b, x)
     [nTheta]  = size(A.DictSig,1);
     [nAtoms] = size(A.DictSig,2); %feGet(fe,'natoms');
     [nVoxels] = size(A.Phi,2); %feGet(fe,'nvoxels');    
-    
-    %Ax = A*x - b;
-    Ax = M_times_w(A,x) - b;
-    %Ax = M_times_w_LOOP_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,x,nTheta,nVoxels) - b;
+
+    %Ax = M_times_w(A,x) - b;
+    Ax = M_times_w(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,x,nTheta,nVoxels)- b;
     
     f = 0.5*norm(Ax)^2;
     if (nargout > 1)
 %     g = A'*Ax;
 %     g =
-%     Mtransp_times_b_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);
-%     % MEX default compiler version
-     g = Mtransp_times_b_mex_v2015a_Intel(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);% MEX Intel compiler version     
-     %g = Mtransp_times_b_mex_oIcc_oMan(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);
-     
-     %g = Mtransp_times_b_NOloop(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]));
-%      g = Mtransp_times_b(A,Ax);
+     g = Mtransp_times_b(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);% MEX Intel compiler version     
     end
 end
 

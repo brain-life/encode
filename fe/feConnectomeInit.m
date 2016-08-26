@@ -17,7 +17,13 @@ function fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepe
 fe = feCreate;
 
 % Set the based dir for fe, this dire will be used 
-if notDefined('savedir'),  savedir = fullfile(fileparts(fgFileName),'life');
+
+if notDefined('savedir')
+    if isstruct(fgFileName)
+        savedir = fullfile(fileparts(fgFileName.name),'life');
+    else
+        savedir = fullfile(fileparts(fgFileName),'life');
+    end
 end
 fe = feSet(fe,'savedir',savedir);
 
@@ -57,12 +63,10 @@ if ~isempty(varargin)
   N = varargin{1}(1);
   axialDiffusion  = varargin{2}(1);
   radialDiffusion = varargin{2}(2);  
-  Compute_matrix_M = varargin{3};
 else % Default to stick and ball
   N = 360;   
   axialDiffusion  = 1;
   radialDiffusion = 0;
-  Compute_matrix_M = 0;
 end
 dParms(1) =  axialDiffusion; 
 dParms(2) = radialDiffusion; 
@@ -99,7 +103,6 @@ clear fg
 % % This compute the unique fibers per voxels
 % fe  = feGetConnectomeInfo(fe);
 
-
 % Install the information about the diffusion data.
 fe = feConnectomeSetDwi(fe,dwiFile,0);
 
@@ -123,7 +126,8 @@ fe = feBuildDictionaries(fe,Nphi,Ntheta);
 
 %% NEW: The previous very large matrix M was replaced by a sparse multiway decomposition
 % Build LiFE tensors and key connection matrices
-fe = feConnectomeBuildModel(fe,Compute_matrix_M);
+fe = feConnectomeBuildModel(fe);
+
 
 fprintf(['\n[%s] fe-structure Memory Storage:',ByteSize(fe),'\n'],mfilename);
 
