@@ -1,5 +1,11 @@
-function [fit, w, R2] = feFitModel(M,dSig,fitMethod)
-% 
+function [fit, w, R2] = feFitModel(varargin)
+M = varargin{1};
+dSig = varargin{2};
+fitMethod = varargin{3};
+Niter = varargin{4};
+preconditioner = varargin{5};
+
+
 % feFitModel() function in LiFE but restricted to the
 % 
 % BBNNLS algorithm and using the Factorization model.
@@ -48,10 +54,32 @@ function [fit, w, R2] = feFitModel(M,dSig,fitMethod)
 % at each voxel in each direction.  These are extracted from the dwi data
 % and knowledge of the roiCoords.
 
+
+if nargin <6 % no initial w0 is provided
+    [nFibers] = size(M.Phi,3);
+    w0 = zeros(nFibers,1);
+else
+    w0 = varargin{6};
+end
+
 % fit the model, by selecting the proper toolbox.
 
 mycomputer = computer();
 release = version('-release');
+
+if strcmp(preconditioner,'preconditioner')
+    switch strcat(mycomputer,'_',release)
+        case {'GLNXA64_2015a','MACI64_2014b','MACI64_2015a'}
+            [nFibers] = size(M.Phi,3); %feGet(fe,'nfibers');
+            h = compute_diag_mex(M.Phi.subs(:,1), M.Phi.subs(:,3), M.Phi.vals, M.DictSig,nFibers);
+            vals = M.Phi.vals./h(M.Phi.subs(:,3));
+            M.Phi = sptensor(M.Phi.subs,vals,size(M.Phi));
+        otherwise
+            h = dot(M.MmatrixM,M.MmatrixM,1);
+            M.MmatrixM = M.MmatrixM*diag(h.^(-1));
+    end
+end
+
 
 switch fitMethod
    case {'bbnnls'}
@@ -63,19 +91,25 @@ switch fitMethod
     tic
     fprintf('\nLiFE: Computing least-square minimization with BBNNLS...\n')
     opt = solopt;
-    opt.maxit = 5000;
+    opt.maxit = Niter;
     opt.use_tolo = 1;
+    opt.tolg = 1e-5;
     
     switch strcat(mycomputer,'_',release)
         case {'GLNXA64_2015a'}
-        out_data = bbnnls_GLNXA64(M,dSig,zeros(nFibers,1),opt);
-        case {'MACI64_2014b'}
-        out_data = bbnnls_MACI64(M,dSig,zeros(nFibers,1),opt);
+        out_data = bbnnls_GLNXA64(M,dSig,w0,opt);
+        case {'MACI64_2014b','MACI64_2015a'}
+        out_data = bbnnls_MACI64(M,dSig,w0,opt);
         otherwise
         sprintf('WARNING: currently LiFE is optimized for an efficient usage of memory \n using the Sparse Tucker Decomposition aproach (Caiafa&Pestilli, 2015) \n ONLY for Linux (MatlabR2015a) and MacOS (MatlabR2014b). \n If you have a different system or version you can still \n use the old version of LiFE (memory intensive). \n\n')
         sprintf('\n Starting using old version of LiFE...\n')
-        out_data = bbnnls_OLD(M.MmatrixM,dSig,zeros(nFibers,1),opt);
+        out_data = bbnnls_OLD(M.MmatrixM,dSig,w0,opt);
     end
+    
+    if strcmp(preconditioner,'preconditioner')
+        out_data.x = out_data.x./h;
+    end
+    
     fprintf('BBNNLS status: %s\nReason: %s\n',out_data.status,out_data.termReason);
     w = out_data.x;
     fprintf(' ...fit process completed in %2.3fminutes\n',toc/60)

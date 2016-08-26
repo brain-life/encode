@@ -188,8 +188,13 @@ switch param
     fe.life.fibers.Nelem = val;
   case 'ms0'
     fe.life.M.S0 = val;
-        
-    
+  case 'curvature'
+    fe.fg.Cur = val{1};
+    fe.fg.Indication = val{2};
+  case 'torsion'
+    fe.fg.Tor = val{1};  
+    fe.fg.Indication = val{2}; 
+            
   otherwise
     error('Unknown parameter %s\n',param);
 end

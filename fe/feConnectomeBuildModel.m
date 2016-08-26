@@ -76,6 +76,7 @@ Phi = sptensor(Phi.subs,vals,size(Phi));
 
 fe = feSet(fe,'Indication Tensor',Phi);
 
+clear 'A' 'vox' 'fib' 'vals'
 
 if Compute_matrix_M % This was introduced in order to compare OLD vs NEW LiFE
     % Compute Large sparse matrix M (as in the old LiFE)
@@ -95,22 +96,62 @@ if Compute_matrix_M % This was introduced in order to compare OLD vs NEW LiFE
         nodeSig(:,j) = nodeSig(:,j) - mean(nodeSig(:,j)); % demeaned signal
     end
 
+    clear Phi rows fibers grad voxel_coord a
+    
     indi = zeros(nBvecs*nTotalNodes,1);
     indj = zeros(nBvecs*nTotalNodes,1);
-    vals = zeros(nBvecs*nTotalNodes,1);
+    %%vals = zeros(nBvecs*nTotalNodes,1);   
+    Nnodes = zeros(nBvecs*nTotalNodes,1);
 
+    %Mmatrix = sparse(nTotalVoxels*nBvecs,nFibers);
+    %MmatrixN = sparse(nTotalVoxels*nBvecs,nFibers);
     % Construction of nonzero indices of matrix M    
     for node=1:nTotalNodes
         disp(['Building matrix M, node ',num2str(node),'/',num2str(nTotalNodes)]);
         indi((node-1)*nBvecs + 1 : node*nBvecs) = [(cols(node)-1)*nBvecs+1:cols(node)*nBvecs]';
         indj((node-1)*nBvecs + 1 : node*nBvecs) = repmat(tubes(node),[nBvecs,1]);
-        vals((node-1)*nBvecs + 1 : node*nBvecs) = nodeSig(:,node);   
+        %%vals((node-1)*nBvecs + 1 : node*nBvecs) = nodeSig(:,node); 
+        Nnodes((node-1)*nBvecs + 1 : node*nBvecs) = 1;
+        %Mmatrix((cols(node)-1)*nBvecs+1:cols(node)*nBvecs, tubes(node)) =   Mmatrix((cols(node)-1)*nBvecs+1:cols(node)*nBvecs, tubes(node)) + nodeSig(:,node);
+        %MmatrixN((cols(node)-1)*nBvecs+1:cols(node)*nBvecs, tubes(node)) =  MmatrixN((cols(node)-1)*nBvecs+1:cols(node)*nBvecs, tubes(node)) + ones(nBvecs,1);
     end
     
     % June 27/6/2015
-    clear nodeSig Phi rows cols tubes fibers grad voxel_coord
+    clear cols tubes
+    
+    nodeSig = nodeSig(:);
+%     sizeblock = floor(nTotalNodes/1000)*nBvecs;
+%     Mmatrix = sparse(nTotalVoxels*nBvecs,nFibers);
+%     for block = 1:1000
+%         block
+%         range = (block-1)*sizeblock+1:block*sizeblock;
+%         Mmatrix = Mmatrix + sparse(double(indi(range)),double(indj(range)),nodeSig(range),nTotalVoxels*nBvecs,nFibers);
+%     end
+%     range = block*sizeblock+1:nTotalNodes;
+%     Mmatrix = Mmatrix + sparse(double(indi(range)),double(indj(range)),nodeSig(range),nTotalVoxels*nBvecs,nFibers);
 
-    Mmatrix = sparse(indi, indj, vals);
+    Mmatrix = sparse(indi, indj, nodeSig);
+    %[indin,indjn,vals] = find(Mmatrix);
+    [indin,indjn,nodeSig] = find(Mmatrix);
+    clear Mmatrix indin indjn
+    
+    MmatrixN = sparse(indi, indj, Nnodes);
+%     MmatrixN = sparse(nTotalVoxels*nBvecs,nFibers);
+%     for block = 1:1000
+%         block
+%         range = (block-1)*sizeblock+1:block*sizeblock;
+%         MmatrixN = MmatrixN + sparse(double(indi(range)),double(indj(range)),double(Nnodes(range)),nTotalVoxels*nBvecs,nFibers);
+%     end
+%     range = block*sizeblock+1:nTotalNodes;
+%     MmatrixN = MmatrixN + sparse(double(indi(range)),double(indj(range)),double(Nnodes(range)),nTotalVoxels*nBvecs,nFibers);
+    
+    [indi,indj,vsum] = find(MmatrixN);
+    
+    clear MmatrixN Nnodes
+    
+    Mmatrix = sparse(indi, indj, nodeSig./vsum,nTotalVoxels*nBvecs,nFibers);
+    clear indi indj nodeSig vsum
+    
     kept_ind = zeros(length(roi_ind)*nBvecs,1);
     for i=1:length(roi_ind)
         disp(['Keeping voxels that are in ROI, voxel= ',num2str(i),'/',num2str(length(roi_ind))]);
@@ -118,14 +159,14 @@ if Compute_matrix_M % This was introduced in order to compare OLD vs NEW LiFE
     end
 
     Mmatrix = Mmatrix(kept_ind,:); % reduce Matrix
-    [indi,indj,vals]=find(Mmatrix);
+    [indi,indj,nodeSig]=find(Mmatrix);
+    clear Mmatrix
 
     vox = ceil(indi/nBvecs);
-    vals = vals.*S0(vox);
-    Mmatrix = sparse(indi,indj,vals);
+    nodeSig = nodeSig.*S0(vox);
+    fe.life.M.Mmatrix = sparse(indi,indj,nodeSig,nVoxels*nBvecs,nFibers);
 
-
-    fe.life.M.Mmatrix = Mmatrix;
+    %fe.life.M.Mmatrix = Mmatrix;
 end
 
 fprintf('took: %2.3fs.\n',toc)

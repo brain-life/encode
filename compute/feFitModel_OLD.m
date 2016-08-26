@@ -1,4 +1,4 @@
-function [fit, w, R2] = feFitModel_OLD(M,dSig,fitMethod)
+function [fit, w, R2] = feFitModel_OLD(M,dSig,fitMethod,Niter,preconditioner)
 % 
 % feFitModel() function in LiFE but restricted to the
 % 
@@ -35,6 +35,7 @@ function [fit, w, R2] = feFitModel_OLD(M,dSig,fitMethod)
 %
 % Example:
 %
+% Copyright (2013-2014), Franco Pestilli, Stanford University, pestillifranco@gmail.com.
 %
 % Notes about the LiFE model:
 %
@@ -50,6 +51,12 @@ function [fit, w, R2] = feFitModel_OLD(M,dSig,fitMethod)
 % and knowledge of the roiCoords.
 
 % fit the model, by selecting the proper toolbox.
+
+if strcmp(preconditioner,'preconditioner')
+    h = dot(M,M,1)';
+    M = M*diag(h.^(-1));
+end
+
 switch fitMethod
    case {'bbnnls'}
     [nFibers] = size(M,2); %feGet(fe,'nfibers');
@@ -60,9 +67,15 @@ switch fitMethod
     tic
     fprintf('\nLiFE: Computing least-square minimization with BBNNLS...\n')
     opt = solopt;
-    opt.maxit = 5000;
+    opt.maxit = Niter;
     opt.use_tolo = 1;
+    opt.tolg = 1e-5;
     out_data = bbnnls_OLD(M,dSig,zeros(nFibers,1),opt);
+    
+    if strcmp(preconditioner,'preconditioner')
+        out_data.x = out_data.x./h;
+    end
+    
     fprintf('BBNNLS status: %s\nReason: %s\n',out_data.status,out_data.termReason);
     w = out_data.x;
     fprintf(' ...fit process completed in %2.3fminutes\n',toc/60)

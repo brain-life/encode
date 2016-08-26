@@ -76,7 +76,7 @@ max_x = ceil( mean([se.lesion.rmse.all])   + mean([se.lesion.rmse.all])*.05);
 
 for inm = 1:se.s.nmontecarlo
     fprintf('.')
-    parfor ibt = 1:se.s.nboots
+    for ibt = 1:se.s.nboots
         nullDistributionW(ibt,inm)  = mean(randsample(se.nolesion.rmse.all,   sizeunlesioned,true));      
         nullDistributionWO(ibt,inm) = mean(randsample(se.lesion.rmse.all,sizeunlesioned,true));
     end

@@ -1,5 +1,6 @@
-%function out = bbnnls_New(A, b, x0, opt)
 function out = bbnnls_GLNXA64(M, b, x0, opt)
+% function out = bbnnls_New(A, b, x0, opt)
+% 
 % This is a modified version of BBNNLS code originally written by Suvrit Sra, Dongmin Kim
 % This version accept as parameter a factorization of matrix A which is a
 % structure M containing:

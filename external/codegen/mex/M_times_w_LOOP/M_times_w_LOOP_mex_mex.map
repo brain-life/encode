@@ -1,0 +1,17 @@
+MEX {
+	global:
+		mexFunction;
+		emlrtMexFcnProperties;
+		M_times_w_LOOP;
+		b_emxInit_real_T;
+		emxEnsureCapacity;
+		emxFree_int32_T;
+		emxFree_real_T;
+		emxInit_int32_T;
+		emxInit_real_T;
+		M_times_w_LOOP_initialize;
+		M_times_w_LOOP_terminate;
+		M_times_w_LOOP_atexit;
+	local:
+		*;
+};
