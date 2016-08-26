@@ -1,5 +1,7 @@
 # Multidimensional encoding of brain connectomes
 
+https://cloud.githubusercontent.com/assets/11638664/18020005/00d2fb9e-6bad-11e6-861a-d746cca35f0d.png
+
 # About
 This software implements a method to encode both, structural brain connectomes and diffusion-weighted magnetic resonance data, into multidimensional arrays (tensors). The encoding method allows implementing Connectoem Evaluation Models (Pestilli et al., 2015) with dramatic reduction in storage requirements with up to 40x compression factor. 
 
