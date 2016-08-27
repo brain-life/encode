@@ -69,7 +69,7 @@ release = version('-release');
 
 if strcmp(preconditioner,'preconditioner')
     switch strcat(mycomputer,'_',release)
-        case {'GLNXA64_2015a','MACI64_2014b','MACI64_2015a'}
+        case {'GLNXA64_2015a','GLNXA64_2016a','MACI64_2014b','MACI64_2015a'}
             [nFibers] = size(M.Phi,3); %feGet(fe,'nfibers');
             h = compute_diag_mex(M.Phi.subs(:,1), M.Phi.subs(:,3), M.Phi.vals, M.DictSig,nFibers);
             vals = M.Phi.vals./h(M.Phi.subs(:,3));
@@ -96,7 +96,7 @@ switch fitMethod
     opt.tolg = 1e-5;
     
     switch strcat(mycomputer,'_',release)
-        case {'GLNXA64_2015a'}
+        case {'GLNXA64_2015a','GLNXA64_2016a'}
         out_data = bbnnls_GLNXA64(M,dSig,w0,opt);
         case {'MACI64_2014b','MACI64_2015a'}
         out_data = bbnnls_MACI64(M,dSig,w0,opt);
