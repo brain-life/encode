@@ -3,7 +3,10 @@
 ![alt tag](https://cloud.githubusercontent.com/assets/11638664/18020005/00d2fb9e-6bad-11e6-861a-d746cca35f0d.png)
 
 # About
-This software implements a method to encode both, structural brain connectomes and diffusion-weighted magnetic resonance data, into multidimensional arrays (tensors). The encoding method allows implementing Connectoem Evaluation Models (Pestilli et al., 2015) with dramatic reduction in storage requirements with up to 40x compression factor. 
+This software implements a framework to encode both, structural brain connectomes and associated diffusion-weighted magnetic resonance data, into multidimensional arrays (tensors). The encoding method allows implementing Connectome Evaluation Models (Pestilli et al., 2015) with dramatic reduction in storage requirements with up to 40x compression factor. Furtheremore, connectome encoding allows perfomring computational neuroanatomy dissection and virtual lesions very efficiently using the machine-friendly array operations. We provide demos and tutorials to expain how to:
+ (1) Load and encode diffusion-weighted data and tractography models of white matter fascicles, as well as perform multidimensional arrays operations. 
+ (2) Build and optimize a Linear Fascicle Evaluation model. 
+ (3) Perform neuronatomical segmentations, computational neuroanatomy operations and virtual lesions using the connectome encoding framework.
 
 ## Application.
 * Encoding of brain conenctome and associated phenotypes into multidimensional arrays.
