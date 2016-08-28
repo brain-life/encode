@@ -99,11 +99,6 @@ STC_run01.rmse = feGet(fe,'vox rmse');
 STC_run01.rmsexv = feGetRep(fe,'vox rmse');
 STC_run01.rrmse = feGetRep(fe,'vox rmse ratio');
 
-disp('SAVING RESULTS...')
-save(fullfile(dataOutputPath,sprintf('Results_STC_run01_%s_%s_%s_conn%s.mat',subject,char(algorithm),char(parameter),connectome)), 'STC_run01','-v7.3')
-save(fullfile(dataOutputPath,sprintf('fe_structure_%s_%s_%s_%s_conn%s.mat',subject,'STC_run01',char(algorithm),char(parameter),connectome)), 'fe','-v7.3')
-
-
 end
 
 
