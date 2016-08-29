@@ -32,8 +32,8 @@ test.rmse   = feGet(fe_test,'vox rmse');
 test.w      = feGet(fe_test,'fiber weights');
 test.coords = feGet(fe_test,'roi coords');
 
-disp(['Supported fibers (Orig)=',num2str(nnz(test.w))])
-disp(['Global rmse (Orig)=',num2str(mean(test.rmse(:)))])
+disp(['Supported fibers (Test)=',num2str(nnz(test.w))])
+disp(['Global rmse (Test)=',num2str(mean(test.rmse(:)))])
 
 
 % load results computed for the paper
@@ -46,6 +46,9 @@ orig.coords = feGet(fe,'roi coords');
 
 disp(['Supported fibers (Orig)=',num2str(nnz(orig.w))])
 disp(['Global rmse (Orig)=',num2str(mean(orig.rmse(:)))])
+
+disp(['Error in rmse=',num2str(norm(test.rmse(:)-orig.rmse(:))/norm(orig.rmse(:))*100),'%'])
+disp(['Error in weights=',num2str(norm(test.w(:)-orig.w(:))/norm(orig.w(:))*100),'%'])
 
 fprintf('Finding common brain coordinates between Test and Orig connectomes...\n')
 test.coordsIdx = ismember(test.coords,orig.coords,'rows');
@@ -73,6 +76,7 @@ t1File        = deblank(fullfile(dataRootPath,subject,'anatomy',  'T1w_acpc_dc_r
 
 % Number of iterations for the optimization
 Niter = 500;
+
 
 L = 360;
 tic
