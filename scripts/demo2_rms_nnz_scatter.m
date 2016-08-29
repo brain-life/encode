@@ -21,7 +21,7 @@ hold on
 % Change to datasets directory
 [folder, name, ext] = fileparts(which(mfilename));
 cd(folder);
-cd ../demo_datasets/fe_structures/
+cd /N/dc2/projects/lifebid/code/ccaiafa/demo_datasets/fe_structures
 
 %% Read STN subject PROB results
 disp('loading fe_structures for FP subject in STN dataset ...')
