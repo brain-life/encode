@@ -1,4 +1,4 @@
-function [ Y ] = M_times_w_LOOP(atoms,voxels,fibers,values,D,w,nTheta,nVoxels)
+function [ Y ] = M_times_w(atoms,voxels,fibers,values,D,w,nTheta,nVoxels)
 Y = zeros(nTheta,nVoxels);
 for k = 1:length(values)
     %k

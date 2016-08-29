@@ -973,7 +973,11 @@ switch param
     % pSig = feGet(fe,'pSig fiber',coords);
     % pSig = feGet(fe,'pSig fiber',voxelIndices);
     %val = feGet(fe,'Mfiber')*feGet(fe,'fiber weights');
-    val = M_times_w(feGet(fe,'Mfiber'),feGet(fe,'fiber weights'));
+    %val = M_times_w(feGet(fe,'Mfiber'),feGet(fe,'fiber weights'));
+    nTheta  = feGet(fe,'nbvecs');
+    nVoxels = feGet(fe,'nvoxels');  
+    val = M_times_w(fe.life.M.Phi.subs(:,1),fe.life.M.Phi.subs(:,2),fe.life.M.Phi.subs(:,3),fe.life.M.Phi.vals,fe.life.M.DictSig,feGet(fe,'fiber weights'),nTheta,nVoxels);
+    
     if ~isempty(varargin)
       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
       % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
