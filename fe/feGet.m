@@ -643,52 +643,7 @@ switch param
     % M contains only the rows for the specified voxels (all directions)
     
     val = fe.life.M;
-    
-%     if isempty(varargin)
-%       % Return the whole M matrix
-%       val = fe.life.Mfiber;
-%     else
-%       % Return only the rows for the specified voxels, including all
-%       % directions.
-%       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
-%       % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
-%       % val = fe.life.Mfiber(voxelRowsToKeep,:);
-%       val = fe.life.Mfiber(feGet(fe,'voxel rows',feGet(fe,'voxelsindices',varargin)),:);
-%     end
-    
-%   case {'mfibervoxelsubset','indexedafiber','mfiberindexed'}
-%     % Return a subset of measurements from the fiber portion of M matrix
-%     % The rows of M are specified.  Remember that the rows refer to a
-%     % combination of voxel and measurement direction and potentially in the
-%     % future a b-value.  Hence, the rows are not specific to a voxel.
-%     %
-%     % Mfiber = feGet(fe,'mfiber subset',rowsToKeep);
-%     
-%     if isempty(varargin), error('Subset of rows must be specified'); end
-%     val = fe.life.Mfiber(varargin{1},:);
-%     
-%   case {'msubsetfibers','mfiberssubset','mkeepfibers'}
-%     % Returns the model (M) with only a subset of columns (fibers).
-%     %
-%     % fiberList is a vector of indexes, e.g, [1 10 100]
-%     %
-%     % M = feGet(fe,'mkeepfibers',fiberList)
-%     val = fe.life.Mfiber(:,varargin{1});
-    
-%   case {'miso'}
-%     % Isotropic portion of M matrix
-%     % returns the matrix for the full model or for a subset of voxels
-%     %
-%     % Miso = feGet(fe,'M iso')
-%     % Miso = feGet(fe,'M iso',voxelsIndices)
-%     % Miso = feGet(fe,'M iso',coords)
-%     if isempty(varargin)
-%       % Return the whole M iso
-%       val = feBuildSparseBlockDiag(feGet(fe,'nBvecs'),feGet(fe,'nVoxels'));
-%     else
-%       val = feBuildSparseBlockDiag(feGet(fe,'nBvecs'),length(feGet(fe,'voxelsindices',varargin)));
-%     end
-    
+        
   case {'voxel2fnpair','voxel2fibernodepair','v2fnp'}
     % Pairing of fibers and nodes in each voxel.
     %
@@ -1067,75 +1022,6 @@ switch param
       val(ivx,5) = nanvar(w(uniquefvx{ivx}));
     end
     
-%   case {'psigfibertest'}
-%     % Predicted signal (demeaned) with a subset of fibers' weights set to 0.
-%     % This can be used to test the loss in RMSE for the connectome when a
-%     % subset of fibers is removed, but the connectome is not fitted again.
-%     %
-%     % pSig = feGet(fe,'pSig fiber test',fiberIndices);
-%     % pSig = feGet(fe,'pSig fiber test',fiberIndices,voxelIndices);
-%     % pSig = feGet(fe,'pSig fiber test',fiberIndices,coords);
-%     if ~isempty(varargin)
-%       val = feGet(fe,'Mfiber')*feGet(fe,'fiber weights test',varargin{1});
-%           
-%       % Now select a subset of voxels if requested
-%       if (length(varargin) == 2)
-%         % voxelIndices     = feGet(fe,'voxelsindices',varargin);
-%         % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
-%         % val               = val(voxelRowsToKeep,:);
-%         val = val(feGet(fe,'voxel rows',feGet(fe,'voxelsindices',varargin{2})));
-%       end
-%     else
-%       error('[%s] A set f fiber indiced must be passed in. pSig = feGet(fe,''pSig fiber test'',fiberIndices))',mfilename);
-%     end
-    
-%   case {'psigfibertestvoxelwise'}
-%     % Predicted signal (demeaned) with a subset of fibers' weights set to 0.
-%     % This can be used to test the loss in RMSE for the connectome when a
-%     % subset of fibers is removed, but the connectome is not fitted again.
-%     %
-%     % pSig = feGet(fe,'pSig fiber test voxel wise',fiberIndices);
-%     % pSig = feGet(fe,'pSig fiber test voxel wise',fiberIndices,voxelIndices);
-%     % pSig = feGet(fe,'pSig fiber test voxel wise',fiberIndices,coords);
-%     
-%     if ~isempty(varargin)
-%       nVoxels = feGet(fe,'nvoxels');
-%       w = feGet(fe,'fiber weights test voxel wise',varargin{1}); % Weights with a subset set to 0
-%       val = cell(nVoxels,1);
-%       for ivox = 1:nVoxels        
-%         % Predict the signal.
-%         val{ivox} = feGet(fe,'Mfiber',ivox)*w(ivox,:)';
-%       end
-%       
-%      feOpenLocalCluster
-%      % Reorganize the signal into a vector
-%       val = vertcat(val{:})';
-%       
-%       % Now select a subset of voxels if requested
-%       if (length(varargin) == 2)
-%         % voxelIndices     = feGet(fe,'voxelsindices',varargin);
-%         % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
-%         % val               = val(voxelRowsToKeep,:);
-%         val = val(feGet(fe,'voxel rows',feGet(fe,'voxelsindices',varargin{2})));
-%       end
-%     else
-%       error('[%s] A set f fiber indiced must be passed in. pSig = feGet(fe,''pSig fiber test'',fiberIndices))',mfilename);
-%     end
-%     
-%   case {'predictedsignalfull','psigfull'}
-%     % Predicted measured signal from both fiber and iso
-%     %
-%     % pSig = feGet(fe,'pSig full')
-%     % pSig = feGet(fe,'pSig full',coords)
-%     % pSig = feGet(fe,'pSig full',voxelIndices)
-%     val = [feGet(fe,'M fiber'), feGet(fe,'M iso')] * feGet(fe,'full weights');
-%     if ~isempty(varargin)
-%       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
-%       % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
-%       % val           = val(voxelRowsToKeep,:);
-%       val = val(feGet(fe,'voxel rows',feGet(fe,'voxelsindices',varargin)));
-%     end
-    
   case {'fullweights'}
     % The fiber and isotropic weights as a long vector
     %
@@ -1386,7 +1272,7 @@ switch param
     val = 100.*feGet(fe,'voxr2voxelwise');
     val = val(feGet(fe,'return voxel indices',varargin));
     
-  case {'dsigdemeanedbyvoxel','dsigdemeanedvox'}
+  case {'dsigdemeanedbyvoxel','dsigdemeanedvox','Y'}
     % Demeaned diffusion signal in each voxel
     %
     % dSigByVoxel = feGet(fe,'dsigdemeaned by Voxel');
@@ -1602,9 +1488,12 @@ switch param
     % Diffusion weighted file used for testing results
     % dtfile = feGet(fe,'dtfile')
      val = fe.path.dtfile;  
-  case 'model'
-    % Multiway decomposition model elements
-     val = fe.life.M;  
+  case 'phi'
+    % sparse core tensor
+     val = fe.life.M.Phi;
+  case {'dictionary', 'd'}
+     val = fe.life.M.DictSig;
+        
   case 'lists'
     % atoms, voxels and Nelem lists (to be revised for future elimination)
      val.atoms = fe.life.fibers.atoms_list;       
@@ -1622,14 +1511,14 @@ switch param
       disp('Serching for Path Neighborhood voxels indices ...')
       % provides the indices of fibers that touch the same voxels where a
       % provided tract exists
-      [inds, vals] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor      
+      [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor      
       % inds has a list of (i,j,k) positions of nnz entries. Since we are interested in
       % locating voxels we need to look at the second column (j).
       voxel_ind = unique(inds(:,2));      
       % To find which other fibers crosses these voxels, we need to look at
       % the the subtensor that corresponds to those voxels
       % See following lines
-      [inds, vals] = find(fe.life.M.Phi(:,voxel_ind,:)); % find indices for nnz in the subtensor defined by voxel_ind
+      [inds, ~] = find(fe.life.M.Phi(:,voxel_ind,:)); % find indices for nnz in the subtensor defined by voxel_ind
       val = unique(inds(:,3)); % Fibers are the 3rd dimension in the subtensor
       val = setdiff(val,varargin{1});
       
@@ -1640,7 +1529,7 @@ switch param
       
     case 'coordsfromfibers'
         disp('Serching roi from fibers ...');
-        [inds, vals] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor   
+        [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor   
         voxel_ind = unique(inds(:,2));  
         val = feGet(fe,'roicoords');
         val = val(voxel_ind,:);

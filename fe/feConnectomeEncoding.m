@@ -1,4 +1,4 @@
-function fe = feConnectomeBuildModel(fe)
+function fe = feConnectomeEncoding(fe)
 % Compute multiway decompositon model to predict directional diffusion in each voxel from fibers
 %
 %   fe = feConnectomeBuildModel(fe)
@@ -16,7 +16,7 @@ if ~isfield(fe,'life')
   error('LiFE - the field ''life'' is necessary in the fe structure.')
 end
 
-fprintf('\n[%s] Building the Connetome Model (Indication Tensor Phi) ... ',mfilename); 
+fprintf('\n[%s] Encoding connectome (building Phi, sparse tensor) ... ',mfilename); 
 tic
 
 
@@ -124,37 +124,3 @@ function atom_ind = get_atom(vect,Nphi,Ntheta)
     
     
 end
-
-
-% This function computes the atom indexing in a (Nphi x Ntheta)-grid dictionary corresponding to a given
-% orientation vect
-% function atom_ind = get_atom(vect,Nphi,Ntheta)
-%     deltaTheta = pi/Ntheta;
-%     deltaPhi = pi/Nphi;
-%     
-%     % vector should belong to the positive half of the sphere
-%     if vect(2) < 0
-%         vect = - vect;
-%     end
-%     
-%     % cartesian to spherical coordinates
-%     [angPhi,angTheta,r] = cart2sph(vect(1),vect(2),vect(3));
-%     angTheta = pi/2 - angTheta; % we measure theta as the angle with the positive semi-axis y
-%     
-%     % ind_Phi=1 correspond to Phi=0, ind_Phi=Nphi to Phi = Pi - delta_Phi
-%     ind_Phi = round(angPhi/deltaPhi) + 1;
-%     if ind_Phi == Nphi+1
-%         ind_Phi = 1;
-%         angTheta = pi - angTheta;
-%     end
-% 
-%     % ind_Theta=1 correspond to Theta=delta_Theta, ind_Theta=NTheta-1 to
-%     % Phi = Pi - delta_Theta
-%     ind_Theta = round(angTheta/deltaTheta);
-%      
-%     if (ind_Theta == 0) || (ind_Theta == Ntheta)
-%         atom_ind = 1; % spin-Up or spin-Down case
-%     else
-%         atom_ind = sub2ind([Ntheta-1,Nphi],ind_Theta,ind_Phi) + 1;
-%     end
-% end

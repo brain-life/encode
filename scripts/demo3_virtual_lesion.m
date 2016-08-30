@@ -30,7 +30,7 @@ end
 % Change to datasets directory
 [folder, name, ext] = fileparts(which(mfilename));
 cd(folder);
-cd ../demo_datasets/fe_structures/
+cd /N/dc2/projects/lifebid/code/ccaiafa/demo_datasets/fe_structures
 
 % Choose major tract for computing VL
 clc
