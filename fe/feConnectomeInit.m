@@ -17,7 +17,6 @@ function fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepe
 fe = feCreate;
 
 % Set the based dir for fe, this dire will be used 
-
 if notDefined('savedir')
     if isstruct(fgFileName)
         savedir = fullfile(fileparts(fgFileName.name),'life');
@@ -43,17 +42,33 @@ if notDefined('feFileName'),
 end
 fe = feSet(fe, 'name',feFileName);
 
-% Load a connectome
+%% Load a connectome from disk
 if isstruct(fgFileName), fg = fgFileName; clear fgFileName
 else % A file name was passed load the fibers from disk
   fprintf('\n[%s]\n loading fiber from file: %s\n',mfilename,fgFileName)
   fg = fgRead(fgFileName);
 end
-
-% Set fg in the fe structure identifying the fg coordinate frame.
-% Everything in LiFE is in img coordinates, but everyting in mrDiffusion is in acpc.  
-% So here we assume the fibers are read in acpc and we xform them in img.
 fe = feSet(fe,'fg from acpc',fg);
+fe = feSet(fe,'roi fg',[]); clear fg
+
+%% Diffusion data (Y)
+% Install the information about the diffusion data.
+fe = feConnectomeSetDwi(fe,dwiFile,0);
+
+% Information about a repeated measurement of the diffusion data.
+if ~notDefined('dwiFileRepeated')
+  fe = feConnectomeSetDwi(fe,dwiFileRepeated,1);
+end
+
+%% Anatomy Install the path tot he anatomical high-resolution file.
+if ~notDefined('anatomyFile')
+  fe = feSet(fe,'anatomy file',anatomyFile);
+end
+
+%% Precompute Dictionary of orientations and canonical demeaned signals
+% Define discretization steps for building Dictionary of canonical difussivities
+% These numbers represents the steps in which the range [0,pi] is divided
+% for spherical coordinates phi: azimuth and theta: pi/2-elevetion
 
 % Set model for canonical tensor
 %tic
@@ -71,38 +86,11 @@ dParms(2) = radialDiffusion;
 dParms(3) = radialDiffusion;
 Nphi = N;
 Ntheta = N;
-
 fe = feSet(fe,'model tensor',dParms);
-
-fe = feSet(fe,'roi fg',[]);
-clear fg
-
-% Install the information about the diffusion data.
-fe = feConnectomeSetDwi(fe,dwiFile,0);
-
-% Install the information about a repeated measurement of the diffusion
-% data.
-if ~notDefined('dwiFileRepeated')
-  fe = feConnectomeSetDwi(fe,dwiFileRepeated,1);
-end
-
-% Install the path tot he anatomical high-resolution file.
-if ~notDefined('anatomyFile')
-  fe = feSet(fe,'anatomy file',anatomyFile);
-end
-
-%% Precompute Dictionary of orientations and canonical demeaned signals
-% Define discretization steps for building Dictionary of canonical difussivities
-% These numbers represents the steps in which the range [0,pi] is divided
-% for spherical coordinates phi: azimuth and theta: pi/2-elevetion
-
 fe = feBuildDictionaries(fe,Nphi,Ntheta);
 
-%% NEW: The previous very large matrix M was replaced by a sparse multiway decomposition
-% Build LiFE tensors and key connection matrices
+%% Encode Connectome in multidimensional tensor
 fe = feConnectomeEncoding(fe);
-
-
 fprintf(['\n[%s] fe-structure Memory Storage:',ByteSize(fe),'\n'],mfilename);
 
 return

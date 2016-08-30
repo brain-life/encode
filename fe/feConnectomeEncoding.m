@@ -16,7 +16,7 @@ if ~isfield(fe,'life')
   error('LiFE - the field ''life'' is necessary in the fe structure.')
 end
 
-fprintf('\n[%s] Building the Connetome Model (Indication Tensor Phi) ... ',mfilename); 
+fprintf('\n[%s] Encoding connectome (building Phi, sparse tensor) ... ',mfilename); 
 tic
 
 
