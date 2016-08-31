@@ -39,9 +39,9 @@ Generate_Fig3_paper_Caiafa_Pestilli('gray')
 %% Read HCP3T subject connectome obtained by using Probabilistic tractography
 disp('loading fe_structures for 105115 subject in HCP3T dataset (PROB) ...')
 
-fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
+FileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
              'fe_structure_105115_STC_run01_SD_PROB_lmax10_connNUM01.mat');
-load(fgFileName)
+load(FileName)
 sbj = retrieve_results(fe,'PROB', 'HCP3T');
 % plot new data point
 Add_new_data_point(sbj,'cold',2)
@@ -50,9 +50,9 @@ Add_new_data_point(sbj,'cold',2)
 % tractography
 disp('loading fe_structures for 105115 subject in HCP3T dataset (DET) ...')
 
-fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
+FileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
              'fe_structure_105115_STC_run01_tensor__connNUM01.mat');
-load(fgFileName)
+load(FileName)
 sbj = retrieve_results(fe,'TENSOR', 'HCP3T');
 % plot new data point
 Add_new_data_point(sbj,'cold',2)
@@ -60,9 +60,9 @@ Add_new_data_point(sbj,'cold',2)
 %% Read STN subject connectome obtained by using Probabilistic tractography
 disp('loading fe_structures for FP subject in STN dataset (PROB) ...')
 
-fgFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
+FileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
-load(fgFileName)
+load(FileName)
 sbj = retrieve_results(fe,'PROB', 'STN');
 % plot new data point
 Add_new_data_point(sbj,'medium',2)
@@ -71,9 +71,9 @@ Add_new_data_point(sbj,'medium',2)
 % tractography
 disp('loading fe_structures for FP subject in STN dataset (DET) ...')
 
-fgFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
+FileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_tensor__connNUM01.mat');
-load(fgFileName)
+load(FileName)
 sbj = retrieve_results(fe,'TENSOR', 'STN');
 % plot new data point
 Add_new_data_point(sbj,'medium',2)
@@ -81,9 +81,9 @@ Add_new_data_point(sbj,'medium',2)
 %% Read HCP7T subject connectome obtained by using Probabilistic tractography
 disp('loading fe_structures for 108323 subject in HCP7T dataset (PROB) ...')
 
-fgFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
+FileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
              'fe_structure_108323_STC_run01_SD_PROB_lmax8_connNUM01.mat');
-load(fgFileName)
+load(FileName)
 sbj = retrieve_results(fe,'PROB', 'HCP7T');
 % plot new data point
 Add_new_data_point(sbj,'hot',2)
@@ -92,9 +92,9 @@ Add_new_data_point(sbj,'hot',2)
 % tractography
 disp('loading fe_structures for 108323 subject in HCP7T dataset (DET) ...')
 
-fgFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
+FileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
              'fe_structure_108323_STC_run01_tensor__connNUM01.mat');
-load(fgFileName)
+load(FileName)
 sbj = retrieve_results(fe,'TENSOR', 'HCP7T');
 % plot new data point
 Add_new_data_point(sbj,'hot',2)
