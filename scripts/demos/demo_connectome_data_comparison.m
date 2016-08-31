@@ -237,7 +237,7 @@ switch color_mode
     case 'original'
         c = getNiceColors(color_type);
     case 'gray'
-        c = getNiceColors_light(color_type);
+        c = repmat([.9,.9,.9], [4,1]);
 end
 
 
@@ -317,46 +317,6 @@ switch color_type
     case 'hot'
         c = [c2([32 25 13 5],:)];
 end
-
-end
-
-%%
-function c = getNiceColors_light(color_type)
-
-% dotest = false;
-% c1 = colormap(parula(32));
-% c2 = colormap(autumn(32));
-% 
-% if dotest
-%     figure('name','C1 color test');
-%     hold on
-%     for ii = 1:size(c1,1)
-%         plot(ii,1,'o','markerfacecolor',c1(ii,:),'markersize',12)
-%         text(ii-0.75,1,sprintf('%i',ii))
-%     end
-%     
-%     figure('name','C2 color test');
-%     hold on
-%     for ii = 1:size(c2,1)
-%         plot(ii,1,'o','markerfacecolor',c2(ii,:),'markersize',12)
-%         text(ii-0.75,1,sprintf('%i',ii))
-%     end
-%     keyboard
-% end
-% 
-% switch color_type
-%     case 'cold'
-%         c = [c1([1 3 6 9],:) ];
-%     case 'medium'
-%         c = [c1([12 16 19 23],:) ];
-%     case 'hot'
-%         c = [c2([32 25 13 5],:)];
-% end
-% 
-% c = brighten(c,.85); % 
-
-c = repmat([.9,.9,.9], [4,1]);
-
 
 end
 
