@@ -11,17 +11,17 @@ function [fh, fe] = demo_connectome_encoding()
 %  (CONICET) email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
 %% (0) Check matlab dependencies and path settings.
-if exist('vistaRootPath.m','file');
+if ~exist('vistaRootPath.m','file');
     disp('Vistasoft package either not installed or not on matlab path.')
     error('Please, download it from https://github.com/vistalab/vistasoft');
 end
 
-if exist('mbaComputeFibersOutliers','file')
+if ~exist('mbaComputeFibersOutliers','file')
     disp('ERROR: mba package either not installed or not on matlab path.')
     error('Please, download it from https://github.com/francopestilli/mba')
 end
 
-if exist('feDemoDataPath.m','file');
+if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
     error('Please, download it from https://XXXXXXXXXXXXX')
 end
