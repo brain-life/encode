@@ -12,7 +12,23 @@ function [fh, fe] = demo_connectome_encoding()
 % Check if vistasoft is visible on the matlab path.
 check = which('vistaRootPath');
 if isempty(check)
-    error('Vistasoft package not installed. \n Please, download it from https://github.com/vistalab/vistasoft and add it to the Matlab Path');
+    error('Vistasoft package not installed or not added to the Matlab path. \n Please, download it from https://github.com/vistalab/vistasoft and add it to the Matlab Path');
+end
+
+% Check if mba is visible on the matlab path
+check = which('mbaComputeFibersOutliers');
+if isempty(check)
+    disp('ERROR: mba package not installed or not added to the Matlab path.')
+    disp('Please, download it from https://github.com/francopestilli/mba')
+    return
+end
+
+% Check if demo datasets are visible on the matlab path
+check = which('feDemoDataPath');
+if isempty(check)
+    disp('ERROR: demo datasets are not installed or not added to the Matlab path')
+    disp('Please, download it from https://XXXXXXXXXXXXX')
+    return
 end
 
 %% Build the file names for the diffusion data, the anatomical MRI.
