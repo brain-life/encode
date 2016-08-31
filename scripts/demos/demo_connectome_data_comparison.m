@@ -12,14 +12,6 @@ function [fh, fe] = demo_connectome_data_comparison()
 %  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
 %  (CONICET) email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
-% Check if demo datasets are visible on the matlab path
-check = which('feDemoDataPath');
-if isempty(check)
-    disp('ERROR: demo datasets are not installed or not added to the Matlab path')
-    disp('Please, download it from https://XXXXXXXXXXXXX')
-    return
-end
-
 %% (0) Check matlab dependencies and path settings.
 if ~exist('vistaRootPath.m','file');
     disp('Vistasoft package either not installed or not on matlab path.')
@@ -31,6 +23,7 @@ end
 %     error('Please, download it from https://github.com/francopestilli/mba')
 % end
 
+% Check if demo datasets are visible on the matlab path
 if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
     error('Please, download it from https://XXXXXXXXXXXXX')
