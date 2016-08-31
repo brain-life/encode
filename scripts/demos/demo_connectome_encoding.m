@@ -190,7 +190,11 @@ fg{1}.fibers   = fg{1}.fibers(fascicles_ind);
 % Plot region of interest (ROI), anatomy voxels.
 set(gcf,'Color',[1 1 1])
 hold on
-scatter3(fe.roi.coords(voxel_ind,1)-2,fe.roi.coords(voxel_ind,2)-2,fe.roi.coords(voxel_ind,3)-2,'r')
+offset = 1.5;
+plot3(fe.roi.coords(voxel_ind,1)-offset, ...
+         fe.roi.coords(voxel_ind,2)-offset, ...
+         fe.roi.coords(voxel_ind,3)-offset,'ro', ...
+         'markerfacecolor','r', 'markersize',15)
 
 end
 
