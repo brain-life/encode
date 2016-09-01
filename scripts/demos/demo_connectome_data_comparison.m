@@ -113,10 +113,13 @@ Add_new_data_point(sbj,'hot',2)
 
 end
 
-%%%%
+% Below is a series of local helper functions.
 function [] = Generate_Fig3_paper_Caiafa_Pestilli(color_mode)
+%
+% Load data from the demo data repositroy and geenrate a plot similar to
+% the one in Figure 3 of Caiafa and Pestilli under review.
+%
 
-%DataPath = '/N/dc2/projects/lifebid/code/ccaiafa/Caiafa_Pestilli_paper2015/Results/Variability/';
 DataPath = feDemoDataPath('Figs_data');
 
 HCP_subject_set = {'111312','105115','113619','110411'};
@@ -151,6 +154,9 @@ drawnow
 end
 
 function [] = Gen_plot(subject_set,color_type,DataPath,Nalg,dataset,color_mode)
+%
+% Generate a scatter plot similar to Caiafa and Pestilli Figure 3
+%
 nnz_all = zeros(length(subject_set),Nalg,10);
 nnz_mean = zeros(length(subject_set),Nalg);
 nnz_std  = zeros(length(subject_set),Nalg);
@@ -181,10 +187,10 @@ end
 
 n = 1;
 for subject = subject_set;
-    
+    keyboard
     switch dataset
         case {'HCP7T60','STN96','HCP3T90'}
-            DataFile = deblank(ls(char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_run01','.mat')))));
+            DataFile = char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_run01','.mat')));
         case {'HCP3T60','STN60'}
             DataFile = deblank(ls(char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_60dir*run01','.mat'))))); 
     end    
@@ -289,9 +295,11 @@ end
 
 end
 
-%%
-function c = getNiceColors(color_type)
 
+function c = getNiceColors(color_type)
+%
+% Load look-up-table for plot colors.
+% 
 dotest = false;
 c1 = colormap(parula(32));
 c2 = colormap(autumn(32));
