@@ -974,6 +974,15 @@ switch param
     
     % Return only the ones for the fibers in this roi
     val = w(unique( FibInRoi ));
+        
+  case {'nnz','numberofnonzerofibers','connectomedensity'}
+    % Connectome density (number of non-zero weighted fascicles).
+    %
+    % conDensity = feGet(fe,'nnz');
+                          
+    % extract the fber weights obtained in a LiFE fit
+    fw = feGet(fe,'fiber weights');
+    val = sum(fw > 0);
     
   case {'fiberdensity'}
     % Fiber density statistics.

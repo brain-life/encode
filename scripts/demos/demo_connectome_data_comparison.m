@@ -76,17 +76,14 @@ sbj.name = 'HCP3T';
 
 % We use the core function feGet.m to extract the RMSE and the B0 (MRI
 % measureemnts without the diffusion-weighted gradient applied).
-rmse = feGet(fe,'voxrmses0norm');
-
-% compute the mean RMSE across the whole white matter volume.
-sbj.rmse = nanmean(rmse);
+% 
+% We compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(feGet(fe,'voxrmses0norm'));
 
 % We find the positive weights and disregard the NaNs. THen compute the
 % number of postive weights (number of fascicles with non-zero weight, alse
 % referred to as conenctome density).
-ind = find(fe.life.fit.weights > 0);
-nnzeros = length(ind);
-sbj.nnz = nnzeros; 
+sbj.nnz = feGet(fe,'connectome density'); 
 
 % Finally we add the new data point to the plot we have generted. This si
 % doen by plotting connectome density on the ordinate and RMSE on the
@@ -395,17 +392,14 @@ sbj.name = name;
 
 % We use the core function feGet.m to extract the RMSE and the B0 (MRI
 % measureemnts without the diffusion-weighted gradient applied).
-rmse = feGet(fe,'voxrmses0norm');
-
-% compute the mean RMSE across the whole white matter volume.
-sbj.rmse = nanmean(rmse);
+% 
+% We compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(feGet(fe,'voxrmses0norm'));
 
 % We find the positive weights and disregard the NaNs. THen compute the
 % number of postive weights (number of fascicles with non-zero weight, alse
 % referred to as conenctome density).
-ind = find(fe.life.fit.weights > 0);
-nnzeros = length(ind);
-sbj.nnz = nnzeros; 
+sbj.nnz = feGet(fe,'connectome density'); 
 
 end
 
