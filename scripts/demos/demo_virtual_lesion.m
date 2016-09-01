@@ -1,17 +1,19 @@
 function [fh, fe] = demo_virtual_lesion()
-%% Example of Virtual Lesion computation using the multidimensional LiFE model
+% Example of Virtual Lesion computation using the multidimensional encoding
+% model and the LiFE method.
+% 
 % This demo function illustrates how to:
-
+%
+%
 %  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
 %  (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
+%  email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
 %% (0) Check matlab dependencies and path settings.
 if ~exist('vistaRootPath.m','file');
     disp('Vistasoft package either not installed or not on matlab path.')
     error('Please, download it from https://github.com/vistalab/vistasoft');
 end
-
 if ~exist('mbaComputeFibersOutliers','file')
     disp('ERROR: mba package either not installed or not on matlab path.')
     error('Please, download it from https://github.com/francopestilli/mba')
@@ -22,21 +24,35 @@ if ~exist('feDemoDataPath.m','file');
     error('Please, download it from https://XXXXXXXXXXXXX')
 end
 
-%% Compute Virtual Lesion (VL) from fe structures.
-
-% Choose major tract for computing VL
+%% (1) Compute Virtual Lesion (VL) from fe structures.
+%
+% The demo data set provides a series of precomputed fascicles. These
+% fascicles were segmented given known anatomical atlases of thehuman white matter (Mori, Susumu, et al. 
+% MRI atlas of human white matter. Elsevier, 2005.) using the AFQ toolbox
+% (https://github.com/jyeatman/AFQ). 
+%
+% The demo will ask to select one out of 20 major tracts. We will then use
+% that tract to perform a virtual leasion using the LiFE toolbox. The
+% virtual lesion operation will inform us of the statistical evidence for
+% the tract given the tractogprahy solution and the data set provided.
+%
+% We choose a major tract:
 clc
 prompt = 'Please select a major tract number (1 to 20): \n1-2: Anterior thalamic radiation (ATR) \n3-4: Cortico Spinal Tract (CST) \n5-6: Cingulum (cingulate gyrus) (Cing) \n7-8: Cingulum (hippocampus)  (Hipp) \n9-10: Forceps minor/major \n11-12: Inferior fronto-occipital fasciculus (InFOF) \n13-14: Inferior longitudinal fasciculus (InLF) \n15-16: Superior longitudinal fasciculus (SuLF) \n17-18: Uncinate fasciculus (UF) \n19:20: Superior longitudinal fasciculus (temporal part) (Temp) \n\n';
 tract = input(prompt);
 
-%% Read STN subject PROB results
+%% We load one precomputed LiFE structure (FE strucure)
+%
+% The structure we load is provided as part of the Demo Data set.
+% It was generated using one subject from the STN diffusion-weighted dataset 
+% the MRTRIX toolbox, probabilistic tracking based of the CSD model (Lmax=10).
 disp('loading fe_structures for FP subject in STN dataset ...')
-% load fe_structure
 feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
 load(feFileName)
+
 % Find indices with nonzero weights
-ind = find(fe.life.fit.weights>0);
+ind = feGet(fe,'nnzw');
 
 % load tract classificationfe
 FileName = fullfile(feDemoDataPath('STN','sub-FP','tracts_classification'), ...
@@ -53,8 +69,8 @@ sprintf('\n Cleaning %s ...',tract_name)
 [fg_tract, keep_tract] = mbaComputeFibersOutliers(fascicles(tract),3,3);
     
 ind_tracts1 = ind_tracts1(keep_tract);
+ind_nnz = feGet(fe,'nnzw');
 
-ind_nnz = find(fe.life.fit.weights);
 ind1 = ind_nnz(ind_tracts1);
 if isempty(ind1)
     rmse_wVL = [];
