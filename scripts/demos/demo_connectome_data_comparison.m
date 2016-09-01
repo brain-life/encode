@@ -34,6 +34,11 @@ end
 % After that we will add one additional point to the plot. Using data from
 % a different subject.
 %
+% This plots shows in a compact form two fundamental properties of a brain
+% connectome:
+% - the error of the conenctome in predicting the measured diffusion
+%   signal, the root-mean-squared error.
+% - 
 Generate_Fig3_paper_Caiafa_Pestilli('original')
 
 % We brighten the symbols to use them as background.
@@ -48,14 +53,53 @@ fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
              'fe_structure_105115_STC_run01_SD_PROB_lmax10_connNUM01.mat');
 load(fgFileName)
 
-% Get precomputed information abotu subjects in the data. Pick one subject.
-sbj = retrieve_results(fe,'PROB', 'HCP3T');
+% Here we extract two measures we are interested in:
+% (1) The root-mean-squared-error RMSE of the connectome in predicting 
+%     the measured demeaned diffusion-weighted signal.
+% (2) The number of non-zero weighted fibers. These are fibers for which
+%     LiFE assiged a weight larger than zero.
+%
+% First we pick a data set.
+sbj.alg = 'PROB';
+sbj.name = 'HCP3T';
+
+% We use the core function feGet.m to extract the RMSE and the B0 (MRI
+% measureemnts without the diffusion-weighted gradient applied).
+rmse = feGet(fe,'voxrmses0norm');
+
+% compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(rmse);
+
+% We find the positive weights and disregard the NaNs. THen compute the
+% number of postive weights (number of fascicles with non-zero weight, alse
+% referred to as conenctome density).
+ind = find(fe.life.fit.weights > 0);
+nnzeros = length(ind);
+sbj.nnz = nnzeros; 
+
+% Finally we add the new data point to the plot we have generted. This si
+% doen by plotting connectome density on the ordinate and RMSE on the
+% abscissa.
 Add_new_data_point(sbj,'cold',2)
+%
+% Below we show additional examples of data points added to the principla
+% plot in the Figure. To do so, we repeate several operations shown abouve
+% (using feGet.m). But we reduce clutter by packaging the operations into a
+% helper function saved at the bottom of this file that can be conveneinty
+% called multiple times as we show examples of multiple data points added
+% to the plot.
+%
 
 %% (3) Read data from the chosen subjects.
 %
 % 3.1 These results were obtained by using tensor-based deterministic
 % tractography and the HCP3T data set.
+%
+% In practice we repeate the same operations shown about (using feGet.m).
+% To reduce clutter we have packaged the operations into a helper function
+% saved at the bottom of this file that can be conveneinty called multiple
+% times as we show examples of multiple data points added to the plot.
+%
 disp('loading fe_structures for 105115 subject in HCP3T dataset (DET) ...')
 fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
              'fe_structure_105115_STC_run01_tensor__connNUM01.mat');
@@ -113,10 +157,13 @@ Add_new_data_point(sbj,'hot',2)
 
 end
 
-%%%%
+% Below is a series of local helper functions.
 function [] = Generate_Fig3_paper_Caiafa_Pestilli(color_mode)
+%
+% Load data from the demo data repositroy and geenrate a plot similar to
+% the one in Figure 3 of Caiafa and Pestilli under review.
+%
 
-%DataPath = '/N/dc2/projects/lifebid/code/ccaiafa/Caiafa_Pestilli_paper2015/Results/Variability/';
 DataPath = feDemoDataPath('Figs_data');
 
 HCP_subject_set = {'111312','105115','113619','110411'};
@@ -151,6 +198,9 @@ drawnow
 end
 
 function [] = Gen_plot(subject_set,color_type,DataPath,Nalg,dataset,color_mode)
+%
+% Generate a scatter plot similar to Caiafa and Pestilli Figure 3
+%
 nnz_all = zeros(length(subject_set),Nalg,10);
 nnz_mean = zeros(length(subject_set),Nalg);
 nnz_std  = zeros(length(subject_set),Nalg);
@@ -181,12 +231,11 @@ end
 
 n = 1;
 for subject = subject_set;
-    
     switch dataset
         case {'HCP7T60','STN96','HCP3T90'}
-            DataFile = deblank(ls(char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_run01','.mat')))));
+            DataFile = char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_run01','.mat')));
         case {'HCP3T60','STN60'}
-            DataFile = deblank(ls(char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_60dir*run01','.mat'))))); 
+            DataFile = char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_60dir*run01','.mat'))); 
     end    
     
     load(DataFile)
@@ -289,9 +338,11 @@ end
 
 end
 
-%%
-function c = getNiceColors(color_type)
 
+function c = getNiceColors(color_type)
+%
+% Load look-up-table for plot colors.
+% 
 dotest = false;
 c1 = colormap(parula(32));
 c2 = colormap(autumn(32));
@@ -324,25 +375,37 @@ end
 
 end
 
-%%
 function [sbj] = retrieve_results(fe,alg,name)
+%
+% Extracts results from a precomputed FE strcuture.
+% These results compare
+%
 sbj.alg = alg;
 sbj.name = name;
 
-rmse = feGet(fe,'vox rmse')./feGet(fe,'b0signalimage')';
-rmse = rmse(rmse~=Inf);
-rmse = nanmean(rmse);
-sbj.rmse = rmse;
+% We use the core function feGet.m to extract the RMSE and the B0 (MRI
+% measureemnts without the diffusion-weighted gradient applied).
+rmse = feGet(fe,'voxrmses0norm');
 
-ind = find(~isnan(fe.life.fit.weights)&fe.life.fit.weights>0);
+% compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(rmse);
+
+% We find the positive weights and disregard the NaNs. THen compute the
+% number of postive weights (number of fascicles with non-zero weight, alse
+% referred to as conenctome density).
+ind = find(fe.life.fit.weights > 0);
 nnzeros = length(ind);
 sbj.nnz = nnzeros; 
 
+
 end
 
-%%
-function [] = Add_new_data_point(sbj,color_type,order)
 
+function [] = Add_new_data_point(sbj,color_type,order)
+%
+% This function adds a new data point precomputed into the scater plot that
+% compares connectome prediction error and resolution.
+%
 c = getNiceColors(color_type);
 
 %% scatter plot

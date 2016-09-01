@@ -1305,6 +1305,17 @@ switch param
     val       = sqrt(mean((measured - predicted).^2,1));
     val       = val(feGet(fe,'voxelsindices',varargin));
    
+  case {'voxrmses0norm'}
+      % A volume of RMSE normalized by the S0 value in each voxel.
+      rmse = feGet(fe,'vox rmse');
+      s0   = feGet(fe,'b0signalimage')';
+      % Some voxels can have a S0=0. We replace the S0 in these voxles with
+      % a NaN. 
+      idx = (s0 == 0);
+      rmse(idx) = nan(size(find(idx)));
+      
+      val = rmse./s0;
+        
   case {'voxelrmsevoxelwise','voxrmsevoxelwise'}
     % A volume of RMSE values optained with the voxel-wise (voxelwise) fit.
     %
