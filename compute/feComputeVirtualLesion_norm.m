@@ -25,6 +25,7 @@ ind2 = feGet(fe,'pathneighborhood',ind_tract);
 nFib_tract = length(ind_tract);
  
 nVoxels = length(voxel_ind);
+nTheta = feGet(fe,'n bvals');
 
 % [inds, vals] = find(fe.life.M.Phi(:,voxel_ind,:)); % find indices for nnz in the subtensor defined by voxel_ind
 % ind2 = unique(inds(:,3)); % Fibers are the 3rd dimension in the subtensor
@@ -65,14 +66,15 @@ measured = measured(:,voxel_ind);
 % Restrict tensor model to the PN voxels
 M = fe.life.M;
 M.Phi = M.Phi(:,voxel_ind,:);
-predicted_woVL =  reshape(M_times_w(M,w),size(measured));
+predicted_woVL =  reshape(M_times_w(M.Phi.subs(:,1),M.Phi.subs(:,2),M.Phi.subs(:,3),M.Phi.vals,M.DictSig,w,nTheta,nVoxels),size(measured));
+%predicted_woVL =  reshape(M_times_w(M,w),size(measured));
 rmse_woVL = sqrt(mean((measured - predicted_woVL).^2,1));
 rmse_woVL = rmse_woVL./S0';
 
 %% Compute rmse restricted to Path neighborhood voxels with Virtual Lesion
 w_VL = w;
 w_VL(ind_tract) = 0;
-predicted_VL =  reshape(M_times_w(M,w_VL),size(measured));
+predicted_VL =  reshape(M_times_w(M.Phi.subs(:,1),M.Phi.subs(:,2),M.Phi.subs(:,3),M.Phi.vals,M.DictSig,w_VL,nTheta,nVoxels),size(measured));
 rmse_wVL = sqrt(mean((measured - predicted_VL).^2,1));
 rmse_wVL = rmse_wVL./S0';
 
