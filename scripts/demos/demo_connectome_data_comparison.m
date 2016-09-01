@@ -1,111 +1,169 @@
 function [fh, fe] = demo_connectome_data_comparison()
-% In this demo we load a previously LiFE_SD connectome and compare the
-% obtained root mean squared error (rmse) and fascicle density (Fascicles
-% number) with the ones obtained for all datasets/methods in the paper
-% "Multidimensional encoding of brain connectomes" by Cesar F. Caiafa and
-% Franco Pestilli, submitted (2016).
+% 
+% In this demo we load previously computed results showing the relationship
+% between the root mean squared error (rmse) and connectome resolution
+% (Fascicles number) with the ones obtained for all datasets/methods in the
+% paper "Multidimensional encoding of brain connectomes" by Cesar F. Caiafa
+% and Franco Pestilli, submitted (2016).
 %
-% This demo illustrates how to take as input a tractogrpahy file and a
-% diffusion-weighted imaging file and encode them into a multidimensional
-% model.
+% 
 %
 %  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
 %  (CONICET) email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
-%% (0) Check matlab dependencies and path settings.
+%% (0) Check matlab, data dependencies and path settings.
 if ~exist('vistaRootPath.m','file');
     disp('Vistasoft package either not installed or not on matlab path.')
     error('Please, download it from https://github.com/vistalab/vistasoft');
 end
-
-% if ~exist('mbaComputeFibersOutliers','file')
-%     disp('ERROR: mba package either not installed or not on matlab path.')
-%     error('Please, download it from https://github.com/francopestilli/mba')
-% end
-
-% Check if demo datasets are visible on the matlab path
 if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
     error('Please, download it from https://XXXXXXXXXXXXX')
 end
+if  ~exist('feDemoDataPath','file');
+    disp('ERROR: demo datasets are not installed or not added to the Matlab path')
+    error('Please, download it from https://XXXXXXXXXXXXX')
+end
 
-%% (1) We generate Fig. 3 of the paper "Multidimensional encoding of brain connectomes" by Cesar F. Caiafa and Franco Pestilli, submitted (2016).
+%% (1) Figure 3 from Multidimensional encoding of brain connectomes
+%      Cesar F. Caiafa and Franco Pestilli, submitted.
+%
+% Below we will first load part of the data used in Figure 3 of the
+% original publication (Caiafa and Pestilli, submitted)
+%
+% After that we will add one additional point to the plot. Using data from
+% a different subject.
+%
+% This plots shows in a compact form two fundamental properties of a brain
+% connectome:
+% - the error of the conenctome in predicting the measured diffusion
+%   signal, the root-mean-squared error.
+% - 
 Generate_Fig3_paper_Caiafa_Pestilli('original')
 
-
-%% (2) Load connectomes (fe structures) evaluated previously with LiFE
+% We brighten the symbols to use them as background.
 Generate_Fig3_paper_Caiafa_Pestilli('gray')
 
-%% Read HCP3T subject connectome obtained by using Probabilistic tractography
+%% (2) Read HCP3T subject connectome obtained by using Probabilistic tractography
+%
+% We load data not yet present on the plot.
+%
 disp('loading fe_structures for 105115 subject in HCP3T dataset (PROB) ...')
-
-FileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
+fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
              'fe_structure_105115_STC_run01_SD_PROB_lmax10_connNUM01.mat');
-load(FileName)
-sbj = retrieve_results(fe,'PROB', 'HCP3T');
-% plot new data point
-Add_new_data_point(sbj,'cold',2)
+load(fgFileName)
 
-% Read HCP3T subject connectome obtained by using Deterministic (tensor)
-% tractography
+% Here we extract two measures we are interested in:
+% (1) The root-mean-squared-error RMSE of the connectome in predicting 
+%     the measured demeaned diffusion-weighted signal.
+% (2) The number of non-zero weighted fibers. These are fibers for which
+%     LiFE assiged a weight larger than zero.
+%
+% First we pick a data set.
+sbj.alg = 'PROB';
+sbj.name = 'HCP3T';
+
+% We use the core function feGet.m to extract the RMSE and the B0 (MRI
+% measureemnts without the diffusion-weighted gradient applied).
+rmse = feGet(fe,'voxrmses0norm');
+
+% compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(rmse);
+
+% We find the positive weights and disregard the NaNs. THen compute the
+% number of postive weights (number of fascicles with non-zero weight, alse
+% referred to as conenctome density).
+ind = find(fe.life.fit.weights > 0);
+nnzeros = length(ind);
+sbj.nnz = nnzeros; 
+
+% Finally we add the new data point to the plot we have generted. This si
+% doen by plotting connectome density on the ordinate and RMSE on the
+% abscissa.
+Add_new_data_point(sbj,'cold',2)
+%
+% Below we show additional examples of data points added to the principla
+% plot in the Figure. To do so, we repeate several operations shown abouve
+% (using feGet.m). But we reduce clutter by packaging the operations into a
+% helper function saved at the bottom of this file that can be conveneinty
+% called multiple times as we show examples of multiple data points added
+% to the plot.
+%
+
+%% (3) Read data from the chosen subjects.
+%
+% 3.1 These results were obtained by using tensor-based deterministic
+% tractography and the HCP3T data set.
+%
+% In practice we repeate the same operations shown about (using feGet.m).
+% To reduce clutter we have packaged the operations into a helper function
+% saved at the bottom of this file that can be conveneinty called multiple
+% times as we show examples of multiple data points added to the plot.
+%
 disp('loading fe_structures for 105115 subject in HCP3T dataset (DET) ...')
-
-FileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
+fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
              'fe_structure_105115_STC_run01_tensor__connNUM01.mat');
-load(FileName)
+load(fgFileName)
 sbj = retrieve_results(fe,'TENSOR', 'HCP3T');
+
 % plot new data point
 Add_new_data_point(sbj,'cold',2)
 
-%% Read STN subject connectome obtained by using Probabilistic tractography
+% 3.2 These results were obtained by using CSD-based Probabilistic
+% tractography and the STN data set.
 disp('loading fe_structures for FP subject in STN dataset (PROB) ...')
-
-FileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
+fgFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
-load(FileName)
+load(fgFileName)
 sbj = retrieve_results(fe,'PROB', 'STN');
+
 % plot new data point
 Add_new_data_point(sbj,'medium',2)
 
-% Read STN subject connectome obtained by using Deterministic (tensor)
-% tractography
+% 3.3 These results were obtained by using tensor-based deterministic
+% tractography and the STN data set.
 disp('loading fe_structures for FP subject in STN dataset (DET) ...')
-
-FileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
+fgFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_tensor__connNUM01.mat');
-load(FileName)
+load(fgFileName)
 sbj = retrieve_results(fe,'TENSOR', 'STN');
+
 % plot new data point
 Add_new_data_point(sbj,'medium',2)
 
-%% Read HCP7T subject connectome obtained by using Probabilistic tractography
+% 3.4 These results were obtained by using CSD-based probabilistic
+% tractography and the HCP7T data set.
 disp('loading fe_structures for 108323 subject in HCP7T dataset (PROB) ...')
-
-FileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
+fgFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
              'fe_structure_108323_STC_run01_SD_PROB_lmax8_connNUM01.mat');
-load(FileName)
+load(fgFileName)
 sbj = retrieve_results(fe,'PROB', 'HCP7T');
+
 % plot new data point
 Add_new_data_point(sbj,'hot',2)
 
-% Read HCP7T subject connectome obtained by using Deterministic (tensor)
-% tractography
+% 3.5 These results were obtained by using tensor-based deterministic
+% tractography and the HCP7T data set.
 disp('loading fe_structures for 108323 subject in HCP7T dataset (DET) ...')
 
-FileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
+fgFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
              'fe_structure_108323_STC_run01_tensor__connNUM01.mat');
-load(FileName)
+load(fgFileName)
 sbj = retrieve_results(fe,'TENSOR', 'HCP7T');
+
 % plot new data point
 Add_new_data_point(sbj,'hot',2)
 
 
 end
 
-%%%%
+% Below is a series of local helper functions.
 function [] = Generate_Fig3_paper_Caiafa_Pestilli(color_mode)
+%
+% Load data from the demo data repositroy and geenrate a plot similar to
+% the one in Figure 3 of Caiafa and Pestilli under review.
+%
 
-%DataPath = '/N/dc2/projects/lifebid/code/ccaiafa/Caiafa_Pestilli_paper2015/Results/Variability/';
 DataPath = feDemoDataPath('Figs_data');
 
 HCP_subject_set = {'111312','105115','113619','110411'};
@@ -140,6 +198,9 @@ drawnow
 end
 
 function [] = Gen_plot(subject_set,color_type,DataPath,Nalg,dataset,color_mode)
+%
+% Generate a scatter plot similar to Caiafa and Pestilli Figure 3
+%
 nnz_all = zeros(length(subject_set),Nalg,10);
 nnz_mean = zeros(length(subject_set),Nalg);
 nnz_std  = zeros(length(subject_set),Nalg);
@@ -170,12 +231,11 @@ end
 
 n = 1;
 for subject = subject_set;
-    
     switch dataset
         case {'HCP7T60','STN96','HCP3T90'}
-            DataFile = deblank(ls(char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_run01','.mat')))));
+            DataFile = char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_run01','.mat')));
         case {'HCP3T60','STN60'}
-            DataFile = deblank(ls(char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_60dir*run01','.mat'))))); 
+            DataFile = char(fullfile(DataPath,strcat('Rmse_nnz_10_connectomes_',subject,'_60dir*run01','.mat'))); 
     end    
     
     load(DataFile)
@@ -278,9 +338,11 @@ end
 
 end
 
-%%
-function c = getNiceColors(color_type)
 
+function c = getNiceColors(color_type)
+%
+% Load look-up-table for plot colors.
+% 
 dotest = false;
 c1 = colormap(parula(32));
 c2 = colormap(autumn(32));
@@ -313,25 +375,37 @@ end
 
 end
 
-%%
 function [sbj] = retrieve_results(fe,alg,name)
+%
+% Extracts results from a precomputed FE strcuture.
+% These results compare
+%
 sbj.alg = alg;
 sbj.name = name;
 
-rmse = feGet(fe,'vox rmse')./feGet(fe,'b0signalimage')';
-rmse = rmse(rmse~=Inf);
-rmse = nanmean(rmse);
-sbj.rmse = rmse;
+% We use the core function feGet.m to extract the RMSE and the B0 (MRI
+% measureemnts without the diffusion-weighted gradient applied).
+rmse = feGet(fe,'voxrmses0norm');
 
-ind = find(~isnan(fe.life.fit.weights)&fe.life.fit.weights>0);
+% compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(rmse);
+
+% We find the positive weights and disregard the NaNs. THen compute the
+% number of postive weights (number of fascicles with non-zero weight, alse
+% referred to as conenctome density).
+ind = find(fe.life.fit.weights > 0);
 nnzeros = length(ind);
 sbj.nnz = nnzeros; 
 
+
 end
 
-%%
-function [] = Add_new_data_point(sbj,color_type,order)
 
+function [] = Add_new_data_point(sbj,color_type,order)
+%
+% This function adds a new data point precomputed into the scater plot that
+% compares connectome prediction error and resolution.
+%
 c = getNiceColors(color_type);
 
 %% scatter plot
@@ -349,6 +423,7 @@ end
 drawnow
 
 end
+
 
 
 
