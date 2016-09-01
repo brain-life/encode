@@ -49,7 +49,9 @@ end
 % connectome:
 % - the error of the conenctome in predicting the measured diffusion
 %   signal, the root-mean-squared error.
-% - 
+% - the density of a connectome. More specifcially the number of fibers
+%   supported by the measured diffusion-weighted data in the provided
+%   tractography solution.
 Generate_Fig3_paper_Caiafa_Pestilli('original')
 
 % We brighten the symbols to use them as background.
