@@ -2,6 +2,7 @@
 
 ![alt tag](https://cloud.githubusercontent.com/assets/11638664/18020005/00d2fb9e-6bad-11e6-861a-d746cca35f0d.png)
 
+<<<<<<< HEAD
 # About
 This software implements a framework to encode both, structural brain connectomes and associated diffusion-weighted magnetic resonance data, into multidimensional arrays (tensors). The encoding method allows implementing Connectome Evaluation Models (Pestilli et al., 2015) with dramatic reduction in storage requirements with up to 40x compression factor. Furtheremore, connectome encoding allows perfomring computational neuroanatomy dissection and virtual lesions very efficiently using the machine-friendly array operations. We provide demos and tutorials to expain how to:
  (1) Load and encode diffusion-weighted data and tractography models of white matter fascicles, as well as perform multidimensional arrays operations. 
@@ -78,4 +79,7 @@ This final step will run the life_demo code. The code will perform the operation
   >>  demo_connectome_evalaution.m
 ```
 demo_connectome_evalaution.m runs in about 3 hours on a modern Intel processor with 8GB of RAM. This code has been tested with MatLab 2015b on Ubuntu 15+ and Mac OSX 10.11.
+=======
+C. Caiafa and F. Pestilli Sparse multiway decomposition for analysis and modelling of diffusion imagign and tractogrpahy.
+>>>>>>> master
 
