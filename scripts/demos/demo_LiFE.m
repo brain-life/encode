@@ -1,5 +1,6 @@
 function [fh, fe] = demo_LiFE()
 %% Example of initialization and fitting LiFE model
+%
 % This demo function illustrates how to:
 %  - A - Set up a LiFE structure, identified as 'fe' (fascicle evaluation) in
 %  the code below. This model contains a prediction of the diffusion
@@ -11,6 +12,7 @@ function [fh, fe] = demo_LiFE()
 %  fascicles in each voxels are combined to generate a global connectome
 %  prediciton for the diffusion signal in large sets of white matter
 %  voxels.
+% 
 %  - B - Fit the LiFE model to compute the weights associated to each fascicle
 %  in the connectome. Fascicles in the conenctome contribute differently to
 %  predicting the diffusion signal in each voxel. First of all, fascicles
@@ -32,6 +34,7 @@ function [fh, fe] = demo_LiFE()
 %  is used to evaluate the model prediction quality, compare different
 %  tractography models and to perform statistical inference on the on
 %  properties of the connectomes.
+%  
 %  - C - Compare two different connectome models. This demo will show how to
 %  compare two different conenctome models by using the diffusion
 %  prediction error (the Root-Mean-Squared Error, RMSE). We report the
@@ -47,11 +50,12 @@ function [fh, fe] = demo_LiFE()
 %  a few minutes requiring only about 10GB of computer RAM and standard 
 %  hardaware. This code has been tested with: 
 %
-
 %
+%  Copyright (2013-2014), Franco Pestilli, Stanford University, frakkopesto@gmail.com.
+% 
 %  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
 %  (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
+%  email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
 % Intialize a local matlab cluster if the parallel toolbox is available.
 % This helps speeding up computations espacially for large conenctomes.
