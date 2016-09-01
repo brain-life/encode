@@ -975,7 +975,7 @@ switch param
     % Return only the ones for the fibers in this roi
     val = w(unique( FibInRoi ));
         
-  case {'nnz','numberofnonzerofibers','connectomedensity'}
+  case {'nnzw','numberofnonzerofibers','connectomedensity'}
     % Connectome density (number of non-zero weighted fascicles).
     %
     % conDensity = feGet(fe,'nnz');
