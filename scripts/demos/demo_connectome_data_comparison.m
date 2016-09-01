@@ -1,12 +1,27 @@
 function [fh, fe] = demo_connectome_data_comparison()
+% This demo characterizes connectomes obtained with different data sets and
+% tracking methods. 
 % 
-% In this demo we load previously computed results showing the relationship
-% between the root mean squared error (rmse) and connectome resolution
-% (Fascicles number) with the ones obtained for all datasets/methods in the
-% paper "Multidimensional encoding of brain connectomes" by Cesar F. Caiafa
-% and Franco Pestilli, submitted (2016).
+% It compares two fundamental properties of a connectome density and error
+% in predicting the diffusion signal. It shows how these conenctome
+% properties depend from data type (spatial resolution and directional
+% resolution) and tractogrpahy method (probabilistic, deterministic,
+% constrained spehreical deconvolution or tensor based).
+% 
+% Below, we load previously computed results and show the
+% relationship between the root-mean-squared error of a connectome in
+% predicting the demeaned diffusion-weighted signal and the number of
+% non-zero weighted connectome fascicles (connectome density).
+% 
+% The demo introduces uses of some fundamental operations provided by the
+% toolbox and accessed via feGet.m 
 %
-% 
+% feGet.m is a hub function that allows computing connectome error and
+% density among other operations.
+%
+% The plots geenrated by this demo reproduce partially results presented in
+% Figure 3 of "Multidimensional encoding of brain connectomes" by Cesar F.
+% Caiafa and Franco Pestilli, submitted (2016).
 %
 %  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
 %  (CONICET) email: frakkopesto@gmail.com and ccaiafa@gmail.com
@@ -18,10 +33,6 @@ if ~exist('vistaRootPath.m','file');
 end
 if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
-    error('Please, download it from https://XXXXXXXXXXXXX')
-end
-if  ~exist('feDemoDataPath','file');
-    disp('ERROR: demo datasets are not installed or not added to the Matlab path')
     error('Please, download it from https://XXXXXXXXXXXXX')
 end
 
@@ -65,17 +76,14 @@ sbj.name = 'HCP3T';
 
 % We use the core function feGet.m to extract the RMSE and the B0 (MRI
 % measureemnts without the diffusion-weighted gradient applied).
-rmse = feGet(fe,'voxrmses0norm');
-
-% compute the mean RMSE across the whole white matter volume.
-sbj.rmse = nanmean(rmse);
+% 
+% We compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(feGet(fe,'voxrmses0norm'));
 
 % We find the positive weights and disregard the NaNs. THen compute the
 % number of postive weights (number of fascicles with non-zero weight, alse
 % referred to as conenctome density).
-ind = find(fe.life.fit.weights > 0);
-nnzeros = length(ind);
-sbj.nnz = nnzeros; 
+sbj.nnz = feGet(fe,'connectome density'); 
 
 % Finally we add the new data point to the plot we have generted. This si
 % doen by plotting connectome density on the ordinate and RMSE on the
@@ -173,7 +181,7 @@ HCP7T_subject_set = {'108323','131217','109123','910241'};
 fh = figure('name','combined scatter mean ±sem across repeats','color','w');
 set(fh,'Position',[0,0,800,600]);
 
-Nalg = 13; %(6 Prob + 6 Stream + Tensor)
+Nalg = 13; % We plot a few data points (13 in total, 6 Prob + 6 Stream + Tensor)
 
 % plot HCP
 Gen_plot(HCP_subject_set,'cold',DataPath,Nalg,'HCP3T90',color_mode)
@@ -181,7 +189,7 @@ Gen_plot(HCP_subject_set,'cold',DataPath,Nalg,'HCP3T90',color_mode)
 % plot STN
 Gen_plot(STN_subject_set,'medium',DataPath,Nalg,'STN96',color_mode)
 
-Nalg = 9; %(4 Prob + 4 Stream + Tensor)
+Nalg = 9; % We plot a few data points (9 in total, 4 Prob + 4 Stream + Tensor)
 
 % plot HCP7T
 Gen_plot(HCP7T_subject_set,'hot',DataPath,Nalg,'HCP7T60',color_mode)
@@ -192,7 +200,6 @@ set(gca,'tickdir','out', 'ticklen',[0.025 0.025], ...
 axis square
 ylabel('Fascicles number','fontsize',20)
 xlabel('Connectome error (r.m.s.)','fontsize',20)
-
 drawnow
 
 end
@@ -310,7 +317,7 @@ for is  = 1:size(nnz_all,1)
     nnz_ci(is,:) = [nnz_mu(is,:), nnz_mu(is,:)] + 5*([-nanstd(tmp_nnz,[],2);nanstd(tmp_nnz,[],2)]' ./sqrt(size(tmp_rmse,2)));
 end
 
-% scatter plot with confidence intervakls first all in gray
+% scatter plot with confidence intervals first all in gray
 a = 0.5;
 
 for ii = 1:length(subject_set) % subjects
@@ -385,18 +392,14 @@ sbj.name = name;
 
 % We use the core function feGet.m to extract the RMSE and the B0 (MRI
 % measureemnts without the diffusion-weighted gradient applied).
-rmse = feGet(fe,'voxrmses0norm');
-
-% compute the mean RMSE across the whole white matter volume.
-sbj.rmse = nanmean(rmse);
+% 
+% We compute the mean RMSE across the whole white matter volume.
+sbj.rmse = nanmean(feGet(fe,'voxrmses0norm'));
 
 % We find the positive weights and disregard the NaNs. THen compute the
 % number of postive weights (number of fascicles with non-zero weight, alse
 % referred to as conenctome density).
-ind = find(fe.life.fit.weights > 0);
-nnzeros = length(ind);
-sbj.nnz = nnzeros; 
-
+sbj.nnz = feGet(fe,'connectome density'); 
 
 end
 
