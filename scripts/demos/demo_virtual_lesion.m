@@ -2,11 +2,16 @@ function [fh, fe] = demo_virtual_lesion()
 % Example of Virtual Lesion computation using the multidimensional encoding
 % model and the LiFE method.
 % 
-% This demo function illustrates how to:
+% This demo function illustrates how to perfomr a virtual lesion by using
+% the multidimensional connectome encoding framework.
 %
+% The demo reproduces some of the results initially published in Pestilli
+% et al., Nature Methods 2014 and replicated in Caiafa and Pestilli
+% forthcoming.
 %
 %  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
 %  (CONICET)
+%
 %  email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
 %% (0) Check matlab dependencies and path settings.
@@ -36,9 +41,8 @@ end
 % the tract given the tractogprahy solution and the data set provided.
 %
 % We choose a major tract: 
-clc
 
-%% We load one precomputed LiFE structure (FE strucure)
+% We load one precomputed LiFE structure (FE strucure)
 %
 % The structure we load is provided as part of the Demo Data set.
 %
