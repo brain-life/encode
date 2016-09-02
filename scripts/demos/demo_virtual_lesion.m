@@ -201,7 +201,7 @@ end
 
 function fh = distributionPlotStrengthOfEvidence(se)
 %
-% Make aplto fothe Strengh-of-evidence result.
+% Make a plot of the Strengh-of-evidence result.
 %
 y_e        = se.s.unlesioned_e;
 ywo_e      = se.s.lesioned_e;
