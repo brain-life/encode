@@ -1,105 +1,144 @@
 function [fh, fe] = demo_virtual_lesion()
-%% Example of Virtual Lesion computation using the multidimensional LiFE model
-% This demo function illustrates how to:
-
+% Example of Virtual Lesion computation using the multidimensional encoding
+% model and the LiFE method.
+% 
+% This demo function illustrates how to perfomr a virtual lesion by using
+% the multidimensional connectome encoding framework.
+%
+% The demo reproduces some of the results initially published in Pestilli
+% et al., Nature Methods 2014 and replicated in Caiafa and Pestilli
+% forthcoming.
+%
 %  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
 %  (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
+%
+%  email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
 %% (0) Check matlab dependencies and path settings.
 if ~exist('vistaRootPath.m','file');
     disp('Vistasoft package either not installed or not on matlab path.')
     error('Please, download it from https://github.com/vistalab/vistasoft');
 end
-
 if ~exist('mbaComputeFibersOutliers','file')
     disp('ERROR: mba package either not installed or not on matlab path.')
     error('Please, download it from https://github.com/francopestilli/mba')
 end
-
 if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
     error('Please, download it from https://XXXXXXXXXXXXX')
 end
 
-%% Compute Virtual Lesion (VL) from fe structures.
+%% (1) Compute Virtual Lesion (VL) from fe structures.
+%
+% The demo data set provides a series of precomputed fascicles. These
+% fascicles were segmented given known anatomical atlases of thehuman white matter (Mori, Susumu, et al. 
+% MRI atlas of human white matter. Elsevier, 2005.) using the AFQ toolbox
+% (https://github.com/jyeatman/AFQ). 
+%
+% The demo will ask to select one out of 20 major tracts. We will then use
+% that tract to perform a virtual leasion using the LiFE toolbox. The
+% virtual lesion operation will inform us of the statistical evidence for
+% the tract given the tractogprahy solution and the data set provided.
+%
+% We choose a major tract: 
 
-% Choose major tract for computing VL
-clc
-prompt = 'Please select a major tract number (1 to 20): \n1-2: Anterior thalamic radiation (ATR) \n3-4: Cortico Spinal Tract (CST) \n5-6: Cingulum (cingulate gyrus) (Cing) \n7-8: Cingulum (hippocampus)  (Hipp) \n9-10: Forceps minor/major \n11-12: Inferior fronto-occipital fasciculus (InFOF) \n13-14: Inferior longitudinal fasciculus (InLF) \n15-16: Superior longitudinal fasciculus (SuLF) \n17-18: Uncinate fasciculus (UF) \n19:20: Superior longitudinal fasciculus (temporal part) (Temp) \n\n';
-tract = input(prompt);
-
-%% Read STN subject PROB results
+% We load one precomputed LiFE structure (FE strucure)
+%
+% The structure we load is provided as part of the Demo Data set.
+%
+% It was generated using one subject from the STN diffusion-weighted dataset 
+% the MRTRIX toolbox, probabilistic tracking based of the CSD model (Lmax=10).
 disp('loading fe_structures for FP subject in STN dataset ...')
-% load fe_structure
 feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
 load(feFileName)
-% Find indices with nonzero weights
-ind = find(fe.life.fit.weights>0);
 
-% load tract classificationfe
+% All fascicles in a full brain connectome have been encoded into a three
+% dimensional array – tensor Phi. Phi is available inside the FE sctructure
+% we just loaded. Each dimension of Phi encodes different properties of the
+% connectome. Mode 1 the orientation of the connectome fascicles. Mode 2
+% the spatial location of each node/fascile. Mode 3 the identify of each
+% fascicles, also called fascicle indices.
+% 
+% A white matter tract is defined as a set of fascicles. To identify a
+% tract within Phi we need to select a group of fascicles within Phi along Mode 3.
+%
+% First we find the indices of all fascicles in the connectome that have a
+% non-zero weight associated ('nnzw'). These are fascicles that contributed a
+% reliable amount in predicting the diffusion signal. A simple call of the
+% hub function feGet.m helps with this.
+ind_nnz = feGet(fe,'nnzw');
+
+% After that we load a precomputed tract segmentation. A segmentaion of
+% tracts was performed on the connectome. Edges of the connectome were
+% classified as being part of one of twenty major human white matter
+% tracts. For example the arcuate fasciculus, or the cortico-spinal tract.
+% 
 FileName = fullfile(feDemoDataPath('STN','sub-FP','tracts_classification'), ...
              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_500000_SD_PROB_lmax10_connNUM01_TRACTS.mat');
-load(FileName)
+load(FileName) % Load classification file from disk.
 
-tract_name = char(classification.names(tract));
-disp(char(strcat('Computing virtual lesion of ', tract_name,' for subject in STN dataset (PROB)')));
+% Pick a tract and return indices of tract-fascicles in the encoded 
+% connectome (Phi tensor).
+[tract_fas_indices, tract_num] = demo_local_choose_tract(fe,classification, fascicles);
 
-ind_tracts1 = find(classification.index==tract); % indices to fascicles in the selected major tract
+% Remove the fascicles of the tract to be lesioned (actually perform the
+% lesion) from the encoded connectome. 
+%
+% Compute the root-mean-squared error of the model with and without tract
+% in the white-matter voxels comprised by the tract. 
+[rmse_wVL, rmse_woVL]= feComputeVirtualLesion_norm(fe,tract_fas_indices);
 
-% We clean all major tracs
-sprintf('\n Cleaning %s ...',tract_name)
-[fg_tract, keep_tract] = mbaComputeFibersOutliers(fascicles(tract),3,3);
-    
-ind_tracts1 = ind_tracts1(keep_tract);
+% Compute the statistical strenght of evidence for the tract. 
+%
+% This means measure the change in root-mean-squared error in predicting
+% the measured demeaned diffusion-weighted MRI signal due to the tract
+% lesion.
+se = feComputeEvidence_norm(rmse_woVL,rmse_wVL);
 
-ind_nnz = find(fe.life.fit.weights);
-ind1 = ind_nnz(ind_tracts1);
-if isempty(ind1)
-    rmse_wVL = [];
-    rmse_woVL = [];
-    nFib_tract = 0;
-    nFib_PN = 0;
-    nVoxels = 0;
-else
-    [rmse_wVL, rmse_woVL,nFib_tract, ~, ~]= feComputeVirtualLesion_norm(fe,ind1);
-end
-
-if nFib_tract ==0
-    se = [];
-else
-    se = feComputeEvidence_norm(rmse_woVL,rmse_wVL);
-end
-
-
-%% Strength of evidence in favor of Probabilistic tractography. 
+% Plot the Strength of evidence. 
+%
 % Plot the distributions of resampled mean RMSE
 % used to compute the strength of evidence (S).
 fh(1) = distributionPlotStrengthOfEvidence(se);
 
-%% RMSE distributions for Probabilistic and Deterministic tractography. 
-% Compare the distributions using the Earth Movers Distance.
-% Plot the distributions of RMSE for the two models and report the Earth
-% Movers Distance between the distributions.
+% Plot the two RMSE distributions with and without lesion.
+%
+% Compare the distributions using the Earth Movers Distance. Plot the
+% distributions of RMSE for the two models and report the Earth Movers
+% Distance between the distributions.
 fh(2) = distributionPlotEarthMoversDistance(se);
 
+% Plot the anatomy of the tract and its path-neighborhood.
+%
+fh = demo_local_plot_anatomy(fe,fascicles, tract_num, classification);
 
-%% Generate visualization of the major tract and its path neighborhood
+end
+
+%
+% -- local helper functions -- %
+%
+function fh = demo_local_plot_anatomy(fe,fascicles, tract_num, classification)
+% - 
+% Visualize the major tract and its path neighborhood
+%
 colors     = {[.1 .25 .65],[.75 .25 .1]};
 viewCoords = [90,0];
 slice      = [-1 0 0];
 proportion_to_show = .05;
 threshold_length = 10;
 
+ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in the selected major tract
+[~, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
+ind_tracts1     = ind_tracts1(keep_tract);
 
-ind_nnz = find(fe.life.fit.weights);
+ind_nnz = feGet(fe,'nnzw');
 ind1    = ind_nnz(ind_tracts1);
 ind_tracts2 = feGet(fe,'Path Neighborhood',ind1);
 fg          = feGet(fe,'fibers img');
 fg_pathn    = fgExtract(fg,ind_tracts2,'keep');
 clear fg
-roicoords = feGet(fe,'coords from fibers',ind1);
+%roicoords = feGet(fe,'coords from fibers',ind1);
 
 fg_pathn.fibers = mbaFiberSplitLoops(fg_pathn.fibers);
 xform     = feGet(fe,'img2acpcxform');
@@ -122,30 +161,52 @@ fibs_indx = randsample(1:length(fg_pathn.fibers),round(length(fg_pathn.fibers)*p
 fg_pnplot.fibers = fg_pnplot.fibers(fibs_indx);
 fg{2}    = fg_pnplot;
 
-% plot tract and PN
+% plot tract and Path-Neighborhood
 fig_name      = char(strcat(tract_name,'+ PN (only ',num2str(proportion_to_show*100),'% of PN fascicles)'));
 [fh(3), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1 2]);
-%feSavefig(fig_h,'verbose','yes','figName',[fig_name, 'leftSAG'],'figDir',dataOutputPath,'figType','jpg');
-%close all; drawnow
 
 % plot tract
 fig_name      = char(strcat(tract_name));
 [fh(4), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1]);
-%feSavefig(fig_h,'verbose','yes','figName',[fig_name, 'leftSAG'],'figDir',dataOutputPath,'figType','jpg');
-%close all; drawnow
 
 % plot PN
 fig_name      = char(strcat('PN (only ',num2str(proportion_to_show*100),'% of PN fascicles)') );
 [fh(5), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [2]);
-%feSavefig(fig_h,'verbose','yes','figName',[fig_name, 'leftSAG'],'figDir',dataOutputPath,'figType','jpg');
-%close all; drawnow
+
+end
 
 
+
+function [tract_indices, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles)
+% 
+% Local function to select a tract from a series of segemnted tracts.
+%
+% Aask to choose a major tract as example.
+% Perform some preprocessing to return the appropriate tract indices that
+% can be used for the virtual lesion process.
+%
+prompt = 'Please select a major tract number (1 to 20): \n1-2: Anterior thalamic radiation (ATR) \n3-4: Cortico Spinal Tract (CST) \n5-6: Cingulum (cingulate gyrus) (Cing) \n7-8: Cingulum (hippocampus)  (Hipp) \n9-10: Forceps minor/major \n11-12: Inferior fronto-occipital fasciculus (InFOF) \n13-14: Inferior longitudinal fasciculus (InLF) \n15-16: Superior longitudinal fasciculus (SuLF) \n17-18: Uncinate fasciculus (UF) \n19:20: Superior longitudinal fasciculus (temporal part) (Temp) \n\n';
+tract_num = input(prompt);
+tract_name  = char(classification.names(tract_num));
+fprintf('[%s] Extracting tract %s from Encoding model... \n', mfilename, tract_name);
+ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in the selected major tract
+
+% We clean all major tracs. This is because some of the initial
+% segmentation performed by AFQ can return tracts that are too far away
+% from the expected tract path. TO overcome this limitation we accept
+% tracts that are (1) close by the mean tract path coordinates, (2) not
+% tool long or too short from the average length of the tract fascicles.
+[~, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
+ind_tracts1     = ind_tracts1(keep_tract);
+ind_nnz = feGet(fe,'nnzw');
+tract_indices   = ind_nnz(ind_tracts1);
 
 end
 
 function fh = distributionPlotStrengthOfEvidence(se)
-
+%
+% Make a plot of the Strengh-of-evidence result.
+%
 y_e        = se.s.unlesioned_e;
 ywo_e      = se.s.lesioned_e;
 dprime     = se.s.mean;
@@ -177,7 +238,9 @@ legend({'without VL','with VL'})
 end
 
 function fh = distributionPlotEarthMoversDistance(se)
-
+%
+% Make a plot fo the Earth Mover's distance result.
+%
 nolesion = se.nolesion;
 lesion  = se.lesion;
 em   = se.em;
