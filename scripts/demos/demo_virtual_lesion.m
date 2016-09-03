@@ -40,7 +40,6 @@ end
 % virtual lesion operation will inform us of the statistical evidence for
 % the tract given the tractogprahy solution and the data set provided.
 %
-% We choose a major tract: 
 
 % We load one precomputed LiFE structure (FE strucure)
 %
@@ -64,10 +63,10 @@ load(feFileName)
 % tract within Phi we need to select a group of fascicles within Phi along Mode 3.
 %
 % First we find the indices of all fascicles in the connectome that have a
-% non-zero weight associated ('nnzw'). These are fascicles that contributed a
+% non-zero weight associated ('ind nnzw'). These are fascicles that contributed a
 % reliable amount in predicting the diffusion signal. A simple call of the
 % hub function feGet.m helps with this.
-ind_nnz = feGet(fe,'nnzw');
+ind_nnz = feGet(fe,'ind nnzw');
 
 % After that we load a precomputed tract segmentation. A segmentaion of
 % tracts was performed on the connectome. Edges of the connectome were
@@ -80,7 +79,7 @@ load(FileName) % Load classification file from disk.
 
 % Pick a tract and return indices of tract-fascicles in the encoded 
 % connectome (Phi tensor).
-[tract_fas_indices, tract_num] = demo_local_choose_tract(fe,classification, fascicles);
+[tract_fas_indices, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles);
 
 % Remove the fascicles of the tract to be lesioned (actually perform the
 % lesion) from the encoded connectome. 
@@ -111,14 +110,14 @@ fh(2) = distributionPlotEarthMoversDistance(se);
 
 % Plot the anatomy of the tract and its path-neighborhood.
 %
-fh = demo_local_plot_anatomy(fe,fascicles, tract_num, classification);
+fh = demo_local_plot_anatomy(fe,fascicles, tract_num, tract_name, classification);
 
 end
 
 %
 % -- local helper functions -- %
 %
-function fh = demo_local_plot_anatomy(fe,fascicles, tract_num, classification)
+function fh = demo_local_plot_anatomy(fe,fascicles, tract_num, tract_name, classification)
 % - 
 % Visualize the major tract and its path neighborhood
 %
@@ -129,10 +128,10 @@ proportion_to_show = .05;
 threshold_length = 10;
 
 ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in the selected major tract
-[~, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
+[fg_tract, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
 ind_tracts1     = ind_tracts1(keep_tract);
 
-ind_nnz = feGet(fe,'nnzw');
+ind_nnz = feGet(fe,'ind nnzw');
 ind1    = ind_nnz(ind_tracts1);
 ind_tracts2 = feGet(fe,'Path Neighborhood',ind1);
 fg          = feGet(fe,'fibers img');
@@ -198,7 +197,7 @@ ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in
 % tool long or too short from the average length of the tract fascicles.
 [~, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
 ind_tracts1     = ind_tracts1(keep_tract);
-ind_nnz = feGet(fe,'nnzw');
+ind_nnz = feGet(fe,'ind nnzw');
 tract_indices   = ind_nnz(ind_tracts1);
 
 end
