@@ -3,7 +3,7 @@ root = pwd;
 % Compile Mtransp_times_b function
 try 
     cd('mexfiles')
-    mex -largeArrayDims Mtransp_times_b.c Mtransp_times_b_sub.c -output Mtransp_times_b -DNDEBUG
+    mex -largeArrayDims -output Mtransp_times_b -DNDEBUG Mtransp_times_b.c Mtransp_times_b_sub.c -output Mtransp_times_b -DNDEBUG
     
     fprintf('Successfully compiled Mtransp_times_b.\n');
     cd(root)
