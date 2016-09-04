@@ -3,9 +3,9 @@
 ![alt tag](https://cloud.githubusercontent.com/assets/11638664/18020005/00d2fb9e-6bad-11e6-861a-d746cca35f0d.png)
 
 # About
-This software implements a framework to encode structural brain connectomes into multidimensional arrays. These are arrays are commonly referrd to as [tensors](https://en.wikipedia.org/wiki/Tensor). Encoding Connectomes provide an agile framework for computing over connectome edges and nodes efficiently. We provide several examples of operations that can be performed using the framework.
+This software implements a framework to encode structural brain connectomes into multidimensional arrays. These arrays are commonly referred to as [tensors](https://arxiv.org/abs/1403.4462). Encoding Connectomes provides an agile framework for computing over connectome edges and nodes efficiently. We provide several examples of operations that can be performed using the framework.
 
-One major application of the tensor is the implementaion of the [Linear Fascicle Evaluation method](http://francopestilli.github.io/life/), in short [LiFE](http://www.nature.com/nmeth/journal/v11/n10/abs/nmeth.3098.html). The tensor encoding method allows implementing LiFE with dramatic reduction in storage requirements, up to 40x compression factors. Furtheremore, connectome encoding allows performing multiple computational neuroanatomy operations such as tract-dissections, virtual lesions, and connectivity estimates very efficiently using the machine-friendly array operators. 
+One major application of the tensor encoding is the implementaion of the [Linear Fascicle Evaluation method](http://francopestilli.github.io/life/), in short [LiFE](http://www.nature.com/nmeth/journal/v11/n10/abs/nmeth.3098.html). The tensor encoding method allows implementing LiFE with dramatic reduction in storage requirements, up to 40x compression factors. Furtheremore, connectome encoding allows performing multiple computational neuroanatomy operations such as tract-dissections, virtual lesions, and connectivity estimates very efficiently using the machine-friendly array operators. 
 
 We provide demos to expain how to:
  (1) Load and encode diffusion-weighted data and tractography models of white matter fascicles, as well as perform multidimensional arrays operations. 
