@@ -63,7 +63,7 @@ load(feFileName)
 % tract within Phi we need to select a group of fascicles within Phi along Mode 3.
 %
 % First we find the indices of all fascicles in the connectome that have a
-% non-zero weight associated ('ind nnzw'). These are fascicles that contributed a
+% non-zero weight associated ('ind nzw'). These are fascicles that contributed a
 % reliable amount in predicting the diffusion signal. A simple call of the
 % hub function feGet.m helps with this.
 ind_nzw = feGet(fe,'ind nzw');
@@ -80,7 +80,7 @@ load(FileName) % Load tract classification file from disk.
 
 % Pick a tract and return indices of tract-fascicles in the encoded 
 % connectome (Phi tensor).
-[ind_fascicles_in_tract, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles, ind_nzw);
+[ind_fascicles_in_tract, ~, ~] = demo_local_choose_tract(fe,classification, fascicles, ind_nzw);
 
 % Remove the fascicles of the tract to be lesioned (actually perform the
 % lesion) from the encoded connectome. 
@@ -100,55 +100,58 @@ se = feComputeEvidence_norm(rmse_woVL,rmse_wVL);
 %
 % Plot the distributions of resampled mean RMSE
 % used to compute the strength of evidence (S).
-fh(5) = distributionPlotStrengthOfEvidence(se);
+fh(6) = distributionPlotStrengthOfEvidence(se);
 
 % Plot the two RMSE distributions with and without lesion.
 %
 % Compare the distributions using the Earth Movers Distance. Plot the
 % distributions of RMSE for the two models and report the Earth Movers
 % Distance between the distributions.
-fh(6) = distributionPlotEarthMoversDistance(se);
+fh(7) = distributionPlotEarthMoversDistance(se);
 
-% Plot the anatomy of the tract and its path-neighborhood.
+%% (3) Plot the anatomy of the tract and its path-neighborhood.
 %
-fh = demo_local_plot_anatomy(fe,fascicles, tract_num, tract_name, classification);
+% Below we show how to extract a path neighborhood of a tract and the tract
+% out of the FE structure, given only the indices of the fascicles of the
+% tract in the condidate whole-brain tractography.
+
+% Get full candidate connectome.
+fg_whole_brain = feGet(fe,'fibers acpc');
+
+% Get tract fascicles.
+fg_tract       = fgExtract(fg_whole_brain,ind_fascicles_in_tract,'keep'); 
+
+% Get path-neightborhood of the tract using the connectome encoding, via
+% feGet.m
+ind_pathneighborhood = feGet(fe,'Path Neighborhood',ind_fascicles_in_tract);
+fg_pathn             = fgExtract(fg_whole_brain,ind_pathneighborhood,'keep');
+clear fg_whole_brain
+
+% Plot the anatomy of tract and neighborhood.
+fh = demo_local_plot_anatomy(fg_tract, fg_pathn);
 
 end
 
 %
 % -- local helper functions -- %
 %
-function fh = demo_local_plot_anatomy(fe,fascicles, tract_num, tract_name, classification)
+function fh = demo_local_plot_anatomy(fg_tract,fg_pathn)
 % - 
 % Visualize the major tract and its path neighborhood
 %
 colors     = {[.1 .25 .65],[.75 .25 .1]};
 viewCoords = [90,0];
-slice      = [-1 0 0];
 proportion_to_show = .05;
-threshold_length = 10;
-
-ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in the selected major tract
-[fg_tract, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
-ind_tracts1     = ind_tracts1(keep_tract);
-
-ind_nnz = feGet(fe,'ind nnzw');
-ind1    = ind_nnz(ind_tracts1);
-ind_tracts2 = feGet(fe,'Path Neighborhood',ind1);
-fg          = feGet(fe,'fibers img');
-fg_pathn    = fgExtract(fg,ind_tracts2,'keep');
-clear fg
-%roicoords = feGet(fe,'coords from fibers',ind1);
-
-fg_pathn.fibers = mbaFiberSplitLoops(fg_pathn.fibers);
-xform     = feGet(fe,'img2acpcxform');
-fg_pathn  = dtiXformFiberCoords(fg_pathn,xform,'acpc');
+threshold_length   = 10;
 
 % Prepare the plot of tract and neighborhood
-fg{1}    = fg_tract;
-fg_pathn = rmfield(fg_pathn,'coordspace');
-fg_pnplot = fg_pathn;
+fg{1} = fg_tract; 
 
+% We split the fibers of the path-neighborhood that enter and exit the
+% tract ROI multiple times into separate fascicles. This is convenient for
+% visualizing the fascicles.
+fg_pathn.fibers = mbaFiberSplitLoops(fg_pathn.fibers);
+fg_pathn = rmfield(fg_pathn,'coordspace');
 c = 1;
 for ii = 1:length(fg_pathn.fibers)
     if length(fg_pathn.fibers{ii}) > threshold_length
@@ -157,21 +160,28 @@ for ii = 1:length(fg_pathn.fibers)
     end
 end
 fg_pathn.fibers = fibers; clear fibers
-fibs_indx = randsample(1:length(fg_pathn.fibers),round(length(fg_pathn.fibers)*proportion_to_show));
-fg_pnplot.fibers = fg_pnplot.fibers(fibs_indx);
-fg{2}    = fg_pnplot;
+% Pick a percentage of fascicles to display (the PN can be too dense for visualization).
+fibs_indx = randsample(1:length(fg_pathn.fibers), ...
+            round(length(fg_pathn.fibers)*proportion_to_show));
+fg{2}.fibers = fg_pathn.fibers(fibs_indx);
 
-% plot tract and Path-Neighborhood
-fig_name      = char(strcat(tract_name,'+ PN (only ',num2str(proportion_to_show*100),'% of PN fascicles)'));
+% plot tractPath-Neighborhood
+fig_name      = char(strcat('Tract + PN (',num2str(proportion_to_show*100),'% of PN fascicles)'));
 [fh(3), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1 2]);
 
+dootherplots = false;
+if dootherplots
 % plot tract
-fig_name      = char(strcat(tract_name));
+fig_name      = 'Tract only';
 [fh(4), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1]);
 
 % plot PN
 fig_name      = char(strcat('PN (only ',num2str(proportion_to_show*100),'% of PN fascicles)') );
 [fh(5), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [2]);
+end
+
+% Change plot view.
+view(0,90)
 
 end
 
