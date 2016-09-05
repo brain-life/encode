@@ -1493,24 +1493,34 @@ switch param
   case 'ntheta'
      val = fe.life.M.Ntheta;    
   case 'pathneighborhood'
-      disp('Serching for Path Neighborhood voxels indices ...')
+      %
+      % Find the path neighborhood of a set of fascicles. In this case the
+      % set of fascicles is intepreted as a 'white matter tract' and the
+      % fascicles sharing voxels with the tract are called path
+      % neighborhood and their indices returned.
+      %
+      % INPUT: indices of fascicles composing a tract.
+      % OUTPUT: indices of the fascicles sharing the same voxels.
+      
       % provides the indices of fibers that touch the same voxels where a
       % provided tract exists
       [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor      
+      
       % inds has a list of (i,j,k) positions of nnz entries. Since we are interested in
       % locating voxels we need to look at the second column (j).
-      voxel_ind = unique(inds(:,2));      
+      voxel_ind = unique(inds(:,2)); 
+      
       % To find which other fibers crosses these voxels, we need to look at
       % the the subtensor that corresponds to those voxels
       % See following lines
       [inds, ~] = find(fe.life.M.Phi(:,voxel_ind,:)); % find indices for nnz in the subtensor defined by voxel_ind
-      val = unique(inds(:,3)); % Fibers are the 3rd dimension in the subtensor
-      val = setdiff(val,varargin{1});
+      val       = unique(inds(:,3)); % Fibers are the 3rd dimension in the subtensor
+      val       = setdiff(val,varargin{1});
       
       % Find nnz weights indices and filter the obtained path neighborhood
-      w = fe.life.fit.weights;
+      w       = feGet(fe,'fiber weights');
       ind_nnz = find(w);
-      val = intersect(ind_nnz,val);
+      val     = intersect(ind_nnz,val);
       
     case 'coordsfromfibers'
         disp('Serching roi from fibers ...');
