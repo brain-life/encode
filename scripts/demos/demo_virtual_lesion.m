@@ -66,7 +66,7 @@ load(feFileName)
 % non-zero weight associated ('ind nnzw'). These are fascicles that contributed a
 % reliable amount in predicting the diffusion signal. A simple call of the
 % hub function feGet.m helps with this.
-ind_nnz = feGet(fe,'ind nnzw');
+ind_nzw = feGet(fe,'ind nzw');
 
 % After that we load a precomputed tract segmentation (classification). A
 % segmentaion of tracts was performed on the connectome. Edges of the
@@ -80,14 +80,14 @@ load(FileName) % Load tract classification file from disk.
 
 % Pick a tract and return indices of tract-fascicles in the encoded 
 % connectome (Phi tensor).
-[tract_fas_indices, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles);
+[ind_fascicles_in_tract, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles, ind_nzw);
 
 % Remove the fascicles of the tract to be lesioned (actually perform the
 % lesion) from the encoded connectome. 
 %
 % Compute the root-mean-squared error of the model with and without tract
 % in the white-matter voxels comprised by the tract. 
-[rmse_wVL, rmse_woVL]= feComputeVirtualLesion_norm(fe,tract_fas_indices);
+[rmse_wVL, rmse_woVL]= feComputeVirtualLesion_norm(fe,ind_fascicles_in_tract);
 
 % Compute the statistical strenght of evidence for the tract. 
 %
@@ -100,14 +100,14 @@ se = feComputeEvidence_norm(rmse_woVL,rmse_wVL);
 %
 % Plot the distributions of resampled mean RMSE
 % used to compute the strength of evidence (S).
-fh(1) = distributionPlotStrengthOfEvidence(se);
+fh(5) = distributionPlotStrengthOfEvidence(se);
 
 % Plot the two RMSE distributions with and without lesion.
 %
 % Compare the distributions using the Earth Movers Distance. Plot the
 % distributions of RMSE for the two models and report the Earth Movers
 % Distance between the distributions.
-fh(2) = distributionPlotEarthMoversDistance(se);
+fh(6) = distributionPlotEarthMoversDistance(se);
 
 % Plot the anatomy of the tract and its path-neighborhood.
 %
@@ -177,7 +177,7 @@ end
 
 
 
-function [tract_indices, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles)
+function [ind_good_fascicles_in_tract, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles, ind_nzw)
 % 
 % Local function to select a tract from a series of segemnted tracts.
 %
@@ -189,17 +189,24 @@ prompt = 'Please select a major tract number (1 to 20): \n1-2: Anterior thalamic
 tract_num = input(prompt);
 tract_name  = char(classification.names(tract_num));
 fprintf('[%s] Extracting tract %s from Encoding model... \n', mfilename, tract_name);
-ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in the selected major tract
 
-% We clean all major tracs. This is because some of the initial
+% First, given a selected tract index (tract_num), we find the indices of
+% the fascicles in the cadidate connectome (all fascicles returned by
+% tractography).
+ind_tract_fascicles = find(classification.index == tract_num); 
+
+% We clean all major tracs. This means that we remove anatomical outliers, namely fascicles too far from the mean anatomical location and lenght of the  This is because some of the initial
 % segmentation performed by AFQ can return tracts that are too far away
-% from the expected tract path. TO overcome this limitation we accept
+% from the expected tract path. To overcome this limitation we accept
 % tracts that are (1) close by the mean tract path coordinates, (2) not
 % tool long or too short from the average length of the tract fascicles.
-[~, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
-ind_tracts1     = ind_tracts1(keep_tract);
-ind_nnz = feGet(fe,'ind nnzw');
-tract_indices   = ind_nnz(ind_tracts1);
+[~, fascicles_to_keep] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
+fascicles_to_keep      = ind_tract_fascicles(fascicles_to_keep);
+
+% Now we use the indices of the fascicles in the tract (ind_tracts1) and the indices of the
+% non-zero weight fibers (ind_nzw) to identify the subset of tract 1 that
+% is supported by the data.
+ind_good_fascicles_in_tract   = ind_nzw(fascicles_to_keep);
 
 end
 
