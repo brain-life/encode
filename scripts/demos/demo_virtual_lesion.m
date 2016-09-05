@@ -94,7 +94,7 @@ load(FileName) % Load tract classification file from disk.
 % This means measure the change in root-mean-squared error in predicting
 % the measured demeaned diffusion-weighted MRI signal due to the tract
 % lesion.
-se = feComputeEvidence(rmse_woVL,rmse_wVL);
+se = feComputeEvidence_norm(rmse_woVL,rmse_wVL);
 
 % Plot the Strength of evidence. 
 %
