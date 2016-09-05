@@ -1043,33 +1043,6 @@ switch param
     %
     % w = feGet(fe,'fullweights')
     val = [feGet(fe,'fiber weights'); feGet(fe,'iso weights')];
-  
-  case {'fiberweightsvoxelwise'}
-    % The woxels returned by a fit of LiFE by voxel/fiber
-    %
-    % w = feGet(fe,'fiberweightsvoxelwise')
-    val = fe.life.voxfit.weights;
-    
-  case {'psigfvoxelwise'}
-    % Predict the diffusion signal for the fiber component 
-    % with the voxel-wise fit of LiFE
-    %
-    % pSig = feGet(fe,'psigfvoxelwise')
-    % pSig = feGet(fe,'psigfvoxelwise',coords)
-    % pSig = feGet(fe,'psigfvoxelwise',voxelIndices)
-    
-    if ~isfield(fe.life,'voxfit'), 
-      error('[%s] Cannot find voxel-wise fit.\nTo fit the model voxel-wise run:\nfe = feFitModelByVoxel(fe)\n',mfilename);
-    end
-    val = fe.life.voxfit.psig;
- 
-    % Get a subset of voxels.
-    if ~isempty(varargin)
-      % voxelIndices     = feGet(fe,'voxelsindices',varargin);
-      % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
-      % val           = val(voxelRowsToKeep,:);
-      val = val(feGet(fe,'voxel rows',feGet(fe,'voxelsindices',varargin)));
-    end
     
   case {'psigfvoxelwisebyvoxel'}
     % Predict the diffusion signal for the fiber component 
@@ -1094,21 +1067,6 @@ switch param
     %                 sum((measured - mean(measured)).^2) ));
     val = (1 - (sum((feGet(fe,'diffusion signal demeaned') - ...
       feGet(fe,'fiber predicted')).^2 ) ./ ...
-      sum((feGet(fe,'diffusion signal demeaned') - ...
-      mean(feGet(fe,'diffusion signal demeaned'))).^2) ));
-  
-  case {'totalr2voxelwise'}
-    % Return the global R2 (fraction of variance explained) of the full life
-    % model from a voxel-wise fit.
-    %
-    % R2 = feGet(fe,'total r2 vocel wise');
-
-    %     measured  = feGet(fe,'dsigdemeaned');
-    %     predicted = feGet(fe,'p sig f voxel wise');
-    %     val = (1 - (sum((measured - predicted).^2 ) ./ ...
-    %                 sum((measured - mean(measured)).^2) ));
-    val = (1 - (sum((feGet(fe,'diffusion signal demeaned') - ...
-      feGet(fe,'psigfvoxelwise')').^2 ) ./ ...
       sum((feGet(fe,'diffusion signal demeaned') - ...
       mean(feGet(fe,'diffusion signal demeaned'))).^2) ));
    
