@@ -31,9 +31,9 @@ end
 %% (1) Compute Virtual Lesion (VL) from fe structures.
 %
 % The demo data set provides a series of precomputed fascicles. These
-% fascicles were segmented given known anatomical atlases of thehuman white matter (Mori, Susumu, et al. 
-% MRI atlas of human white matter. Elsevier, 2005.) using the AFQ toolbox
-% (https://github.com/jyeatman/AFQ). 
+% fascicles were segmented given known anatomical atlases of thehuman white
+% matter (Mori, Susumu, et al. MRI atlas of human white matter. Elsevier,
+% 2005.) using the AFQ toolbox (https://github.com/jyeatman/AFQ).
 %
 % The demo will ask to select one out of 20 major tracts. We will then use
 % that tract to perform a virtual leasion using the LiFE toolbox. The
@@ -41,7 +41,7 @@ end
 % the tract given the tractogprahy solution and the data set provided.
 %
 
-% We load one precomputed LiFE structure (FE strucure)
+% We load one precomputed LiFE structure (FE structure)
 %
 % The structure we load is provided as part of the Demo Data set.
 %
@@ -49,7 +49,7 @@ end
 % the MRTRIX toolbox, probabilistic tracking based of the CSD model (Lmax=10).
 disp('loading fe_structures for FP subject in STN dataset ...')
 feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
-             'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
+'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
 load(feFileName)
 
 % All fascicles in a full brain connectome have been encoded into a three
@@ -63,30 +63,31 @@ load(feFileName)
 % tract within Phi we need to select a group of fascicles within Phi along Mode 3.
 %
 % First we find the indices of all fascicles in the connectome that have a
-% non-zero weight associated ('ind nnzw'). These are fascicles that contributed a
+% non-zero weight associated ('ind nzw'). These are fascicles that contributed a
 % reliable amount in predicting the diffusion signal. A simple call of the
 % hub function feGet.m helps with this.
-ind_nnz = feGet(fe,'ind nnzw');
+ind_nzw = feGet(fe,'ind nzw');
 
-% After that we load a precomputed tract segmentation. A segmentaion of
-% tracts was performed on the connectome. Edges of the connectome were
-% classified as being part of one of twenty major human white matter
-% tracts. For example the arcuate fasciculus, or the cortico-spinal tract.
+% After that we load a precomputed tract segmentation (classification). A
+% segmentaion of tracts was performed on the connectome. Edges of the
+% connectome were classified as being part of one of twenty major human
+% white matter tracts. For example the arcuate fasciculus, or the
+% cortico-spinal tract.
 % 
 FileName = fullfile(feDemoDataPath('STN','sub-FP','tracts_classification'), ...
-             'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_500000_SD_PROB_lmax10_connNUM01_TRACTS.mat');
-load(FileName) % Load classification file from disk.
+'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_500000_SD_PROB_lmax10_connNUM01_TRACTS.mat');
+load(FileName) % Load tract classification file from disk.
 
 % Pick a tract and return indices of tract-fascicles in the encoded 
 % connectome (Phi tensor).
-[tract_fas_indices, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles);
+[ind_fascicles_in_tract, ~, ~] = demo_local_choose_tract(fe,classification, fascicles, ind_nzw);
 
 % Remove the fascicles of the tract to be lesioned (actually perform the
 % lesion) from the encoded connectome. 
 %
 % Compute the root-mean-squared error of the model with and without tract
 % in the white-matter voxels comprised by the tract. 
-[rmse_wVL, rmse_woVL]= feComputeVirtualLesion_norm(fe,tract_fas_indices);
+[rmse_wVL, rmse_woVL]= feComputeVirtualLesion_norm(fe,ind_fascicles_in_tract);
 
 % Compute the statistical strenght of evidence for the tract. 
 %
@@ -99,55 +100,58 @@ se = feComputeEvidence_norm(rmse_woVL,rmse_wVL);
 %
 % Plot the distributions of resampled mean RMSE
 % used to compute the strength of evidence (S).
-fh(1) = distributionPlotStrengthOfEvidence(se);
+fh(6) = distributionPlotStrengthOfEvidence(se);
 
 % Plot the two RMSE distributions with and without lesion.
 %
 % Compare the distributions using the Earth Movers Distance. Plot the
 % distributions of RMSE for the two models and report the Earth Movers
 % Distance between the distributions.
-fh(2) = distributionPlotEarthMoversDistance(se);
+fh(7) = distributionPlotEarthMoversDistance(se);
 
-% Plot the anatomy of the tract and its path-neighborhood.
+%% (3) Plot the anatomy of the tract and its path-neighborhood.
 %
-fh = demo_local_plot_anatomy(fe,fascicles, tract_num, tract_name, classification);
+% Below we show how to extract a path neighborhood of a tract and the tract
+% out of the FE structure, given only the indices of the fascicles of the
+% tract in the condidate whole-brain tractography.
+
+% Get full candidate connectome.
+fg_whole_brain = feGet(fe,'fibers acpc');
+
+% Get tract fascicles.
+fg_tract       = fgExtract(fg_whole_brain,ind_fascicles_in_tract,'keep'); 
+
+% Get path-neightborhood of the tract using the connectome encoding, via
+% feGet.m
+ind_pathneighborhood = feGet(fe,'Path Neighborhood',ind_fascicles_in_tract);
+fg_pathn             = fgExtract(fg_whole_brain,ind_pathneighborhood,'keep');
+clear fg_whole_brain
+
+% Plot the anatomy of tract and neighborhood.
+fh = demo_local_plot_anatomy(fg_tract, fg_pathn);
 
 end
 
 %
 % -- local helper functions -- %
 %
-function fh = demo_local_plot_anatomy(fe,fascicles, tract_num, tract_name, classification)
+function fh = demo_local_plot_anatomy(fg_tract,fg_pathn)
 % - 
 % Visualize the major tract and its path neighborhood
 %
 colors     = {[.1 .25 .65],[.75 .25 .1]};
 viewCoords = [90,0];
-slice      = [-1 0 0];
 proportion_to_show = .05;
-threshold_length = 10;
-
-ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in the selected major tract
-[fg_tract, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
-ind_tracts1     = ind_tracts1(keep_tract);
-
-ind_nnz = feGet(fe,'ind nnzw');
-ind1    = ind_nnz(ind_tracts1);
-ind_tracts2 = feGet(fe,'Path Neighborhood',ind1);
-fg          = feGet(fe,'fibers img');
-fg_pathn    = fgExtract(fg,ind_tracts2,'keep');
-clear fg
-%roicoords = feGet(fe,'coords from fibers',ind1);
-
-fg_pathn.fibers = mbaFiberSplitLoops(fg_pathn.fibers);
-xform     = feGet(fe,'img2acpcxform');
-fg_pathn  = dtiXformFiberCoords(fg_pathn,xform,'acpc');
+threshold_length   = 10;
 
 % Prepare the plot of tract and neighborhood
-fg{1}    = fg_tract;
-fg_pathn = rmfield(fg_pathn,'coordspace');
-fg_pnplot = fg_pathn;
+fg{1} = fg_tract; 
 
+% We split the fibers of the path-neighborhood that enter and exit the
+% tract ROI multiple times into separate fascicles. This is convenient for
+% visualizing the fascicles.
+fg_pathn.fibers = mbaFiberSplitLoops(fg_pathn.fibers);
+fg_pathn = rmfield(fg_pathn,'coordspace');
 c = 1;
 for ii = 1:length(fg_pathn.fibers)
     if length(fg_pathn.fibers{ii}) > threshold_length
@@ -156,27 +160,34 @@ for ii = 1:length(fg_pathn.fibers)
     end
 end
 fg_pathn.fibers = fibers; clear fibers
-fibs_indx = randsample(1:length(fg_pathn.fibers),round(length(fg_pathn.fibers)*proportion_to_show));
-fg_pnplot.fibers = fg_pnplot.fibers(fibs_indx);
-fg{2}    = fg_pnplot;
+% Pick a percentage of fascicles to display (the PN can be too dense for visualization).
+fibs_indx = randsample(1:length(fg_pathn.fibers), ...
+            round(length(fg_pathn.fibers)*proportion_to_show));
+fg{2}.fibers = fg_pathn.fibers(fibs_indx);
 
-% plot tract and Path-Neighborhood
-fig_name      = char(strcat(tract_name,'+ PN (only ',num2str(proportion_to_show*100),'% of PN fascicles)'));
+% plot tractPath-Neighborhood
+fig_name      = char(strcat('Tract + PN (',num2str(proportion_to_show*100),'% of PN fascicles)'));
 [fh(3), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1 2]);
 
+dootherplots = false;
+if dootherplots
 % plot tract
-fig_name      = char(strcat(tract_name));
+fig_name      = 'Tract only';
 [fh(4), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1]);
 
 % plot PN
 fig_name      = char(strcat('PN (only ',num2str(proportion_to_show*100),'% of PN fascicles)') );
 [fh(5), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [2]);
+end
+
+% Change plot view.
+view(0,90)
 
 end
 
 
 
-function [tract_indices, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles)
+function [ind_good_fascicles_in_tract, tract_num, tract_name] = demo_local_choose_tract(fe,classification, fascicles, ind_nzw)
 % 
 % Local function to select a tract from a series of segemnted tracts.
 %
@@ -188,17 +199,24 @@ prompt = 'Please select a major tract number (1 to 20): \n1-2: Anterior thalamic
 tract_num = input(prompt);
 tract_name  = char(classification.names(tract_num));
 fprintf('[%s] Extracting tract %s from Encoding model... \n', mfilename, tract_name);
-ind_tracts1 = find(classification.index == tract_num); % indices to fascicles in the selected major tract
 
-% We clean all major tracs. This is because some of the initial
+% First, given a selected tract index (tract_num), we find the indices of
+% the fascicles in the cadidate connectome (all fascicles returned by
+% tractography).
+ind_tract_fascicles = find(classification.index == tract_num); 
+
+% We clean all major tracs. This means that we remove anatomical outliers, namely fascicles too far from the mean anatomical location and lenght of the  This is because some of the initial
 % segmentation performed by AFQ can return tracts that are too far away
-% from the expected tract path. TO overcome this limitation we accept
+% from the expected tract path. To overcome this limitation we accept
 % tracts that are (1) close by the mean tract path coordinates, (2) not
 % tool long or too short from the average length of the tract fascicles.
-[~, keep_tract] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
-ind_tracts1     = ind_tracts1(keep_tract);
-ind_nnz = feGet(fe,'ind nnzw');
-tract_indices   = ind_nnz(ind_tracts1);
+[~, fascicles_to_keep] = mbaComputeFibersOutliers(fascicles(tract_num),3,3);
+fascicles_to_keep      = ind_tract_fascicles(fascicles_to_keep);
+
+% Now we use the indices of the fascicles in the tract (ind_tracts1) and the indices of the
+% non-zero weight fibers (ind_nzw) to identify the subset of tract 1 that
+% is supported by the data.
+ind_good_fascicles_in_tract   = ind_nzw(fascicles_to_keep);
 
 end
 

@@ -6,7 +6,7 @@ function se = feComputeEvidence_norm(rmse1,rmse2)
 % - The strength of evidence, namely the effect size of the lesion
 % - The Kullback-Leibler Divergence
 % - Jeffrey's Divergence
-% - The Eath Mover's distance
+% - The Earth Mover's distance
 %
 % Copyright (2016), Franco Pestilli, Indiana University, frakkopesto@gmail.com.
 
@@ -45,8 +45,7 @@ se.j.std   = nan;
 fprintf('[%s] Computing the Earth Mover''s distance... \n',mfilename)
 se.em.name = sprintf('Earth Mover''s distance: http://en.wikipedia.org/wiki/Earth_mover''s_distance');
 
-try
-%if (exist('emd_mex.m','file') == 2) % Using Rubinov c-code fastest
+try % Using Rubinov c-code fastest
     pairwiseDist = zeros(size(se.lesion.xhist,2));
     for i=1:size(se.nolesion.xhist,2)
         for j=1:size(se.lesion.xhist,2)
@@ -54,7 +53,7 @@ try
         end
     end
     tmp_em = emd_mex(se.nolesion.hist,se.lesion.hist,pairwiseDist);
-catch ME %else
+catch % else
     fprintf('[%s] Cannot find compiled c-code for Earth Movers Distance.\nUsing the slower and less reliable MatLab implementation.',mfilename)
     [~,tmp_em] = emd(se.nolesion.xhist',se.lesion.xhist',se.nolesion.hist',se.lesion.hist',@gdf);
 end
@@ -63,7 +62,7 @@ se.em.std  = nan;
 clear tmp_emp
 
 % Strenght of evidence (effect size)
-fprintf('[%s] Computing the Strength of Evidence... \n',mfilename)
+fprintf('[%s] Computing the Strength of Evidence... ',mfilename)
 se.s.name = sprintf('strength of evidence, d-prime: http://en.wikipedia.org/wiki/Effect_size');
 se.s.nboots = 5000; 
 se.s.nmontecarlo = 5;

@@ -984,9 +984,12 @@ switch param
     fw = feGet(fe,'fiber weights');
     val = sum(fw > 0);
     
-    case {'indnnzw'}
-        % Return the indices of the nonzero weights
-        val = find(fe.life.fit.weights>0 & ~isnan(fe.life.fit.weights));
+  case {'indnzw'}
+    %
+    % Return the indices of the nonzero weights
+    %
+    fw = feGet(fe, 'fiber weights');
+    val = find(fw > 0 & ~isnan(fw));
     
   case {'fiberdensity'}
     % Fiber density statistics.
@@ -1040,33 +1043,6 @@ switch param
     %
     % w = feGet(fe,'fullweights')
     val = [feGet(fe,'fiber weights'); feGet(fe,'iso weights')];
-  
-  case {'fiberweightsvoxelwise'}
-    % The woxels returned by a fit of LiFE by voxel/fiber
-    %
-    % w = feGet(fe,'fiberweightsvoxelwise')
-    val = fe.life.voxfit.weights;
-    
-  case {'psigfvoxelwise'}
-    % Predict the diffusion signal for the fiber component 
-    % with the voxel-wise fit of LiFE
-    %
-    % pSig = feGet(fe,'psigfvoxelwise')
-    % pSig = feGet(fe,'psigfvoxelwise',coords)
-    % pSig = feGet(fe,'psigfvoxelwise',voxelIndices)
-    
-    if ~isfield(fe.life,'voxfit'), 
-      error('[%s] Cannot find voxel-wise fit.\nTo fit the model voxel-wise run:\nfe = feFitModelByVoxel(fe)\n',mfilename);
-    end
-    val = fe.life.voxfit.psig;
- 
-    % Get a subset of voxels.
-    if ~isempty(varargin)
-      % voxelIndices     = feGet(fe,'voxelsindices',varargin);
-      % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
-      % val           = val(voxelRowsToKeep,:);
-      val = val(feGet(fe,'voxel rows',feGet(fe,'voxelsindices',varargin)));
-    end
     
   case {'psigfvoxelwisebyvoxel'}
     % Predict the diffusion signal for the fiber component 
@@ -1091,21 +1067,6 @@ switch param
     %                 sum((measured - mean(measured)).^2) ));
     val = (1 - (sum((feGet(fe,'diffusion signal demeaned') - ...
       feGet(fe,'fiber predicted')).^2 ) ./ ...
-      sum((feGet(fe,'diffusion signal demeaned') - ...
-      mean(feGet(fe,'diffusion signal demeaned'))).^2) ));
-  
-  case {'totalr2voxelwise'}
-    % Return the global R2 (fraction of variance explained) of the full life
-    % model from a voxel-wise fit.
-    %
-    % R2 = feGet(fe,'total r2 vocel wise');
-
-    %     measured  = feGet(fe,'dsigdemeaned');
-    %     predicted = feGet(fe,'p sig f voxel wise');
-    %     val = (1 - (sum((measured - predicted).^2 ) ./ ...
-    %                 sum((measured - mean(measured)).^2) ));
-    val = (1 - (sum((feGet(fe,'diffusion signal demeaned') - ...
-      feGet(fe,'psigfvoxelwise')').^2 ) ./ ...
       sum((feGet(fe,'diffusion signal demeaned') - ...
       mean(feGet(fe,'diffusion signal demeaned'))).^2) ));
    
@@ -1532,24 +1493,34 @@ switch param
   case 'ntheta'
      val = fe.life.M.Ntheta;    
   case 'pathneighborhood'
-      disp('Serching for Path Neighborhood voxels indices ...')
+      %
+      % Find the path neighborhood of a set of fascicles. In this case the
+      % set of fascicles is intepreted as a 'white matter tract' and the
+      % fascicles sharing voxels with the tract are called path
+      % neighborhood and their indices returned.
+      %
+      % INPUT: indices of fascicles composing a tract.
+      % OUTPUT: indices of the fascicles sharing the same voxels.
+      
       % provides the indices of fibers that touch the same voxels where a
       % provided tract exists
       [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor      
+      
       % inds has a list of (i,j,k) positions of nnz entries. Since we are interested in
       % locating voxels we need to look at the second column (j).
-      voxel_ind = unique(inds(:,2));      
+      voxel_ind = unique(inds(:,2)); 
+      
       % To find which other fibers crosses these voxels, we need to look at
       % the the subtensor that corresponds to those voxels
       % See following lines
       [inds, ~] = find(fe.life.M.Phi(:,voxel_ind,:)); % find indices for nnz in the subtensor defined by voxel_ind
-      val = unique(inds(:,3)); % Fibers are the 3rd dimension in the subtensor
-      val = setdiff(val,varargin{1});
+      val       = unique(inds(:,3)); % Fibers are the 3rd dimension in the subtensor
+      val       = setdiff(val,varargin{1});
       
       % Find nnz weights indices and filter the obtained path neighborhood
-      w = fe.life.fit.weights;
+      w       = feGet(fe,'fiber weights');
       ind_nnz = find(w);
-      val = intersect(ind_nnz,val);
+      val     = intersect(ind_nnz,val);
       
     case 'coordsfromfibers'
         disp('Serching roi from fibers ...');
