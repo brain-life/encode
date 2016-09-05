@@ -55,6 +55,14 @@ preconditioner = varargin{5};
 % and knowledge of the roiCoords.
 
 
+% Check for mexfiles and generate them if necessary
+% Mtransp_times_b function
+checkMexCompiled('-largeArrayDims', '-output', 'Mtransp_times_b', '-DNDEBUG','Mtransp_times_b.c', 'Mtransp_times_b_sub.c')
+% M_times_w function
+checkMexCompiled('-largeArrayDims', '-output', 'M_times_w', '-DNDEBUG', 'M_times_w.c', 'M_times_w_sub.c')
+% compute_diag function
+checkMexCompiled('-largeArrayDims', '-output', 'compute_diag', '-DNDEBUG', 'compute_diag.c', 'compute_diag_sub.c')
+
 if nargin <6 % no initial w0 is provided
     [nFibers] = size(M.Phi,3);
     w0 = zeros(nFibers,1);
