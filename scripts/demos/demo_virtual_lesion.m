@@ -31,9 +31,9 @@ end
 %% (1) Compute Virtual Lesion (VL) from fe structures.
 %
 % The demo data set provides a series of precomputed fascicles. These
-% fascicles were segmented given known anatomical atlases of thehuman white matter (Mori, Susumu, et al. 
-% MRI atlas of human white matter. Elsevier, 2005.) using the AFQ toolbox
-% (https://github.com/jyeatman/AFQ). 
+% fascicles were segmented given known anatomical atlases of thehuman white
+% matter (Mori, Susumu, et al. MRI atlas of human white matter. Elsevier,
+% 2005.) using the AFQ toolbox (https://github.com/jyeatman/AFQ).
 %
 % The demo will ask to select one out of 20 major tracts. We will then use
 % that tract to perform a virtual leasion using the LiFE toolbox. The
@@ -41,7 +41,7 @@ end
 % the tract given the tractogprahy solution and the data set provided.
 %
 
-% We load one precomputed LiFE structure (FE strucure)
+% We load one precomputed LiFE structure (FE structure)
 %
 % The structure we load is provided as part of the Demo Data set.
 %
@@ -49,7 +49,7 @@ end
 % the MRTRIX toolbox, probabilistic tracking based of the CSD model (Lmax=10).
 disp('loading fe_structures for FP subject in STN dataset ...')
 feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
-             'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
+'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
 load(feFileName)
 
 % All fascicles in a full brain connectome have been encoded into a three
@@ -68,14 +68,15 @@ load(feFileName)
 % hub function feGet.m helps with this.
 ind_nnz = feGet(fe,'ind nnzw');
 
-% After that we load a precomputed tract segmentation. A segmentaion of
-% tracts was performed on the connectome. Edges of the connectome were
-% classified as being part of one of twenty major human white matter
-% tracts. For example the arcuate fasciculus, or the cortico-spinal tract.
+% After that we load a precomputed tract segmentation (classification). A
+% segmentaion of tracts was performed on the connectome. Edges of the
+% connectome were classified as being part of one of twenty major human
+% white matter tracts. For example the arcuate fasciculus, or the
+% cortico-spinal tract.
 % 
 FileName = fullfile(feDemoDataPath('STN','sub-FP','tracts_classification'), ...
-             'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_500000_SD_PROB_lmax10_connNUM01_TRACTS.mat');
-load(FileName) % Load classification file from disk.
+'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_500000_SD_PROB_lmax10_connNUM01_TRACTS.mat');
+load(FileName) % Load tract classification file from disk.
 
 % Pick a tract and return indices of tract-fascicles in the encoded 
 % connectome (Phi tensor).

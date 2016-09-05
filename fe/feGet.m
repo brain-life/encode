@@ -984,9 +984,12 @@ switch param
     fw = feGet(fe,'fiber weights');
     val = sum(fw > 0);
     
-    case {'indnnzw'}
-        % Return the indices of the nonzero weights
-        val = find(fe.life.fit.weights>0 & ~isnan(fe.life.fit.weights));
+  case {'indnzw'}
+    %
+    % Return the indices of the nonzero weights
+    %
+    fw = feGet(fe, 'fiber weights');
+    val = find(fw > 0 & ~isnan(fw));
     
   case {'fiberdensity'}
     % Fiber density statistics.
