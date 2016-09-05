@@ -6,7 +6,7 @@ function se = feComputeEvidence_norm(rmse1,rmse2)
 % - The strength of evidence, namely the effect size of the lesion
 % - The Kullback-Leibler Divergence
 % - Jeffrey's Divergence
-% - The Eath Mover's distance
+% - The Earth Mover's distance
 %
 % Copyright (2016), Franco Pestilli, Indiana University, frakkopesto@gmail.com.
 
