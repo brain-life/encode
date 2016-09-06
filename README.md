@@ -28,9 +28,6 @@ We provide demos to expain how to:
 ## How to cite the software.
 [Caiafa, C. and Pestilli, F.](Multidimensional encoding of brain connectomes) Multidimensional encoding of brain connectomes (forthcoming.)
 
-## How to cite the Linear Fascicle Evaluation (LiFE) method.
-[Pestilli, Franco, Jason D. Yeatman, Ariel Rokem, Kendrick N. Kay, and Brian A. Wandell. Evaluation and statistical inference for human connectomes. Nature methods 11, no. 10 (2014): 1058-1063.](http://www.nature.com/nmeth/journal/v11/n10/abs/nmeth.3098.html)
-
 ## Funding.
 This work was supported by grants by the Indiana Clinical and Translational Institute (CTSI, NIH ULTTR001108).
 
