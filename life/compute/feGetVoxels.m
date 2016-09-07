@@ -1,4 +1,6 @@
 % This function return the indices to the atoms having a particular spatial orientation determined by a main_orient +- offest
+%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
+%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
 function [ ind] = feGetVoxels(fe, v0, dv)
 % INPUTS:
 % fe: fe structure
