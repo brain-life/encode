@@ -6,7 +6,6 @@ function out = bbnnls(M, b, x0, opt)
 % structure M containing:
 %       1) The Dictionary M.DictSig;
 %       2) A sparse 3D array M.Phi with size [nFibers,nAtoms,Nvoxels]
-% The modification was written by C. Caiafa (2015)
 
 % BBNNLS   -- Solve NNLS problems via SBB
 % 

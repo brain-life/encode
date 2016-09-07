@@ -1,4 +1,6 @@
-% This function compute the Bundle-based Minimum Distance (BMD) between two bundles [Garyfallidis et al, 2015]
+% This function compute the angles between two tracts. The indices ind1 and
+% ind2 indicate the fascicles (3rmode indices) in those tracts,
+% respectively
 function [ Angles] = feComputeAnglesTracts(fe, ind1, ind2)
 ind = find(~isnan(fe.life.fit.weights)&fe.life.fit.weights>0); % indices of nnz weights
 [Na] = size(fe.life.M.Phi,1); % # of atoms
