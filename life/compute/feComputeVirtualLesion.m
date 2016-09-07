@@ -1,5 +1,7 @@
 % This function compute the rmse in a path neighborhood voxels with and
 % without Virtual Lesion
+%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
+%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
 function [ rmse_wVL, rmse_woVL, nFib_tract, nFib_PN, nVoxels] = feComputeVirtualLesion(fe, ind_tract)
 % INPUTS:
 % fe: fe structure
