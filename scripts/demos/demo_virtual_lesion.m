@@ -53,7 +53,7 @@ feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
 load(feFileName)
 
 % All fascicles in a full brain connectome have been encoded into a three
-% dimensional array – tensor Phi. Phi is available inside the FE sctructure
+% dimensional array, tensor Phi. Phi is available inside the FE sctructure
 % we just loaded. Each dimension of Phi encodes different properties of the
 % connectome. Mode 1 the orientation of the connectome fascicles. Mode 2
 % the spatial location of each node/fascile. Mode 3 the identify of each
