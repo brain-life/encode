@@ -100,14 +100,14 @@ se = feComputeEvidence_norm(rmse_woVL,rmse_wVL);
 %
 % Plot the distributions of resampled mean RMSE
 % used to compute the strength of evidence (S).
-fh(6) = distributionPlotStrengthOfEvidence(se);
+fh(1) = distributionPlotStrengthOfEvidence(se);
 
 % Plot the two RMSE distributions with and without lesion.
 %
 % Compare the distributions using the Earth Movers Distance. Plot the
 % distributions of RMSE for the two models and report the Earth Movers
 % Distance between the distributions.
-fh(7) = distributionPlotEarthMoversDistance(se);
+fh(2) = distributionPlotEarthMoversDistance(se);
 
 %% (3) Plot the anatomy of the tract and its path-neighborhood.
 %
@@ -128,7 +128,7 @@ fg_pathn             = fgExtract(fg_whole_brain,ind_pathneighborhood,'keep');
 clear fg_whole_brain
 
 % Plot the anatomy of tract and neighborhood.
-fh = demo_local_plot_anatomy(fg_tract, fg_pathn);
+fh = [fh, demo_local_plot_anatomy(fg_tract, fg_pathn)];
 
 end
 
@@ -167,17 +167,17 @@ fg{2}.fibers = fg_pathn.fibers(fibs_indx);
 
 % plot tractPath-Neighborhood
 fig_name      = char(strcat('Tract + PN (',num2str(proportion_to_show*100),'% of PN fascicles)'));
-[fh(3), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1 2]);
+[fh(1), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1 2]);
 
-dootherplots = false;
+dootherplots = true;
 if dootherplots
 % plot tract
 fig_name      = 'Tract only';
-[fh(4), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1]);
+[fh(2), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [1]);
 
 % plot PN
 fig_name      = char(strcat('PN (only ',num2str(proportion_to_show*100),'% of PN fascicles)') );
-[fh(5), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [2]);
+[fh(3), ~] = plotFasciclesNoAnat(fg, colors, viewCoords, fig_name, [2]);
 end
 
 % Change plot view.
