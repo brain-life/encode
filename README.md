@@ -43,12 +43,12 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 
 ## Getting started.
 
-### 1. [Download the repository](https://github.com/brain-life/life).
-* Download the Encode repository from the TAR/ZIP files linked [here](https://github.com/brain-life/life/archive/master.zip).
+### 1. [Download the repository](https://github.com/brain-life/encode).
+* Download the Encode repository from the TAR/ZIP files linked [here](https://github.com/brain-life/encode/archive/master.zip).
 * UNZIP/UNTAR the file.
-* Add the life folder to your matlab search path. To do so in the MatLab prompt type: 
+* Add the encode folder to your matlab search path. To do so in the MatLab prompt type: 
 ```
-   >> addpath(genpath('/my/path/to/the/life/folder/'))
+   >> addpath(genpath('/my/path/to/the/encode/folder/'))
 ```
 
 ### 2. [Download the vistasoft repository](https://github.com/vistalab/vistasoft).
@@ -67,7 +67,7 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 ```
 
 ### 4. [Download the Demo Datasets](http://XXXXXXXXXXX).
-* Download the LiFE demo data set from the repository [here](https://XXXXXX.tar.gz).
+* Download the encode demo datasets from the repository [here](https://XXXXXX.tar.gz).
 * UNZIP/UNTAR the file.
 * Add the unzipped/untarred Data folder to your matlab search path. To do so in the MatLab prompt type:
 ```
