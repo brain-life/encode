@@ -44,7 +44,7 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 ## Getting started.
 
 ### 1. [Download the repository](https://github.com/brain-life/life).
-* Download the LiFE repository from the TAR/ZIP files linked [here](https://github.com/brain-life/life/archive/master.zip).
+* Download the Encode repository from the TAR/ZIP files linked [here](https://github.com/brain-life/life/archive/master.zip).
 * UNZIP/UNTAR the file.
 * Add the life folder to your matlab search path. To do so in the MatLab prompt type: 
 ```
