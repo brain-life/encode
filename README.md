@@ -1,6 +1,6 @@
-# Multidimensional encoding of brain connectomes
+# Encode: Multidimensional encoding of brain connectomes
 
-![alt tag](https://cloud.githubusercontent.com/assets/11638664/18020005/00d2fb9e-6bad-11e6-861a-d746cca35f0d.png)
+![alt tag](https://cloud.githubusercontent.com/assets/11638664/18485100/66313a68-79b9-11e6-8b04-80bec2f8530e.png)
 
 # About
 This software implements a framework to encode structural brain connectomes into multidimensional arrays. These arrays are commonly referred to as [tensors](https://arxiv.org/abs/1403.4462). Encoding Connectomes provides an agile framework for computing over connectome edges and nodes efficiently. We provide several examples of operations that can be performed using the framework.
@@ -32,7 +32,7 @@ We provide demos to expain how to:
 This work was supported by grants by the Indiana Clinical and Translational Institute (CTSI, NIH ULTTR001108).
 
 ## Installation.
-1. Download (https://github.com/brain-life/life).
+1. Download (https://github.com/brain-life/encode).
 2. [Start MatLab](http://www.mathworks.com/help/matlab/startup-and-shutdown.html).
 3. Add repository to the [matlab search path](http://www.mathworks.com/help/matlab/ref/addpath.html).
 
@@ -42,14 +42,13 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 * [Matlab Brain Anatomy (MBA)](https://github.com/francopestilli/mba).
 
 ## Getting started.
-Learn about LiFE by using [file_name.m](github.io/file) in [MatLab](http://www.mathworks.com/help/matlab/startup-and-shutdown.html).
 
-### 1. [Download the repository](https://github.com/brain-life/life).
-* Download the LiFE repository from the TAR/ZIP files linked [here](https://github.com/brain-life/life/archive/master.zip).
+### 1. [Download the repository](https://github.com/brain-life/encode).
+* Download the Encode repository from the TAR/ZIP files linked [here](https://github.com/brain-life/encode/archive/master.zip).
 * UNZIP/UNTAR the file.
-* Add the life folder to your matlab search path. To do so in the MatLab prompt type: 
+* Add the encode folder to your matlab search path. To do so in the MatLab prompt type: 
 ```
-   >> addpath(genpath('/my/path/to/the/life/folder/'))
+   >> addpath(genpath('/my/path/to/the/encode/folder/'))
 ```
 
 ### 2. [Download the vistasoft repository](https://github.com/vistalab/vistasoft).
@@ -59,24 +58,39 @@ Learn about LiFE by using [file_name.m](github.io/file) in [MatLab](http://www.m
 ```
    >> addpath(genpath('/my/path/to/the/VISTASOFT/folder/'))
 ```
+### 3. [Download the MBA repository](https://github.com/francopestilli/mba).
+* Download the MBA repository from the TAR/ZIP files linked [here](https://github.com/francopestilli/mba/archive/master.zip).
+* UNZIP/UNTAR the file.
+* Add the MBA folder to your matlab search path. To do so in the MatLab prompt type: 
+```
+   >> addpath(genpath('/my/path/to/the/MBA/folder/'))
+```
 
-### 3. [Download the Demo Data](http://PURL-to-DEMO-data).
-* Download the LiFE demo data set from the repository [here](https://demo-data/demo_data.tar.gz).
+### 4. [Download the Demo Datasets](http://XXXXXXXXXXX).
+* Download the demo datasets from the repository [here](https://XXXXXX.tar.gz).
 * UNZIP/UNTAR the file.
 * Add the unzipped/untarred Data folder to your matlab search path. To do so in the MatLab prompt type:
 ```
    >> addpath(genpath('/my/path/to/the/data_demo/folder/'))
 ```
+### 5. [Run the demo_connectome_encoding code](/scripts/demos/demo_connectome_encoding.m).
+Here you will learn about creating the tensor representation of a connectoms and perform basic operations such as identifying fascicles having a particular spatial orientation in a small voxel area. 
+```
+  >>  demo_connectome_encoding.m
+```
+### 6. [Run the demo_connectome_data_comparison code](/scripts/demos/demo_connectome_data_comparison.m).
+This code reproduce Fig. 3 of the paper "Multidimensional encoding of brain connectomes", by C. Caiafa and F. Pestilli. 
+```
+  >>  demo_connectome_data_comparison.m
+```
+### 7. [Run the demo_virtual_lesion code](/scripts/demos/demo_virtual_lesion.m).
+This code allows you to compute virtual lesions on a particular brain dataset and visualize particular major tracts together with their path-neighborhood, i.e. fascicles sharing same voxels. 
+```
+  >>  demo_virtual_lesion.m
+```
+### 8. [Run the demo_LiFE code](/scripts/demos/demo_LiFE.m).
+This code allows you to compute compute the fascicles weights for two different tractography methods, probabilistic and deterministic tractographies, on a same brain. This is similar to the original LiFE demo in  https://github.com/francopestilli/life but here a full brain dataset is used. The optimization (fitting fascicles weights) runs in about 3 hours on a modern Intel processor with 8GB of RAM. This code has been tested with MatLab 2015b on Ubuntu 15+ and Mac OSX 10.11.
+```
+  >>  demo_LiFE.m
+```
 
-### 4. [Read the demo_connectome_evalaution documentation](http://URL).
-Read the description of the calculations in the documentation inside the file, demo_connectome_evaluation.m by typing the following in the matlab prompt: 
-```
-  >>  edit demo_connectome_evaluation.m
-```
-
-### 5. [Run the demo_connectome_evalaution code](URL).
-This final step will run the life_demo code. The code will perform the operations described [here](http://URL). 
-```
-  >>  demo_connectome_evalaution.m
-```
-demo_connectome_evalaution.m runs in about 3 hours on a modern Intel processor with 8GB of RAM. This code has been tested with MatLab 2015b on Ubuntu 15+ and Mac OSX 10.11.
