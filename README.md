@@ -58,8 +58,8 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 ```
    >> addpath(genpath('/my/path/to/the/VISTASOFT/folder/'))
 ```
-### 3. [Download the MBA repository](https://github.com/mba/mba).
-* Download the MBA repository from the TAR/ZIP files linked [here](https://github.com/mba/mba/archive/master.zip).
+### 3. [Download the MBA repository](https://github.com/francopestilli/mba).
+* Download the MBA repository from the TAR/ZIP files linked [here](https://github.com/francopestilli/mba/archive/master.zip).
 * UNZIP/UNTAR the file.
 * Add the MBA folder to your matlab search path. To do so in the MatLab prompt type: 
 ```
@@ -73,22 +73,22 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 ```
    >> addpath(genpath('/my/path/to/the/data_demo/folder/'))
 ```
-### 5. [Run the demo_connectome_encoding code](URL).
+### 5. [Run the demo_connectome_encoding code](/scripts/demos/demo_connectome_encoding.m).
 Here you will learn about creating the tensor representation of a connectoms and perform basic operations such as identifying fascicles having a particular spatial orientation in a small voxel area. 
 ```
   >>  demo_connectome_encoding.m
 ```
-### 6. [Run the demo_connectome_data_comparison code](URL).
+### 6. [Run the demo_connectome_data_comparison code](/scripts/demos/demo_connectome_data_comparison.m).
 This code reproduce Fig. 3 of the paper "Multidimensional encoding of brain connectomes", by C. Caiafa and F. Pestilli. 
 ```
   >>  demo_connectome_data_comparison.m
 ```
-### 7. [Run the demo_virtual_lesion code](URL).
+### 7. [Run the demo_virtual_lesion code](/scripts/demos/demo_virtual_lesion.m).
 This code allows you to compute virtual lesions on a particular brain dataset and visualize particular major tracts together with their path-neighborhood, i.e. fascicles sharing same voxels. 
 ```
   >>  demo_virtual_lesion.m
 ```
-### 8. [Run the demo_LiFE code](URL).
+### 8. [Run the demo_LiFE code](/scripts/demos/demo_LiFE.m).
 This code allows you to compute compute the fascicles weights for two different tractography methods, probabilistic and deterministic tractographies, on a same brain. This is similar to the original LiFE demo in  https://github.com/francopestilli/life but here a full brain dataset is used. The optimization (fitting fascicles weights) runs in about 3 hours on a modern Intel processor with 8GB of RAM. This code has been tested with MatLab 2015b on Ubuntu 15+ and Mac OSX 10.11.
 ```
   >>  demo_LiFE.m
