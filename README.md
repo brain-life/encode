@@ -1,6 +1,6 @@
 # Encode: Multidimensional encoding of brain connectomes
 
-![alt tag](https://cloud.githubusercontent.com/assets/11638664/18485100/66313a68-79b9-11e6-8b04-80bec2f8530e.png)
+![alt tag](https://cloud.githubusercontent.com/assets/11638664/18526917/8a73562c-7a90-11e6-93d6-7bd5055b1f32.png)
 
 # About
 This software implements a framework to encode structural brain connectomes into multidimensional arrays. These arrays are commonly referred to as [tensors](https://arxiv.org/abs/1403.4462). Encoding Connectomes provides an agile framework for computing over connectome edges and nodes efficiently. We provide several examples of operations that can be performed using the framework.
