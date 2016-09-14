@@ -149,7 +149,7 @@ function [step out] = computeBBStep(A, b, out)
 %       Ag = A'*Ag;         
        %Ag = Mtransp_times_b_NOloop(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]));
        %Ag = Mtransp_times_b_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers); % MEX default compiler version
-       Ag = Mtransp_times_b_mex_v2015a_Intel(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers); % MEX Intel compiler version
+       Ag = Mtransp_times_b_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers); % MEX Intel compiler version
        %Ag = Mtransp_times_b_mex_oIcc_oMan(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag,[nTheta,nVoxels]),nFibers);
        
        %       Agn = Mtransp_times_b_new(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ag0,[nTheta,nVoxels]));
@@ -179,7 +179,7 @@ function [f g] = funcGrad(A, b, x)
 %     g =
 %     Mtransp_times_b_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);
 %     % MEX default compiler version
-     g = Mtransp_times_b_mex_v2015a_Intel(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);% MEX Intel compiler version     
+     g = Mtransp_times_b_mex(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);% MEX Intel compiler version     
      %g = Mtransp_times_b_mex_oIcc_oMan(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]),nFibers);
      
      %g = Mtransp_times_b_NOloop(A.Phi.subs(:,1),A.Phi.subs(:,2),A.Phi.subs(:,3),A.Phi.vals,A.DictSig,reshape(Ax,[nTheta,nVoxels]));
