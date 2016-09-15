@@ -33,7 +33,7 @@ if ~exist('vistaRootPath.m','file');
 end
 if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
-    error('Please, download it from https://XXXXXXXXXXXXX')
+    error('Please, download it from http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz')
 end
 
 %% (1) Figure 3 from Multidimensional encoding of brain connectomes
