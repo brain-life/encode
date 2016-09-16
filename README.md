@@ -74,7 +74,7 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 * feDemoDataPath.m
 * Figs_data/
 * HCP3T/
-* HCP7T
+* HCP7T/
 * README.txt
 * STN/
 * 
