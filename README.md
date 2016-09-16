@@ -68,10 +68,19 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
 
 ### 4. [Download the Demo Datasets](http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz).
 * Download the demo datasets from the repository [doi:10.5967/K8X63JTX](http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz).
-* UNZIP/UNTAR the file.
-* Add the unzipped/untarred Data folder to your matlab search path. To do so in the MatLab prompt type:
+* UNTAR the main file Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz
+* Go inside the folder Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes/ and UNZIP the following files: Figs_data.zip, HCP3T.zip, HCP7T, and STN. You can deleted the original .zip files once they are unziped.
+* The structures of files and foldes under the main folder should looks like as follows
+* feDemoDataPath.m
+* Figs_data/
+* HCP3T/
+* HCP7T
+* README.txt
+* STN/
+* 
+* Add the main data folder (Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes/) to your matlab search path. To do so in the MatLab prompt type:
 ```
-   >> addpath(genpath('/my/path/to/the/data_demo/folder/'))
+   >> addpath(genpath('/my/path/to/the/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes/'))
 ```
 ### 5. [Run the demo_connectome_encoding code](/scripts/demos/demo_connectome_encoding.m).
 Here you will learn about creating the tensor representation of a connectoms and perform basic operations such as identifying fascicles having a particular spatial orientation in a small voxel area. 
