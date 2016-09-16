@@ -66,8 +66,8 @@ This work was supported by grants by the Indiana Clinical and Translational Inst
    >> addpath(genpath('/my/path/to/the/MBA/folder/'))
 ```
 
-### 4. [Download the Demo Datasets](http://XXXXXXXXXXX).
-* Download the demo datasets from the repository [here](https://XXXXXX.tar.gz).
+### 4. [Download the Demo Datasets](http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz).
+* Download the demo datasets from the repository [doi:10.5967/K8X63JTX](http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz).
 * UNZIP/UNTAR the file.
 * Add the unzipped/untarred Data folder to your matlab search path. To do so in the MatLab prompt type:
 ```
