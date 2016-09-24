@@ -1,4 +1,4 @@
-# Multidimensional encoding of brain connectomes
+# Encode: Multidimensional encoding of brain connectomes
 
 ![alt tag](https://cloud.githubusercontent.com/assets/11638664/18526917/8a73562c-7a90-11e6-93d6-7bd5055b1f32.png)
 
@@ -102,3 +102,4 @@ This code allows you to compute compute the fascicles weights for two different 
 ```
   >>  demo_LiFE.m
 ```
+
