@@ -92,7 +92,7 @@ switch fitMethod
     opt.maxit = Niter;
     opt.use_tolo = 1;
     opt.tolg = 1e-5;
-    opt.verbose = 0;
+    opt.verbose = 1;
     
     out_data = bbnnls(M,dSig,w0,opt);
     
