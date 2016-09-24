@@ -1,4 +1,4 @@
-# life
+# Multidimensional encoding of brain connectomes
 
 ![alt tag](https://cloud.githubusercontent.com/assets/11638664/18526917/8a73562c-7a90-11e6-93d6-7bd5055b1f32.png)
 
@@ -102,10 +102,3 @@ This code allows you to compute compute the fascicles weights for two different 
 ```
   >>  demo_LiFE.m
 ```
-=======
-This version is the one used for the arxiv.org paper:
-
-C. Caiafa and F. Pestilli Sparse multiway decomposition for analysis and modelling of diffusion imagign and tractogrpahy.
->>>>>>> master
-
-http://arxiv.org/abs/1505.07170
