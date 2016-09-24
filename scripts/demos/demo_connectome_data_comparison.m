@@ -33,7 +33,7 @@ if ~exist('vistaRootPath.m','file');
 end
 if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
-    error('Please, download it from https://XXXXXXXXXXXXX')
+    error('Please, download it from http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz')
 end
 
 %% (1) Figure 3 from Multidimensional encoding of brain connectomes
@@ -180,7 +180,7 @@ HCP_subject_set = {'111312','105115','113619','110411'};
 STN_subject_set = {'KK_96dirs_b2000_1p5iso','FP_96dirs_b2000_1p5iso','HT_96dirs_b2000_1p5iso','MP_96dirs_b2000_1p5iso'};
 HCP7T_subject_set = {'108323','131217','109123','910241'};
 
-fh = figure('name','combined scatter mean ±sem across repeats','color','w');
+fh = figure('name','combined scatter mean +-sem across repeats','color','w');
 set(fh,'Position',[0,0,800,600]);
 
 Nalg = 13; % We plot a few data points (13 in total, 6 Prob + 6 Stream + Tensor)

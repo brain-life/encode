@@ -23,12 +23,12 @@ end
 
 if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
-    error('Please, download it from https://XXXXXXXXXXXXX')
+    error('Please, download it from http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz ')
 end
 
 %% Build the file names for the diffusion data, the anatomical MRI.
-t1File        = fullfile(feDemoDataPath('HCP3T','sub-105115','anatomy'),  ...
-                                        'T1w_acpc_dc_restore_1p25.nii.gz');
+t1File        = fullfile(feDemoDataPath('STN','sub-FP','anatomy'),  ...
+                                        't1.nii.gz');
 
 %% (1) Load brain connectome from disk. 
 %
@@ -51,8 +51,8 @@ t1File        = fullfile(feDemoDataPath('HCP3T','sub-105115','anatomy'),  ...
 % group) file on disk. In our case this fascicle group was generated using
 % the mrtrix toolbox (URL:XXXX) and the the diffusion-weighted data from the
 % HCP3T data set (URL:XXXX).
-fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','tractography'), ...
-             'dwi_data_b2000_aligned_trilin_csd_lmax10_wm_SD_PROB-NUM01-500000.tck');
+fgFileName = fullfile(feDemoDataPath('STN','sub-FP','tractography'), ...
+             'run01_fliprot_aligned_trilin_csd_lmax10_wm_SD_PROB-NUM01-500000.tck');
 
 %% (2) Identify a DWI file from disk.
 %
@@ -66,10 +66,10 @@ fgFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','tractography'), ...
 % 
 % Below is the DWI file we used to generate the connectome loaded in (1). We
 % will use this DWI data file and encode the DWI data with the connectome. 
-dwiFile       = fullfile(feDemoDataPath('HCP3T','sub-105115','dwi'),'dwi_data_b2000_aligned_trilin.nii.gz');
+dwiFile       = fullfile(feDemoDataPath('STN','sub-FP','dwi'),'run01_fliprot_aligned_trilin.nii.gz');
 
 % The final connectome and data astructure will be saved with this name:
-feFileName    = 'LiFE_build_model_demo_HCP3T_105115_CSD_PROB';
+feFileName    = 'LiFE_build_model_demo_STN_FP_CSD_PROB';
 
 %% (3) Encode connectome and data in a multidimensional tensor. 
 % 
