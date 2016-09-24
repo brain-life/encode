@@ -55,7 +55,21 @@ function [fh, fe] = life_BD_demo()
 % Intialize a local matlab cluster if the parallel toolbox is available.
 % This helps speeding up computations espacially for large conenctomes.
 
+<<<<<<< HEAD:scripts/demos/demo_LiFE.m
+%% (0) Check matlab dependencies and path settings.
+if ~exist('vistaRootPath.m','file');
+    disp('Vistasoft package either not installed or not on matlab path.')
+    error('Please, download it from https://github.com/vistalab/vistasoft');
+end
+
+% Check if demo datasets are visible on the matlab path
+if ~exist('feDemoDataPath.m','file');
+    disp('ERROR: demo dataset either not installed or not on matlab path.')
+    error('Please, download it from http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz')
+end
+=======
 %feOpenLocalCluster;
+>>>>>>> master:scripts/life_demo.m
 
 %% Build the file names for the diffusion data, the anatomical MRI.
 dwiFile       = fullfile(lifeDemoDataPath('diffusion'),'life_demo_scan1_subject1_b2000_150dirs_stanford.nii.gz');
