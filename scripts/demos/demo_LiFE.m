@@ -139,8 +139,6 @@ prob.w      = feGet(fe,'fiber weights');
 [fh(3), ~] = plotHistWeights(prob);
 clear fe
 
-fe = feConnectomeInit(dwiFile,fgFileName,feFileName,[],dwiFileRepeat,t1File,L,[1,0]);
-
 %% Extract the coordinates of the white-matter voxels
 % We will use this later to compare probabilistic and deterministic models.
 p.coords = feGet(fe,'roi coords');
