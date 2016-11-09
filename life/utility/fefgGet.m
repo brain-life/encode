@@ -274,7 +274,6 @@ switch strrep(lower(param),' ','')
     nFiber = fefgGet(fg,'n fibers');
     val    = cell(nFiber,1);
     
-   feOpenLocalCluster
    parfor ii=1:nFiber
      % if ~mod(ii,200), fprintf('%d ',ii); end
      % Node coordinates in image space
@@ -284,7 +283,6 @@ switch strrep(lower(param),' ','')
      % that sample point in a fiber.  For example, if the number 100 is
      % in the 10th position of loc, then the 10th sample point in the
      % fiber passes through the voxel in row 100 of coords.
-     %keyboard
      [~, val{ii}] = ismember(nodeCoords, roiCoords, 'rows');  % This operation is slow.
     end    
     fprintf(' took: %2.3fminutes.\n',toc/60)
@@ -448,10 +446,9 @@ switch strrep(lower(param),' ','')
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
  
-    feOpenLocalCluster
     % For each fiber, this is a list of the nodes that pass through
     % a voxel in the roiCoords
-    parfor ii = 1:nFibers
+    for ii = 1:nFibers
       % For each fiber, this is a list of the nodes that pass through
       % a voxel in the roiCoords
       lst = (nodes2voxels{ii} ~= 0);
@@ -474,8 +471,7 @@ switch strrep(lower(param),' ','')
     nFibers = fefgGet(fg,'nFibers');
     val = cell(1,nFibers);
  
-    feOpenLocalCluster
-    parfor ii = 1:nFibers
+    for ii = 1:nFibers
       % These are the nodes that pass through a voxel in the
       % roiCoords
       lst = (nodes2voxels{ii} ~= 0);
@@ -604,8 +600,7 @@ switch strrep(lower(param),' ','')
     val     = cell(1,nFibers);
     xform   = inv(dt.xformToAcpc);
     dt6     = dt.dt6; clear dt
-    feOpenLocalCluster
-    parfor ii = 1:nFibers
+    for ii = 1:nFibers
       % Get the fiber coordinates.
       coords = fg.fibers{ii}'; % Assumed in ACPC
       
@@ -636,9 +631,7 @@ switch strrep(lower(param),' ','')
     
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
- 
-    feOpenLocalCluster
-    parfor ii = 1:nFibers
+    for ii = 1:nFibers
       
       % We now have the dt6 data from all of the fibers.  We extract the
       % directions into vec and the eigenvalues into val.  The units of val are
@@ -681,8 +674,7 @@ switch strrep(lower(param),' ','')
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
     
-    feOpenLocalCluster
-    parfor ii = 1:nFibers    
+    for ii = 1:nFibers    
       [val{ii},~,~,~] = dtiComputeFA(eigenvals{ii});
     end
     
@@ -703,8 +695,7 @@ switch strrep(lower(param),' ','')
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
     
-    feOpenLocalCluster
-    parfor ii = 1:nFibers    
+    for ii = 1:nFibers    
       [~,val{ii},~,~] = dtiComputeFA(eigenvals{ii});
     end
        
@@ -725,8 +716,7 @@ switch strrep(lower(param),' ','')
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
     
-    feOpenLocalCluster
-    parfor ii = 1:nFibers    
+    for ii = 1:nFibers    
       [~,~,~,val{ii}] = dtiComputeFA(eigenvals{ii});
     end
         
@@ -747,8 +737,7 @@ switch strrep(lower(param),' ','')
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
     
-    feOpenLocalCluster
-    parfor ii = 1:nFibers    
+    for ii = 1:nFibers    
       [~,~,val{ii},~] = dtiComputeFA(eigenvals{ii});
     end
     
@@ -769,8 +758,7 @@ switch strrep(lower(param),' ','')
     
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
-    feOpenLocalCluster
-    parfor ii = 1:nFibers
+    for ii = 1:nFibers
       [~,~,val{ii}.radial, val{ii}.axial] = dtiComputeFA(eigenvals{ii});
     end
     
@@ -797,8 +785,7 @@ switch strrep(lower(param),' ','')
     nFibers = fefgGet(fg,'nFibers');
     val     = cell(1,nFibers);
 
-    feOpenLocalCluster
-    parfor ii = 1:nFibers
+    for ii = 1:nFibers
       [val{ii}.linearity, val{ii}.planarity] = dtiComputeWestinShapes(eigenvals{ii});
     end
     
