@@ -1,11 +1,14 @@
+function [ rmse_wVL, rmse_woVL, nFib_tract, nFib_PN, nVoxels] = feComputeVirtualLesion(fe, ind_tract)
 % This function compute the rmse in a path neighborhood voxels with and
 % without Virtual Lesion
-%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
-function [ rmse_wVL, rmse_woVL, nFib_tract, nFib_PN, nVoxels] = feComputeVirtualLesion(fe, ind_tract)
+%
+%
 % INPUTS:
 % fe: fe structure
 % ind1: indices to fibers in the tract to be virtually lesioned
+%
+%  Copyright (2016), Franco Pestilli (Indiana University) - Cesar F. Caiafa (CONICET)
+%  email: frakkopesto@gmail.com and ccaiafa@gmail.com
 
 % ind_nnz = find(fe.life.fit.weights);
 % ind_tract = ind_nnz(ind1);
@@ -66,13 +69,19 @@ measured = measured(:,voxel_ind);
 % Restrict tensor model to the PN voxels
 M = fe.life.M;
 M.Phi = M.Phi(:,voxel_ind,:);
-predicted_woVL =  reshape(M_times_w(M,w),size(measured));
+%predicted_woVL =  reshape(M_times_w(M,w),size(measured));
+nTheta = feGet(fe,'nbvals');
+nVoxels = size(M.Phi,2);
+Mw =  M_times_w(M.Phi.subs(:,1),M.Phi.subs(:,2),M.Phi.subs(:,3),M.Phi.vals,M.DictSig,w,nTheta,nVoxels);
+predicted_woVL =  reshape(Mw,size(measured));
 rmse_woVL = sqrt(mean((measured - predicted_woVL).^2,1));
 
 %% Compute rmse restricted to Path neighborhood voxels with Virtual Lesion
 w_VL = w;
 w_VL(ind_tract) = 0;
-predicted_VL =  reshape(M_times_w(M,w_VL),size(measured));
+Mw = M_times_w(M.Phi.subs(:,1),M.Phi.subs(:,2),M.Phi.subs(:,3),M.Phi.vals,M.DictSig,w_VL,nTheta,nVoxels);
+predicted_VL =  reshape(Mw,size(measured));
+%predicted_VL =  reshape(M_times_w(M,w_VL),size(measured));
 rmse_wVL = sqrt(mean((measured - predicted_VL).^2,1));
 
 
