@@ -49,8 +49,8 @@ fe  = feSet(fe, sprintf('diffusion signal image %s',tag), dsi);
           
 % Extract the non-diffusion direction signal at the coordinates of the
 % conenctome
-fe  = feSet(fe, sprintf('S0 image %s',tag), ...
-            dwiGet(dwi, 'S0 image',feGet(fe,'roi coords')));
+soimage = dwiGet(dwi, 'S0 image',feroicoords);
+fe  = feSet(fe, sprintf('S0 image %s',tag), soimage);
 
 if length(isrepeat)>1, keyboard;end
           
