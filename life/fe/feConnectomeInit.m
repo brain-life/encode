@@ -1,4 +1,4 @@
-function fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepeated,anatomyFile,varargin)
+function fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepeated, bvalues_centers, anatomyFile,varargin)
 % Initialize a new connectome (fe) structure. 
 %
 %    fe = feConnectomeInit(dwiFile,dtFile,fgFileName,feFileName,savedir,dwiFileRepeated,anatomyFile,varargin);
@@ -53,11 +53,11 @@ fe = feSet(fe,'roi fg',[]); clear fg
 
 %% Diffusion data (Y)
 % Install the information about the diffusion data.
-fe = feConnectomeSetDwi(fe,dwiFile,0);
+fe = feConnectomeSetDwi(fe,dwiFile,bvalues_centers,0);
 
 % Information about a repeated measurement of the diffusion data.
 if ~notDefined('dwiFileRepeated')
-  fe = feConnectomeSetDwi(fe,dwiFileRepeated,1);
+  fe = feConnectomeSetDwi(fe,dwiFileRepeated,bvalues_centers,1);
 end
 
 %% Anatomy Install the path tot he anatomical high-resolution file.

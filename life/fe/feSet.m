@@ -194,8 +194,14 @@ switch param
   case 'torsion'
     fe.fg.Tor = val{1};  
     fe.fg.Indication = val{2}; 
+    case 'indxbvalues'
+        fe.life.bvalues_centers = val{1};
+        for n = 1:length(fe.life.bvalues_centers)
+            bval = fe.life.bvalues_centers(n);
+            fe.life.bvals_ind{n} = find(abs(fe.life.bvals - bval) <100/1000);
+        end
             
-  otherwise
+    otherwise
     error('Unknown parameter %s\n',param);
 end
 
