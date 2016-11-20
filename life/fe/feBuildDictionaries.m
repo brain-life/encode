@@ -49,7 +49,9 @@ for j=1:Norient
     Q = Rot*D*Rot';
     %DictTensors(:,j) = Q(:);
     DictSig(:,j) = exp(- bvals .* diag(bvecs*Q*bvecs')); % Compute the signal contribution of a fiber in the kernel orientation divided S0
-    DictSig(:,j) = DictSig(:,j) - mean(DictSig(:,j)); % demeaned signal
+    for n=1:length(fe.life.bvals_ind)
+        DictSig(fe.life.bvals_ind{n},j) = DictSig(fe.life.bvals_ind{n},j) - mean(DictSig(fe.life.bvals_ind{n},j)); % demeaned signal
+    end
 end
 
 fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,DictSig});
