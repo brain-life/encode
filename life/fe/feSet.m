@@ -200,6 +200,16 @@ switch param
             bval = fe.life.bvalues_centers(n);
             fe.life.bvals_ind{n} = find(abs(fe.life.bvals - bval/1000) < 100/1000);
         end
+%     case 'removenonuseddirs'
+%         ind = [];
+%         for n = 1:length(fe.life.bvalues_centers)
+%             ind = [ind; fe.life.bvals_ind{n}];
+%         end
+%         fe.life.diffusion_signal_img = fe.life.diffusion_signal_img(:,ind);
+%         fe.life.bvecs = fe.life.bvecs(ind,:);
+%         fe.life.bvals = fe.life.bvals(ind);
+%         fe.life.bvecsindices = fe.life.bvecsindices(ind,:);
+        
             
     otherwise
     error('Unknown parameter %s\n',param);

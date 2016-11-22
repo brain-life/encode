@@ -47,6 +47,8 @@ fe = feSet(fe,sprintf('indxbvalues %s',tag), bvalues_centers);
 fe  = feSet(fe, sprintf('diffusion signal image %s',tag), ...
             dwiGet(dwi, 'diffusion signal image',feGet(fe,'roi coords')) );
         
+%fe = feSet(fe, sprintf('remove nonused dirs %s',tag),[]);
+        
 
           
 % Extract the non-diffusion direction signal at the coordinates of the
