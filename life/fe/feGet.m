@@ -405,9 +405,13 @@ function val = feGet(fe,param,varargin)
 %---------
 % Path to the 3D Anatomy Volume.
 % anatomyfile = feGet(fe, 't1 file')
-%
-% End of feGet.m parameters, 
-   
+%---------
+% Compute the FA for all the fibers in the fiber group.
+% Requires a dt structure.
+% fa = feGet(fe,'fa',dt)
+% fa = feGet(fe,'fa',eigenvals)
+% fa = feGet(fe,'fa',dtFileName)
+% End of feGet.m parameters,    
 val = [];
 
 % Format the input parameters.
@@ -1528,6 +1532,9 @@ switch param
         voxel_ind = unique(inds(:,2));  
         val = feGet(fe,'roicoords');
         val = val(voxel_ind,:);
+        
+    case 'fa'
+        val = fefgGet(fe.fg, 'fa', varargin);
  
   otherwise
     help('feGet')
