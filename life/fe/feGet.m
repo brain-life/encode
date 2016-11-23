@@ -901,15 +901,18 @@ switch param
     nBvecs  = feGet(fe,'nBvecs');
     dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
     val = reshape(dSig,nBvecs,nVoxels);
-    for n=1:length(fe.life.bvals_ind)
-        val(fe.life.bvals_ind{n},:) = val(fe.life.bvals_ind{n},:) - repmat( ...
-            mean(val(fe.life.bvals_ind{n},:),1),...
-            length(fe.life.bvals_ind{n}),1);
+    if isfield(fe.life,'bvals_ind')
+        for n=1:length(fe.life.bvals_ind)
+            val(fe.life.bvals_ind{n},:) = val(fe.life.bvals_ind{n},:) - repmat( ...
+                mean(val(fe.life.bvals_ind{n},:),1),...
+                length(fe.life.bvals_ind{n}),1);
+        end
+        val = val(:);
+    else
+        val     = (dSig - reshape(repmat( ...
+            mean(reshape(dSig, nBvecs, nVoxels),1),...
+            nBvecs,1), size(dSig)))';
     end
-    val = val(:);
-    %val     = (dSig - reshape(repmat( ...
-    %        mean(reshape(dSig, nBvecs, nVoxels),1),...
-    %        nBvecs,1), size(dSig)))';
     % Return a subset of voxels
     if ~isempty(varargin)
       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
