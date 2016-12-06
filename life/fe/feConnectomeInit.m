@@ -1,7 +1,7 @@
 function fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepeated,anatomyFile,varargin)
 % Initialize a new connectome (fe) structure. 
 %
-%    fe = feConnectomeInit(dwiFile,dtFile,fgFileName,feFileName,savedir,dwiFileRepeated,anatomyFile,varargin);
+%    fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepeated,anatomyFile,varargin);
 %    
 % We allow a set of (paramName,val) pairs in the varargin that will be
 % executed as fe = feSet(fe,paramName,val)
