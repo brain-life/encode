@@ -548,6 +548,9 @@ switch param
     % val = feGet(fe,'b0signalvoxel',voxelIndex);
     % val = feGet(fe,'b0signalvoxel',coords);
     val = fe.life.diffusion_S0_img(feGet(fe,'voxelsindices',varargin), :);
+    if length(size(val)) > 1
+        val = mean(val,2);
+    end
     
   case {'fiberssubset','fsub','subsetoffibers','fgsubset'}
     % Return a subset of fibers from the conenctome.
