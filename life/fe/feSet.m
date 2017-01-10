@@ -194,7 +194,7 @@ switch param
   case 'torsion'
     fe.fg.Tor = val{1};  
     fe.fg.Indication = val{2}; 
-    case 'indxbvalues'
+    case {'indxbvalues','indxbvaluesrepeat'}
         fe.life.bvalues_centers = val;
         for n = 1:length(fe.life.bvalues_centers)
             bval = fe.life.bvalues_centers(n);
