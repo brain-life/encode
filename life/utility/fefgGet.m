@@ -203,12 +203,12 @@ switch strrep(lower(param),' ','')
     nFibers = length(fList);
     val = cell(1,nFibers);
     if nFibers == 1
-      val = ceil(fg.fibers{fList(1)}')+1;
+      val = round(fg.fibers{fList(1)}')+1;
 
     else
      feOpenLocalCluster
      parfor ii=1:nFibers
-         val{ii} = ceil(fg.fibers{fList(ii)}')+1;
+         val{ii} = round(fg.fibers{fList(ii)}')+1;
      end
     end
 
@@ -220,7 +220,7 @@ switch strrep(lower(param),' ','')
     % Returns the unique image coordinates of all the fibers as an Nx3
     % matrix of integers.
     % val = round(horzcat(fg.fibers{:})'); 
-    val = ceil(horzcat(fg.fibers{:})')+1;
+    val = round(horzcat(fg.fibers{:})')+1;
     val = unique(val,'rows');
   
     case {'allimagecoords'}
@@ -231,7 +231,7 @@ switch strrep(lower(param),' ','')
     % Returns all image coordinates of all the fibers as an Nx3
     % matrix of integers.
     % val = round(horzcat(fg.fibers{:})'); 
-    val = ceil(horzcat(fg.fibers{:})')+1;
+    val = round(horzcat(fg.fibers{:})')+1;
     
   case {'uniqueacpccoords'}
     %   coords = fefgGet(fg,'unique acpc coords');
