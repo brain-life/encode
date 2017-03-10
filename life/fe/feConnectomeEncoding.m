@@ -56,20 +56,25 @@ Phi = sptensor([rows,cols,tubes],ones(nTotalNodes,1),[nAtoms,nTotalVoxels,nFiber
 % nodes per fiber per voxel.
 A = sparse(cols,tubes,ones(nTotalNodes,1),nTotalVoxels,nFibers);
 
+% Get voxex indices in roi
 roi_coords = feGet(fe,'roicoords');
 roi_ind = sub2ind(imgsize,roi_coords(:,1)',roi_coords(:,2)',roi_coords(:,3)');
 
+% Restrict the Sparse Tensor and matrix A to the ROI voxels only
 Phi = Phi(:,roi_ind,:); % reduce tensor in 3rd dimension to roi voxels only
 A = A(roi_ind,:);
 
-vox = Phi.subs(:,2);
-fib = Phi.subs(:,3);
-vals = Phi.vals;
+vox = Phi.subs(:,2); % Recover voxel indices
+fib = Phi.subs(:,3); % Recover fiber indices
+vals = Phi.vals; % Recover vals
 
+% Normalize values in the sparse tensor dividing by the number of nodes per
+% voxel and per fiber
 nVoxels = length(roi_ind);
 a = A(:);
 vals = vals./a(sub2ind([nVoxels,nFibers],vox,fib));
 
+% Create the Sparse Tensor (normalized)
 Phi = sptensor(Phi.subs,vals,size(Phi));
 
 % The following multiplies every slice by the corresponding S0(voxel) value
