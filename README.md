@@ -12,7 +12,7 @@ We provide demos to expain how to:
  (2) Build and optimize a Linear Fascicle Evaluation model. 
  (4) Perform neuronatomical segmentations, computational neuroanatomy operations and virtual lesions using the connectome encoding framework.
  (4) Reproduce some fo the figures of article describing the method implemented in thsi toolbox: Caiafa and Pestilli, forthcoming.
-
+(
 ## Application.
 * Encoding of brain conenctome and associated phenotypes into multidimensional arrays.
 * Evaluate the evidence supporting white-matter connectomes generated using [magnetic resonance diffusion-weighted imaging](http://en.wikipedia.org/wiki/Diffusion_MRI) and [computational tractography ](http://en.wikipedia.org/wiki/Tractography).
