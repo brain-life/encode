@@ -197,8 +197,8 @@ Nalg = 9; % We plot a few data points (9 in total, 4 Prob + 4 Stream + Tensor)
 Gen_plot(HCP7T_subject_set,'hot',DataPath,Nalg,'HCP7T60',color_mode)
 
 set(gca,'tickdir','out', 'ticklen',[0.025 0.025], ...
-         'box','off','ytick',[2 9 16].*10^4, 'xtick', [0.04 0.07 0.1], ...
-         'ylim',[2 16].*10^4, 'xlim', [0.04 0.1],'fontsize',20)
+         'box','off','ytick',[2 10 18].*10^4, 'xtick', [0.04 0.07 0.1], ...
+         'ylim',[2 18].*10^4, 'xlim', [0.04 0.1],'fontsize',20)
 axis square
 ylabel('Fascicles number','fontsize',20)
 xlabel('Connectome error (r.m.s.)','fontsize',20)
