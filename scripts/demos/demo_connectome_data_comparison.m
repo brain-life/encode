@@ -35,6 +35,11 @@ if ~exist('feDemoDataPath.m','file');
     disp('ERROR: demo dataset either not installed or not on matlab path.')
     error('Please, download it from http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz')
 end
+% s = what('demo_datasets');
+% if isempty(s)
+%      disp('ERROR: demo dataset either not installed or not on matlab path.')
+%      error('Please, download it from http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz')
+% end
 
 %% (1) Figure 3 from Multidimensional encoding of brain connectomes
 %      Cesar F. Caiafa and Franco Pestilli, submitted.
@@ -52,10 +57,14 @@ end
 % - the density of a connectome. More specifcially the number of fibers
 %   supported by the measured diffusion-weighted data in the provided
 %   tractography solution.
-Generate_Fig3_paper_Caiafa_Pestilli('original')
+%Generate_Fig3_paper_Caiafa_Pestilli('original')
+%savefig('Fig_3a_paper.fig')
+openfig('Fig_3a_paper.fig')
 
 % We brighten the symbols to use them as background.
-Generate_Fig3_paper_Caiafa_Pestilli('gray')
+%Generate_Fig3_paper_Caiafa_Pestilli('gray')
+%savefig('Fig_3a_paper_gray.fig')
+openfig('Fig_3a_paper_gray.fig')
 
 %% (2) Read HCP3T subject connectome obtained by using Probabilistic tractography
 %
@@ -63,7 +72,8 @@ Generate_Fig3_paper_Caiafa_Pestilli('gray')
 %
 disp('loading fe_structures for 105115 subject in HCP3T dataset (PROB) ...')
 feFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
-             'fe_structure_105115_STC_run01_SD_PROB_lmax10_connNUM01.mat');
+            'fe_structure_105115_STC_run01_SD_PROB_lmax10_connNUM01.mat');
+%feFileName = fullfile(s.path,'HCP3T','sub-105115','fe_structures', 'fe_structure_105115_STC_run01_SD_PROB_lmax10_connNUM01.mat');         
 load(feFileName)
 
 % Here we extract two measures we are interested in:
@@ -113,6 +123,7 @@ Add_new_data_point(sbj,'cold',2)
 disp('loading fe_structures for 105115 subject in HCP3T dataset (DET) ...')
 feFileName = fullfile(feDemoDataPath('HCP3T','sub-105115','fe_structures'), ...
              'fe_structure_105115_STC_run01_tensor__connNUM01.mat');
+%feFileName = fullfile(s.path,'HCP3T','sub-105115','fe_structures','fe_structure_105115_STC_run01_tensor__connNUM01.mat');
 load(feFileName)
 sbj = retrieve_results(fe,'TENSOR', 'HCP3T');
 
@@ -122,8 +133,9 @@ Add_new_data_point(sbj,'cold',2)
 % 3.2 These results were obtained by using CSD-based Probabilistic
 % tractography and the STN data set.
 disp('loading fe_structures for FP subject in STN dataset (PROB) ...')
-feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
-             'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
+ feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
+              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
+%feFileName = fullfile(s.path,'STN','sub-FP','fe_structures','fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_SD_PROB_lmax10_connNUM01.mat');
 load(feFileName)
 sbj = retrieve_results(fe,'PROB', 'STN');
 
@@ -133,8 +145,9 @@ Add_new_data_point(sbj,'medium',2)
 % 3.3 These results were obtained by using tensor-based deterministic
 % tractography and the STN data set.
 disp('loading fe_structures for FP subject in STN dataset (DET) ...')
-feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
-             'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_tensor__connNUM01.mat');
+ feFileName = fullfile(feDemoDataPath('STN','sub-FP','fe_structures'), ...
+              'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_tensor__connNUM01.mat');
+%feFileName = fullfile(s.path,'STN','sub-FP','fe_structures', 'fe_structure_FP_96dirs_b2000_1p5iso_STC_run01_tensor__connNUM01.mat');
 load(feFileName)
 sbj = retrieve_results(fe,'TENSOR', 'STN');
 
@@ -144,8 +157,9 @@ Add_new_data_point(sbj,'medium',2)
 % 3.4 These results were obtained by using CSD-based probabilistic
 % tractography and the HCP7T data set.
 disp('loading fe_structures for 108323 subject in HCP7T dataset (PROB) ...')
-feFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
-             'fe_structure_108323_STC_run01_SD_PROB_lmax8_connNUM01.mat');
+ feFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
+              'fe_structure_108323_STC_run01_SD_PROB_lmax8_connNUM01.mat');
+%feFileName = fullfile(s.path,'HCP7T','sub-108323','fe_structures','fe_structure_108323_STC_run01_SD_PROB_lmax8_connNUM01.mat');
 load(feFileName)
 sbj = retrieve_results(fe,'PROB', 'HCP7T');
 
@@ -156,8 +170,9 @@ Add_new_data_point(sbj,'hot',2)
 % tractography and the HCP7T data set.
 disp('loading fe_structures for 108323 subject in HCP7T dataset (DET) ...')
 
-feFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
-             'fe_structure_108323_STC_run01_tensor__connNUM01.mat');
+ feFileName = fullfile(feDemoDataPath('HCP7T','sub-108323','fe_structures'), ...
+              'fe_structure_108323_STC_run01_tensor__connNUM01.mat');
+%feFileName = fullfile(s.path,'HCP7T','sub-108323','fe_structures','fe_structure_108323_STC_run01_tensor__connNUM01.mat');
 load(feFileName)
 sbj = retrieve_results(fe,'TENSOR', 'HCP7T');
 
@@ -174,11 +189,12 @@ function [] = Generate_Fig3_paper_Caiafa_Pestilli(color_mode)
 % the one in Figure 3 of Caiafa and Pestilli under review.
 %
 
-DataPath = feDemoDataPath('Figs_data');
+%DataPath = feDemoDataPath('Figs_data');
+DataPath = '/N/dc2/projects/lifebid/code/ccaiafa/Caiafa_Pestilli_paper2015/Revision_Feb2017/Results/Variability/';
 
 HCP_subject_set = {'111312','105115','113619','110411'};
 STN_subject_set = {'KK_96dirs_b2000_1p5iso','FP_96dirs_b2000_1p5iso','HT_96dirs_b2000_1p5iso','MP_96dirs_b2000_1p5iso'};
-HCP7T_subject_set = {'108323','131217','109123','910241'};
+HCP7T_subject_set = {'108323','109123','111312_7T','125525','102311_Paolo_masks'};
 
 fh = figure('name','combined scatter mean +-sem across repeats','color','w');
 set(fh,'Position',[0,0,800,600]);
@@ -197,8 +213,8 @@ Nalg = 9; % We plot a few data points (9 in total, 4 Prob + 4 Stream + Tensor)
 Gen_plot(HCP7T_subject_set,'hot',DataPath,Nalg,'HCP7T60',color_mode)
 
 set(gca,'tickdir','out', 'ticklen',[0.025 0.025], ...
-         'box','off','ytick',[2 10 18].*10^4, 'xtick', [0.04 0.07 0.1], ...
-         'ylim',[2 18].*10^4, 'xlim', [0.04 0.1],'fontsize',20)
+         'box','off','ytick',[2 15 32].*10^4, 'xtick', [0.04 0.07 0.1], ...
+         'ylim',[2 32].*10^4, 'xlim', [0.04 0.1],'fontsize',20)
 axis square
 ylabel('Fascicles number','fontsize',20)
 xlabel('Connectome error (r.m.s.)','fontsize',20)
@@ -299,7 +315,7 @@ switch color_mode
     case 'original'
         c = getNiceColors(color_type);
     case 'gray'
-        c = repmat([.9,.9,.9], [4,1]);
+        c = repmat([.9,.9,.9], [length(subject_set),1]);
 end
 
 
@@ -379,7 +395,8 @@ switch color_type
     case 'medium'
         c = [c1([12 16 19 23],:) ];
     case 'hot'
-        c = [c2([32 25 13 5],:)];
+        %c = [c2([32 25 13 5],:)];
+        c = [c2([32 27 19 12 2],:)];
 end
 
 end
