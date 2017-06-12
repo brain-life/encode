@@ -12,7 +12,7 @@ function fe = feBuildDictionaries(fe,Nphi,Ntheta)
 %  email: pestillifranco@gmail.com and ccaiafa@gmail.com
 
 tic
-fprintf(['\n[%s] Computing demeaned difussivities Dictionary in a (',num2str(Nphi),'x',num2str(Ntheta),')-grid', ' ...'],mfilename); 
+fprintf(['\n[%s] Computing demeaned and non-demeaned difussivities dictionaries in a (',num2str(Nphi),'x',num2str(Ntheta),')-grid', ' ...'],mfilename); 
 fprintf('took: %2.3fs.\n',toc)
 
 % Compute orientation vectors
@@ -37,6 +37,7 @@ nBvecs       = feGet(fe,'nBvecs');
 bvecs        = feGet(fe,'bvecs');                      % bvecs
 bvals        = feGet(fe,'bvals');                      % bvals
 
+Dict = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 DictSig = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 %DictTensors = zeros(9,Norient); % Initialize Tensors Dictionary matrix
 
@@ -48,10 +49,10 @@ for j=1:Norient
     
     Q = Rot*D*Rot';
     %DictTensors(:,j) = Q(:);
-    DictSig(:,j) = exp(- bvals .* diag(bvecs*Q*bvecs')); % Compute the signal contribution of a fiber in the kernel orientation divided S0
-    DictSig(:,j) = DictSig(:,j) - mean(DictSig(:,j)); % demeaned signal
+    Dict(:,j) = exp(- bvals .* diag(bvecs*Q*bvecs')); % Compute the signal contribution of a fiber in the kernel orientation divided S0
+    DictSig(:,j) = Dict(:,j) - mean(Dict(:,j)); % demeaned signal
 end
 
-fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,DictSig});
+fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,Dict,DictSig});
 
 end
