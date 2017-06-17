@@ -20,8 +20,12 @@ fprintf('\n[%s] Encoding connectome (building Phi, sparse tensor) ... ',mfilenam
 tic
 
 % make sure that Matlab accept Very Large matrices
-s = Settings();
-set(s.matlab.desktop.workspace, 'ArraySizeLimitEnabled',false)
+if verLessThan('matlab','9.2')
+    % -- Code to run in MATLAB R2016b and earlier here --
+    s = Settings();
+    set(s.matlab.desktop.workspace, 'ArraySizeLimitEnabled',false);
+end
+
 
 nFibers      = feGet(fe,'n fibers');
 nTotalNodes = fefgGet(fe.fg,'n total nodes');
