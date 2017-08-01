@@ -29,8 +29,8 @@ end
 % Check required number of nodes and split the tensor Phi computation in
 % pieces having max nNodesMax nodes each
 
-%nNodesMax = 30000000; % Maximum nodes per batch. This is a reference value, for example one HCP3T subject has 28,677,744 nodes.
-nNodesMax = 12000000; % For testing
+nNodesMax = 30000000; % Maximum nodes per batch. This is a reference value, for example one HCP3T subject has 28,677,744 nodes.
+%nNodesMax = 12000000; % For testing
 
 nTotalNodes = fefgGet(fe.fg,'n total nodes');
 nFibers      = feGet(fe,'n fibers');
