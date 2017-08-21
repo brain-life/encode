@@ -194,15 +194,15 @@ det.w      = feGet(fe,'fiber weights');
 
 %% (2.7) Plot a histogram of the RMSE. 
 % We plot the histogram of  RMSE across white-mater voxels.
-[fh(1), ~, ~] = plotHistRMSE(det);
+[fh(4), ~, ~] = plotHistRMSE(det);
 
 %% (2.8) Plot a histogram of the RMSE ratio.
 % As a reminder the Rrmse is the ratio between data test-retest reliability
 % and model error (the quality of the model fit).
-[fh(2), ~] = plotHistRrmse(det);
+[fh(5), ~] = plotHistRrmse(det);
 
 %% (2.9) Plot a histogram of the fitted fascicle weights. 
-[fh(3), ~] = plotHistWeights(det);
+[fh(6), ~] = plotHistWeights(det);
 
 %% Extract the coordinates of the white-matter voxels.
 % We will use this later to compare probabilistic and deterministic models.
@@ -240,7 +240,7 @@ det.rmse       = det.rmse( det.coordsIdx);
 clear p d
 
 %% (3.2) Make a scatter plot of the RMSE of the two tractography models
-fh(4) = scatterPlotRMSE(det,prob);
+fh(7) = scatterPlotRMSE(det,prob);
 
 %% (3.3) Compute the strength-of-evidence (S) and the Earth Movers Distance.
 % Compare the RMSE of the two models using the Stregth-of-evidence and the
@@ -250,13 +250,13 @@ se = feComputeEvidence(prob.rmse,det.rmse);
 %% (3.4) Strength of evidence in favor of Probabilistic tractography. 
 % Plot the distributions of resampled mean RMSE
 % used to compute the strength of evidence (S).
-fh(5) = distributionPlotStrengthOfEvidence(se);
+fh(8) = distributionPlotStrengthOfEvidence(se);
 
 %% (3.5) RMSE distributions for Probabilistic and Deterministic tractography. 
 % Compare the distributions using the Earth Movers Distance.
 % Plot the distributions of RMSE for the two models and report the Earth
 % Movers Distance between the distributions.
-fh(6) = distributionPlotEarthMoversDistance(se);
+fh(9) = distributionPlotEarthMoversDistance(se);
 
 end
 
