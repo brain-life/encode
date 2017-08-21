@@ -206,7 +206,7 @@ switch strrep(lower(param),' ','')
       val = round(fg.fibers{fList(1)}')+1;
 
     else
-     feOpenLocalCluster
+     %feOpenLocalCluster
      parfor ii=1:nFibers
          val{ii} = round(fg.fibers{fList(ii)}')+1;
      end
