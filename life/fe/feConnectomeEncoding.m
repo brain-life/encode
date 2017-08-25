@@ -26,16 +26,41 @@ if verLessThan('matlab','9.2')
     set(s.matlab.desktop.workspace, 'ArraySizeLimitEnabled',false);
 end
 
+% Set MAXMEM available
+MAXMEM = getenv('MAXMEM'); % read setting from enviroment in kb
+if MAXMEM
+    disp(['MAXMEM set to ',MAXMEM]);
+    MAXMEM = str2num(MAXMEM);
+elseif (isunix||ismac)
+    disp('MAXMEM not set, need to calculate (UNIX or MacOS)')
+    [~,out] = system('cat /proc/meminfo |grep MemFree');
+    textcell = regexp(out,'\d*','Match');
+    MAXMEM = str2num(textcell{1});
+elseif ispc
+    disp('MAXMEM not set, need to calculate (PC)')
+    [~,sys] = memory;
+    MAXMEM = sys.VirtualAddressSpace.Available;
+end
+
+if ~MAXMEM 
+    error('Could not determine MAXMEM');
+end
+
+
 % Check required number of nodes and split the tensor Phi computation in
 % pieces having max nNodesMax nodes each
 
-nNodesMax = 30000000; % Maximum nodes per batch. This is a reference value, for example one HCP3T subject has 28,677,744 nodes.
+%nNodesMax = 30000000; % Maximum nodes per batch. This is a reference value, for example one HCP3T subject has 28,677,744 nodes.
 %nNodesMax = 12000000; % For testing
+
+nNodesMax = round(MAXMEM*30000000/32000000); % In Karst we have available 32,000,000kb of memory, which allows to process up to 30,000,000 nodes;
 
 nTotalNodes = fefgGet(fe.fg,'n total nodes');
 nFibers      = feGet(fe,'n fibers');
 nBatch = ceil(nTotalNodes/nNodesMax); % Number of batch
 nFib_Batch = round(nFibers/nBatch); % Number of fibers per batch
+
+disp(['nNodesMax =',num2str(nNodesMax),', Total number of nodes = ',num2str(nTotalNodes),',  number of batch computation = ',num2str(nBatch)])
 
 fprintf('\n');
 for n=1:nBatch
