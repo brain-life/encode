@@ -38,8 +38,8 @@ elseif (isunix||ismac)
     MAXMEM = str2num(textcell{1});
 elseif ispc
     disp('MAXMEM not set, need to calculate (PC)')
-    [~,sys] = memory;
-    MAXMEM = sys.VirtualAddressSpace.Available;
+    user = memory;
+    MAXMEM = user.MaxPossibleArrayBytes/1024; % Max mem for arrays in Kb
 end
 
 if ~MAXMEM 
