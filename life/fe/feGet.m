@@ -1535,6 +1535,19 @@ switch param
         dSig_pred = feGet(fe,'psigfiber');
         val = norm(dSig - dSig_pred)/norm(dSig);
         
+    case 'predfull'
+        [nAtoms]    = feGet(fe,'natoms');
+        [nFibers]   = feGet(fe,'nfibers');
+        [nVoxels]   = feGet(fe,'nvoxels');
+        [nTheta]    = feGet(fe,'nbvals');
+        D = fe.life.M.Dict;
+        Phi = fe.life.M.Phi;
+        B = ttv(Phi,ones(nFibers,1),3);
+        [ind, val] = find(B);
+        B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
+        s0 = fe.life.s0;
+        
+        val = ones(nTheta,1)*s0' + D*B;    
  
   otherwise
     help('feGet')
