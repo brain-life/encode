@@ -15,7 +15,7 @@ We provide demos to expain how to:
 
 ## Application.
 * Encoding of brain conenctome and associated phenotypes into multidimensional arrays.
-* Evaluate the evidence supporting white-matter connectomes generated using [magnetic resonance diffusion-weighted imaging](http://en.wikipedia.org/wiki/Diffusion_MRI) and [computational tractography ](http://en.wikipedia.org/wiki/Tractography).
+* Evaluate the evidence supporting white-matter connectomes generated using [magnetic resonance diffusion-weighted imaging](http://en.wikipedia.org/wiki/Diffusion_MRI) and [computational tractography](http://en.wikipedia.org/wiki/Tractography).
 * Perform statistical inference on white-matter connectomes: Compare white-matter connectomes, show the evidence for white-matter tracts and connections between brain areas.
 
 ## License.
@@ -26,10 +26,10 @@ We provide demos to expain how to:
 ## [Stable code release](TBA).
 
 ## How to cite the software.
-[Caiafa, C. and Pestilli, F.](Multidimensional encoding of brain connectomes) Multidimensional encoding of brain connectomes (forthcoming.)
+[Caiafa, C. and Pestilli, F. Multidimensional encoding of brain connectomes Nature Scientific Reports 7, Article number: 11491.](https://www.nature.com/articles/s41598-017-09250-w)
 
 ## Funding.
-This work was supported by grants by the Indiana Clinical and Translational Institute (CTSI, NIH ULTTR001108).
+This research was supported by [NSF IIS-1636893](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1636893), [BCS-1734853](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853), NIH ULTTR001108 and the [Indiana University Areas of Emergent Research initiative Learning: Brains, Machines, Children](http://ovpr.indiana.edu/ear1/2017-first-recipient).
 
 ## Installation.
 1. Download (https://github.com/brain-life/encode).
