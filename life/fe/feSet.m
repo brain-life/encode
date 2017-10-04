@@ -195,6 +195,14 @@ switch param
   case 'torsion'
     fe.fg.Tor = val{1};  
     fe.fg.Indication = val{2}; 
+  case 'tracts_info'
+    Ntracts = size(val.names,2);
+    for n=1:Ntracts
+        fe.life.M.tracts{n}.ind = find(val.index==n);
+        fe.life.M.tracts{n}.name = val.names{n};
+    end
+    fe.life.M.tracts{Ntracts+1}.ind = find(val.index==0);
+    fe.life.M.tracts{Ntracts+1}.name = 'not a tract'; 
             
   otherwise
     error('Unknown parameter %s\n',param);

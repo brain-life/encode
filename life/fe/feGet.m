@@ -884,7 +884,7 @@ switch param
     % Measured signal in VOI, this is the raw signal. not demeaned
     %
     % dSig = feGet(fe,'dSig full')
-    val = fe.life.dSig;
+    val = fe.life.diffusion_signal_img';
     % Return a subset of voxels
     if ~isempty(varargin)
       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
@@ -1547,7 +1547,25 @@ switch param
         B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
         s0 = fe.life.s0;
         
-        val = ones(nTheta,1)*s0' + D*B;    
+        val = ones(nTheta,1)*s0' + D*B; 
+        
+    case 'predtract'
+        [nAtoms]    = feGet(fe,'natoms');
+        [nFibers]   = feGet(fe,'nfibers');
+        [nVoxels]   = feGet(fe,'nvoxels');
+        [nTheta]    = feGet(fe,'nbvals');
+        D = fe.life.M.Dict;
+        Phi = fe.life.M.Phi;
+        
+        w = zeros(nFibers,1);
+        w(varargin{1})=1;
+        B = ttv(Phi,w,3);
+        [ind, val] = find(B);
+        B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
+        
+        %s0 = fe.life.s0;
+        %val = ones(nTheta,1)*s0' + D*B; % with iso   
+        val = D*B; % without iso 
  
   otherwise
     help('feGet')
