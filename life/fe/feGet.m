@@ -913,7 +913,7 @@ switch param
       % val           = val(voxelRowsToKeep,:);
       val = val(feGet(fe,'voxel rows',feGet(fe,'voxelsindices',varargin)));
     end
-    
+
   case {'dsigrowssubset','diffusionsignaldemeanedinsubsetofrows'}
     % Get the demeaned signal for a subset of rows.
     % Useful for cross-validation.
@@ -1258,7 +1258,7 @@ switch param
     nBvecs  = feGet(fe,'nBvecs');
     nVoxels = feGet(fe,'n voxels');
     val     = reshape(feGet(fe,'dsigdemeaned'), nBvecs, nVoxels);
-    val     = val(:,feGet(fe,'return voxel indices',varargin));
+    val     = val(:,feGet(fe,'return voxel indices',varargin)); 
     
   case {'dsigfullbyvoxel','dsigfullvox','voxdsigfull'}
     % Full (measured) signal in each voxel
@@ -1520,14 +1520,19 @@ switch param
       val       = setdiff(val,varargin{1});
       
       % Find nnz weights indices and filter the obtained path neighborhood
-      w       = feGet(fe,'fiber weights');
-      ind_nnz = find(w);
+      %w       = feGet(fe,'fiber weights');
+      %ind_nnz = find(w);
+      ind_nnz = feGet(fe,'indnnz');
+      
       val     = intersect(ind_nnz,val);
       
+    case 'indnnz'
+        val = unique(fe.life.M.Phi.subs(:,3));
+        
     case 'coordsfromfibers'
         disp('Serching roi from fibers ...');
-        [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor   
-        voxel_ind = unique(inds(:,2));  
+        [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor
+        voxel_ind = unique(inds(:,2));
         val = feGet(fe,'roicoords');
         val = val(voxel_ind,:);
     case 'relativeerror'
@@ -1566,7 +1571,41 @@ switch param
         %s0 = fe.life.s0;
         %val = ones(nTheta,1)*s0' + D*B; % with iso   
         val = D*B; % without iso 
- 
+        
+     case 'predtractwithiso'
+        [nAtoms]    = feGet(fe,'natoms');
+        [nFibers]   = feGet(fe,'nfibers');
+        [nVoxels]   = feGet(fe,'nvoxels');
+        [nTheta]    = feGet(fe,'nbvals');
+        D = fe.life.M.Dict;
+        Phi = fe.life.M.Phi;
+        
+        w = zeros(nFibers,1);
+        w(varargin{1})=1;
+        B = ttv(Phi,w,3);
+        [ind, val] = find(B);
+        B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
+        
+        s0 = fe.life.s0;
+        val = ones(nTheta,1)*s0' + D*B; % with iso  
+
+     case 'predlesionwithiso'
+        [nAtoms]    = feGet(fe,'natoms');
+        [nFibers]   = feGet(fe,'nfibers');
+        [nVoxels]   = feGet(fe,'nvoxels');
+        [nTheta]    = feGet(fe,'nbvals');
+        D = fe.life.M.Dict;
+        Phi = fe.life.M.Phi;
+        
+        w = ones(nFibers,1);
+        w(varargin{1})=0;
+        B = ttv(Phi,w,3);
+        [ind, val] = find(B);
+        B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
+        
+        s0 = fe.life.s0;
+        val = ones(nTheta,1)*s0' + D*B; % with iso          
+        
   otherwise
     help('feGet')
     fprintf('[feGet] Unknown parameter << %s >>...\n',param);
