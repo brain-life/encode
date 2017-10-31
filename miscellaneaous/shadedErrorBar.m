@@ -75,6 +75,7 @@ params.addParameter('lineProps', '-k', @(x) ischar(x) | iscell(x));
 params.addParameter('transparent', true, @(x) islogical (x) || x==0 || x==1);
 
 params.parse(varargin{:});
+%params.parse(varargin{1});
 
 %Extract values from the inputParser
 lineProps =  params.Results.lineProps;

@@ -97,7 +97,7 @@ error_b = norm(b - A*w)/norm(b);
 disp(' ');
 disp([' Error_B=', num2str(error_b),' nnz(w)=', num2str(nnz(w))]);
 
-Phi = reconstruct_Phi(Phi,w);
+Phi = reconstruct_Phi(Phi,w,S0);
 B = ttv(Phi,ones(nFibers,1),3);
 [ind, val] = find(B);
 B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
@@ -148,12 +148,13 @@ results.L = L;
 
 fe.life.M.Phi = Phi;
 fe.life.s0 = s0;
+fe.life.B = B;
 fe.life.fit.results = results;
 
 end
 
 
-function [Phi] = reconstruct_Phi(Phi,w)
+function [Phi] = reconstruct_Phi(Phi,w, S0)
 [nAtoms] = size(Phi,1);
 [sub, ~] = find(Phi);
 Count = sptensor(sub, ones(size(sub,1),1), size(Phi));
@@ -170,7 +171,7 @@ count = Count(:);
 %count = double(sptenmat(Count,[1,2])); % equivalent to count = Count(:), sparse vectorization
 div = full(count(ind));
 
-valPhi = w(sub(:,3)); % assign weight to fascicle slice
+valPhi = w(sub(:,3))*S0(sub(:,2)); % assign weight to fascicle slice
 valPhi = valPhi./div;
 
 
