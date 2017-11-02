@@ -89,7 +89,11 @@ A = [A0; alpha_f*speye(size(C,2))];
 b = [b0; sparse(size(C,2),1)];
 
 opt = solopt;
+opt.maxit = 10000; % increase number of iteration to asure convergence
+opt.verbose =1;
+tic
 out = bbnnls_orig(A, b, zeros(nFibers,1), opt);
+fprintf('Global Fitting took: %2.3fs.\n',toc)
 
 w = out.x;
 
@@ -171,7 +175,7 @@ count = Count(:);
 %count = double(sptenmat(Count,[1,2])); % equivalent to count = Count(:), sparse vectorization
 div = full(count(ind));
 
-valPhi = w(sub(:,3))*S0(sub(:,2)); % assign weight to fascicle slice
+valPhi = w(sub(:,3)).*S0(sub(:,2)); % assign weight to fascicle slice
 valPhi = valPhi./div;
 
 
