@@ -22,7 +22,7 @@ nTheta = feGet(fe,'nbvals');
 [nFibers] = feGet(fe,'nfibers');
 [nVoxels] = feGet(fe,'nvoxels');
 
-nVoxels = 1000; % For testing purposes ONLY
+%nVoxels = 1000; % For testing purposes ONLY
 
 ind_dirs = randperm(nTheta); 
 
