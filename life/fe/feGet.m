@@ -1522,8 +1522,12 @@ switch param
       % Find nnz weights indices and filter the obtained path neighborhood
       %w       = feGet(fe,'fiber weights');
       %ind_nnz = find(w);
-      ind_nnz = feGet(fe,'indnnz');
-      
+      if isfield(fe.life.fit,'weights')
+        w       = feGet(fe,'fiber weights');
+        ind_nnz = find(w);
+      else
+        ind_nnz = unique(fe.life.M.Phi.subs(:,3));
+      end
       val     = intersect(ind_nnz,val);
       
     case 'indnnz'
