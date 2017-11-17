@@ -1,4 +1,4 @@
-function [fe, results] = FitFullModel_new(dwiFile, fgFileName, feFileName, L, p, alpha_v, alpha_f, lambda_a, lambda_r)
+function [fe, results] = FitFullModel(dwiFile, fgFileName, feFileName, L, p, alpha_v, alpha_f, lambda_a, lambda_r)
 % INPUT
 % dwFile:               diffusion measurements
 % fgFileName:           Tractography file
@@ -22,7 +22,7 @@ nTheta = feGet(fe,'nbvals');
 [nFibers] = feGet(fe,'nfibers');
 [nVoxels] = feGet(fe,'nvoxels');
 
-%nVoxels = 1000; % For testing purposes ONLY
+nVoxels = 1000; % For testing purposes ONLY
 
 ind_dirs = randperm(nTheta); 
 
@@ -77,7 +77,7 @@ C = double(sptenmat(ttv(Phi,ones(nAtoms,1),1),[1])); % sum over atoms
 b0 = (ones(1,nAtoms)*B)';
 
 
-S0 = mean(fe.life.diffusion_S0_img,2);
+S0 = mean(fe.life.diffusion_S0_img(1:nVoxels),2);
 [i,j,~] = find(C);
 values = S0(i);
 A0 = sparse(i, j, values, size(C,1), size(C,2));
@@ -101,7 +101,7 @@ error_b = norm(b - A*w)/norm(b);
 disp(' ');
 disp([' Error_B=', num2str(error_b),' nnz(w)=', num2str(nnz(w))]);
 
-Phi = reconstruct_Phi(Phi,w,S0);
+Phi = reconstruct_Phi(Phi,S0);
 B = ttv(Phi,ones(nFibers,1),3);
 [ind, val] = find(B);
 B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
@@ -154,11 +154,12 @@ fe.life.M.Phi = Phi;
 fe.life.s0 = s0;
 fe.life.B = B;
 fe.life.fit.results = results;
+fe.life.fit.weights = w;
 
 end
 
 
-function [Phi] = reconstruct_Phi(Phi,w, S0)
+function [Phi] = reconstruct_Phi(Phi, S0)
 [nAtoms] = size(Phi,1);
 [sub, ~] = find(Phi);
 Count = sptensor(sub, ones(size(sub,1),1), size(Phi));
@@ -175,7 +176,8 @@ count = Count(:);
 %count = double(sptenmat(Count,[1,2])); % equivalent to count = Count(:), sparse vectorization
 div = full(count(ind));
 
-valPhi = w(sub(:,3)).*S0(sub(:,2)); % assign weight to fascicle slice
+%valPhi = w(sub(:,3)).*S0(sub(:,2)); % assign weight to fascicle slice
+valPhi = S0(sub(:,2)); % assign weight to fascicle slice
 valPhi = valPhi./div;
 
 
