@@ -77,7 +77,7 @@ C = double(sptenmat(ttv(Phi,ones(nAtoms,1),1),[1])); % sum over atoms
 b0 = (ones(1,nAtoms)*B)';
 
 
-S0 = mean(fe.life.diffusion_S0_img(1:nVoxels),2);
+S0 = mean(fe.life.diffusion_S0_img(1:nVoxels,:),2);
 [i,j,~] = find(C);
 values = S0(i);
 A0 = sparse(i, j, values, size(C,1), size(C,2));
@@ -102,7 +102,7 @@ disp(' ');
 disp([' Error_B=', num2str(error_b),' nnz(w)=', num2str(nnz(w))]);
 
 Phi = reconstruct_Phi(Phi,S0);
-B = ttv(Phi,ones(nFibers,1),3);
+B = ttv(Phi,w,3);
 [ind, val] = find(B);
 B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
 
