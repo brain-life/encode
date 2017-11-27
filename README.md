@@ -70,7 +70,7 @@ This research was supported by [NSF IIS-1636893](https://www.nsf.gov/awardsearch
 * Download the demo datasets from the repository [doi:10.5967/K8X63JTX](http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz).
 * UNTAR the main file Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz
 * Go inside the folder Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes/ and UNZIP the following files: Figs_data.zip, HCP3T.zip, HCP7T, and STN. You can deleted the original .zip files once they are unziped.
-* The structures of files and foldes under the main folder should looks like as follows
+* The structures of files and folders under the main folder should looks like as follows
 * feDemoDataPath.m
 * Figs_data/
 * HCP3T/
