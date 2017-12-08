@@ -22,7 +22,7 @@ nTheta = feGet(fe,'nbvals');
 [nFibers] = feGet(fe,'nfibers');
 [nVoxels] = feGet(fe,'nvoxels');
 
-%nVoxels = 1000; % For testing purposes ONLY
+%nVoxels = 10000; % For testing purposes ONLY
 
 ind_dirs = randperm(nTheta); 
 
@@ -101,7 +101,7 @@ error_b = norm(b - A*w)/norm(b);
 disp(' ');
 disp([' Error_B=', num2str(error_b),' nnz(w)=', num2str(nnz(w))]);
 
-Phi = reconstruct_Phi(Phi,S0);
+%Phi = reconstruct_Phi(Phi,S0);
 B = ttv(Phi,w,3);
 [ind, val] = find(B);
 B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);

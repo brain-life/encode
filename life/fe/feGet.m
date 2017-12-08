@@ -1551,7 +1551,12 @@ switch param
         [nTheta]    = feGet(fe,'nbvals');
         D = fe.life.M.Dict;
         Phi = fe.life.M.Phi;
-        B = ttv(Phi,ones(nFibers,1),3);
+        
+        if isfield(fe.life.M.fit, 'weights')
+            B = ttv(Phi,fe.life.M.fit.weights,3);
+        else
+            B = ttv(Phi,ones(nFibers,1),3);
+        end
         [ind, val] = find(B);
         B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
         s0 = fe.life.s0;
@@ -1567,7 +1572,11 @@ switch param
         Phi = fe.life.M.Phi;
         
         w = zeros(nFibers,1);
-        w(varargin{1})=1;
+        if isfield(fe.life.M.fit, 'weights')
+            w(varargin{1}) = fe.life.M.fit.weights(varargin{1});
+        else
+            w(varargin{1})=1;
+        end
         B = ttv(Phi,w,3);
         [ind, val] = find(B);
         B = sparse(ind(:,1),ind(:,2),val,nAtoms,nVoxels);
