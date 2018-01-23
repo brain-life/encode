@@ -1552,8 +1552,8 @@ switch param
         D = fe.life.M.Dict;
         Phi = fe.life.M.Phi;
         
-        if isfield(fe.life.M.fit, 'weights')
-            B = ttv(Phi,fe.life.M.fit.weights,3);
+        if isfield(fe.life.fit, 'weights')
+            B = ttv(Phi,fe.life.fit.weights,3);
         else
             B = ttv(Phi,ones(nFibers,1),3);
         end
@@ -1572,8 +1572,8 @@ switch param
         Phi = fe.life.M.Phi;
         
         w = zeros(nFibers,1);
-        if isfield(fe.life.M.fit, 'weights')
-            w(varargin{1}) = fe.life.M.fit.weights(varargin{1});
+        if isfield(fe.life.fit, 'weights')
+            w(varargin{1}) = fe.life.fit.weights(varargin{1});
         else
             w(varargin{1})=1;
         end
