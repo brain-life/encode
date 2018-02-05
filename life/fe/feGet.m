@@ -1533,6 +1533,11 @@ switch param
     case 'indnnz'
         val = unique(fe.life.M.Phi.subs(:,3));
         
+    case 'voxindfromfibers'
+        disp('Serching roi from fibers ...');
+        [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor
+        val = unique(inds(:,2));
+        
     case 'coordsfromfibers'
         disp('Serching roi from fibers ...');
         [inds, ~] = find(fe.life.M.Phi(:,:,varargin{1})); % find nnz entries of subtensor

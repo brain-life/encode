@@ -27,7 +27,7 @@ nTheta = feGet(fe,'nbvals');
 
 ind_dirs = randperm(nTheta); 
 
-rng('shuffle'); % Change seed based on current time
+%rng('shuffle'); % Change seed based on current time
 ind_vox = randperm(nVoxels);
 nVoxSample = round(n*nVoxels);
 ind_vox = ind_vox(1:nVoxSample);
