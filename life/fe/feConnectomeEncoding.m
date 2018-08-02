@@ -7,7 +7,7 @@ function fe = feConnectomeEncoding(fe)
 %
 % See also: feFitModel.m, feComputePredictedSignal.m
 %
-%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
+%  Copyright (2017), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
 %  email: pestillifranco@gmail.com and ccaiafa@gmail.com
 %
 
@@ -26,16 +26,89 @@ if verLessThan('matlab','9.2')
     set(s.matlab.desktop.workspace, 'ArraySizeLimitEnabled',false);
 end
 
+% Set MAXMEM available
+MAXMEM = getenv('MAXMEM'); % read setting from enviroment in kb
+if MAXMEM
+    disp(['MAXMEM set to ',MAXMEM]);
+    MAXMEM = str2num(MAXMEM);
+elseif (isunix||ismac)
+    disp('MAXMEM not set, need to calculate (UNIX or MacOS)')
+    [~,out] = system('cat /proc/meminfo |grep MemFree');
+    textcell = regexp(out,'\d*','Match');
+    MAXMEM = str2num(textcell{1});
+elseif ispc
+    disp('MAXMEM not set, need to calculate (PC)')
+    user = memory;
+    MAXMEM = user.MaxPossibleArrayBytes/1024; % Max mem for arrays in Kb
+end
 
-nFibers      = feGet(fe,'n fibers');
+if ~MAXMEM 
+    error('Could not determine MAXMEM');
+end
+
+
+% Check required number of nodes and split the tensor Phi computation in
+% pieces having max nNodesMax nodes each
+
+%nNodesMax = 30000000; % Maximum nodes per batch. This is a reference value, for example one HCP3T subject has 28,677,744 nodes.
+%nNodesMax = 12000000; % For testing
+
+%nNodesMax = round(MAXMEM*30000000/32000000); % In Karst we have available 32,000,000kb of memory, which allows to process up to 30,000,000 nodes;
+
+nNodesMax = round(MAXMEM*15000000/32000000); % 
+
 nTotalNodes = fefgGet(fe.fg,'n total nodes');
-fibers = fe.fg.fibers;
+nFibers      = feGet(fe,'n fibers');
+nBatch = ceil(nTotalNodes/nNodesMax); % Number of batch
+nFib_Batch = ceil(nFibers/nBatch); % Number of fibers per batch
+
+disp(['nNodesMax =',num2str(nNodesMax),', Total number of nodes = ',num2str(nTotalNodes),',  number of batch computation = ',num2str(nBatch)])
+
+fprintf('\n');
+for n=1:nBatch
+    fprintf('Encoding batch % 2.f\n',n)
+    fibers_range = (n-1)*nFib_Batch + 1: min(n*nFib_Batch,nFibers);
+    if n == 1
+        Phi = compute_Phi_batch(fe,fibers_range); % Phi is created in the first batch
+    else
+        Phi = concatenate_mode3(Phi, compute_Phi_batch(fe,fibers_range));
+    end
+end
+
+fe = feSet(fe,'Indication Tensor',Phi);
+
+fprintf('took: %2.3fs.\n',toc)
+
+return
+end
+
+function [Phi1] = concatenate_mode3(Phi1, Phi2)
+subs1 = Phi1.subs;
+vals1 = Phi1.vals;
+s1 = size(Phi1);
+s2 = size(Phi2);
+
+Nvals1 = length(vals1);
+subs1 = [subs1; Phi2.subs];
+vals1 = [vals1; Phi2.vals];
+
+subs1(Nvals1+1:end,3) = subs1(Nvals1+1:end,3) + s1(3);
+s1(3) = s1(3) + s2(3);
+Phi1 = sptensor(subs1,vals1,s1);
+
+end
+
+function [Phi] = compute_Phi_batch(fe,fibers_range)
+nFibers      = length(fibers_range);
+fg = fe.fg;
+fg.fibers = fg.fibers(fibers_range);
+nTotalNodes = fefgGet(fg,'n total nodes');
+fibers = fe.fg.fibers(fibers_range);
 imgsize = feGet(fe,'volumesize');
 imgsize = imgsize(1:3); % 4th dimension is discarded
 nTotalVoxels = prod(imgsize); % including voxels not in the ROI
 
 nAtoms       = feGet(fe,'n Atoms');
-%orient       = feGet(fe,'orient');
 Nphi         = feGet(fe,'Nphi');
 Ntheta       = feGet(fe,'Ntheta');
 
@@ -86,14 +159,9 @@ S0 = feGet(fe,'s0_img');
 vals = Phi.vals.*S0(Phi.subs(:,2));
 Phi = sptensor(Phi.subs,vals,size(Phi));
 
-fe = feSet(fe,'Indication Tensor',Phi);
-
-clear 'A' 'vox' 'fib' 'vals'
-
-fprintf('took: %2.3fs.\n',toc)
-
-return
 end
+
+
 
 
 function [tubes, grad] = fiberOfNodes(fibers,nTotalNodes)

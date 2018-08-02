@@ -15,21 +15,21 @@ We provide demos to expain how to:
 
 ## Application.
 * Encoding of brain conenctome and associated phenotypes into multidimensional arrays.
-* Evaluate the evidence supporting white-matter connectomes generated using [magnetic resonance diffusion-weighted imaging](http://en.wikipedia.org/wiki/Diffusion_MRI) and [computational tractography](http://en.wikipedia.org/wiki/Tractography).
+* Evaluate the evidence supporting white-matter connectomes generated using [magnetic resonance diffusion-weighted imaging](http://en.wikipedia.org/wiki/Diffusion_MRI) and [computational tractography ](http://en.wikipedia.org/wiki/Tractography).
 * Perform statistical inference on white-matter connectomes: Compare white-matter connectomes, show the evidence for white-matter tracts and connections between brain areas.
 
 ## License.
-#### Copyright (2017), [Franco Pestilli](http://francopestilli.com/), frakkopesto@gmail.com, [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com
+#### Copyright (2016), [Franco Pestilli](http://francopestilli.com/), frakkopesto@gmail.com, [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com
  
 ## [Documentation](TBA).
 
 ## [Stable code release](TBA).
 
 ## How to cite the software.
-[Caiafa, C. and Pestilli, F. Multidimensional encoding of brain connectomes Nature Scientific Reports 7, Article number: 11491.](https://www.nature.com/articles/s41598-017-09250-w)
+[Caiafa, C. and Pestilli, F.](Multidimensional encoding of brain connectomes) Multidimensional encoding of brain connectomes (forthcoming.)
 
 ## Funding.
-This research was supported by [NSF IIS-1636893](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1636893), [BCS-1734853](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853), NIH ULTTR001108 and the [Indiana University Areas of Emergent Research initiative Learning: Brains, Machines, Children](http://ovpr.indiana.edu/ear1/2017-first-recipient).
+This work was supported by grants by the Indiana Clinical and Translational Institute (CTSI, NIH ULTTR001108).
 
 ## Installation.
 1. Download (https://github.com/brain-life/encode).
@@ -70,7 +70,7 @@ This research was supported by [NSF IIS-1636893](https://www.nsf.gov/awardsearch
 * Download the demo datasets from the repository [doi:10.5967/K8X63JTX](http://purl.dlib.indiana.edu/iusw/data/2022/20995/Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz).
 * UNTAR the main file Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes.tar.gz
 * Go inside the folder Demo_Data_for_Multidimensional_Encoding_of_Brain_Connectomes/ and UNZIP the following files: Figs_data.zip, HCP3T.zip, HCP7T, and STN. You can deleted the original .zip files once they are unziped.
-* The structures of files and folders under the main folder should looks like as follows
+* The structures of files and foldes under the main folder should looks like as follows
 * feDemoDataPath.m
 * Figs_data/
 * HCP3T/
