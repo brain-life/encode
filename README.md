@@ -103,4 +103,4 @@ This code allows you to compute compute the fascicles weights for two different 
   >>  demo_LiFE.m
 ```
 
-For DP
+DP
