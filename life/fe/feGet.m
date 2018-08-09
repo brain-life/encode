@@ -1571,7 +1571,7 @@ switch param
     case 'prediso'
         [nTheta]    = feGet(fe,'nbvals');
         s0 = fe.life.s0;
-        val = ones(nTheta,1)*s0' + D*B; 
+        val = ones(nTheta,1)*s0'; 
         
     case 'predtract'
         [nAtoms]    = feGet(fe,'natoms');
