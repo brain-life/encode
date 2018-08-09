@@ -1568,6 +1568,11 @@ switch param
         
         val = ones(nTheta,1)*s0' + D*B; 
         
+    case 'prediso'
+        [nTheta]    = feGet(fe,'nbvals');
+        s0 = fe.life.s0;
+        val = ones(nTheta,1)*s0' + D*B; 
+        
     case 'predtract'
         [nAtoms]    = feGet(fe,'natoms');
         [nFibers]   = feGet(fe,'nfibers');
