@@ -50,17 +50,11 @@ end
 % Check required number of nodes and split the tensor Phi computation in
 % pieces having max nNodesMax nodes each
 
-%nNodesMax = 30000000; % Maximum nodes per batch. This is a reference value, for example one HCP3T subject has 28,677,744 nodes.
-%nNodesMax = 12000000; % For testing
-
-%nNodesMax = round(MAXMEM*30000000/32000000); % In Karst we have available 32,000,000kb of memory, which allows to process up to 30,000,000 nodes;
-
-nNodesMax = round(MAXMEM*15000000/32000000); % 
-
+nNodesMax = round(MAXMEM*15000000/32000000); 
 nTotalNodes = fefgGet(fe.fg,'n total nodes');
 nFibers      = feGet(fe,'n fibers');
 nBatch = ceil(nTotalNodes/nNodesMax); % Number of batch
-nFib_Batch = ceil(nFibers/nBatch); % Number of fibers per batch
+nFib_Batch = round(nFibers/nBatch); % Number of fibers per batch
 
 disp(['nNodesMax =',num2str(nNodesMax),', Total number of nodes = ',num2str(nTotalNodes),',  number of batch computation = ',num2str(nBatch)])
 
