@@ -26,7 +26,8 @@ We provide demos to expain how to:
 ## [Stable code release](https://github.com/brain-life/encode/releases/tag/v0.45).
 
 ## How to cite the software.
-[Caiafa, C. and Pestilli, F. Multidimensional encoding of brain connectomes. Scientific Reports. volume 7, Article number: 11491 (2017)](https://www.nature.com/articles/s41598-017-09250-w)
+[Caiafa, C. and Pestilli, F. Multidimensional encoding of brain connectomes. Scientific Reports. volume 7, Article number: 11491 (2017)](https://www.nature.com/articles/s41598-017-09250-w).
+
 [Caiafa, C., Sporns, O., Saykin, A., and Pestill, F., Unified representation of tractography and diffusion-weighted MRI data using sparse multidimensional arrays. Advances in Neural Information Processing Systems 30 (NIPS 2017)](http://papers.nips.cc/paper/7021-unified-representation-of-tractography-and-diffusion-weighted-mri-data-using-sparse-multidimensional-arrays)
 
 ## Funding.
