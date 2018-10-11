@@ -171,3 +171,6 @@ This code allows you to compute compute the fascicles weights for two different 
 • fe.roi.dirty: parameter for visualization
 • fe.roi.query_id: not used.
 ```
+
+### Notes
+This software is not compatible with Matlab 2014b, but only with later versions of MatLab.
