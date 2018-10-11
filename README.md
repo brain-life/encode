@@ -106,8 +106,9 @@ This code allows you to compute compute the fascicles weights for two different 
 ```
 
 ### Output data structure
-```
+
 #### fe fields
+```
 • fe.name: [text], customized name of the structure.
 • fe.type: [text], type description.
 • fe.life: [1 × 1 struct], results of the LiFE method, see fe.life fields description below.
@@ -115,8 +116,10 @@ This code allows you to compute compute the fascicles weights for two different 
 • fe.roi: [1 × 1 struct], input fiber group (connectome) information, see fe.roi fields description below.
 • fe.path: [1 × 1 struct], paths to input data (connectome, dMRI data, etc.).
 • fe.rep: [1×1 struct], dMRI data for a repeated measurement if available. In this dataset, a repeated measurement is provided for STN only. For HCP3T and HCP7T a copy of the unique measurement is stored in this field. See details of fields in 2nd level description below.
+```
 
-####fe.life fields
+#### fe.life fields
+```
 • fe.life.M.Phi: [Na × Nv × Nf sptensor], sparse array Φ encoding the
 connectome.
 • fe.life.M.Nphi: Discretization number in azimuth, default = 360.
@@ -136,14 +139,18 @@ connectome.
 • fe.life.modelTensor: [λ1 , λ2 , λ3 ], parameters of the Diffusion Tensor
 (DT) model used to generate the Dictionary of diffusion kernels.
 • fe.life.fit: this field contains the results of applying the LiFE method, see description below.
+```
 
-####fe.life.fit fields
+#### fe.life.fit fields
+```
 • fe.life.fit.randState: saved by the optimization algorithm.
 • fe.life.fit.results: saved by the optimization algorithm.
 • fe.life.fit.weights: [Nf × 1 double], fascicles weights obtained as a result of the optimization.
 • fe.life.fit.params.fitMethod: [text], name of used optimization method, default is “bbnls”.
+```
 
-####fe.fg fields
+#### fe.fg fields
+```
 • fe.fg.name: [text], name of Fiber Group (connectome).
 • fe.fg.colorRgb: [R, G, B], color specification for visualization.
 • fe.fg.thickness: [double], thickness specificattion for visualization.
@@ -153,8 +160,10 @@ connectome.
 • fe.fg.seedVoxelOffsets: MRTRIX parameter.
 • fe.fg.params: additional MRTRIX parameters.
 • fe.fg.fibers: {Nf ×1 cell}, set of fascicles (streamlines), generated with a tractography algorithm. Each cell contains the x,y,z coordinates a list of 3D points describing the trajectory of a single fascicle.
+```
 
-####fe.roi fields
+#### fe.roi fields
+```
 • fe.roi.name: [text], name of ROI.
 • fe.roi.color: [R, G, B], color specification for visualization.
 • fe.roi.coords: [Nv ×3 double], voxel coordinates, each row specifies the spatial location of a single voxel.
