@@ -19,7 +19,7 @@ We provide demos to expain how to:
 * Perform statistical inference on white-matter connectomes: Compare white-matter connectomes, show the evidence for white-matter tracts and connections between brain areas.
 
 ## License.
-#### Copyright (2016), [Franco Pestilli](http://francopestilli.com/), frakkopesto@gmail.com, [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com
+#### Copyright (2017), [Franco Pestilli](http://francopestilli.com/), frakkopesto@gmail.com, [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com
  
 ## [Documentation](TBA).
 
@@ -28,8 +28,10 @@ We provide demos to expain how to:
 ## How to cite the software.
 [Caiafa, C. and Pestilli, F.](Multidimensional encoding of brain connectomes) Multidimensional encoding of brain connectomes (forthcoming.)
 
+
 ## Funding.
-This work was supported by grants by the Indiana Clinical and Translational Institute (CTSI, NIH ULTTR001108).
+[![NIH-5UL1TR001108-05 ](https://img.shields.io/badge/NIH_5UL1TR001108-05-green.svg)](https://projectreporter.nih.gov/project_info_details.cfm?aid=9283642&icde=41600065&ddparam=&ddvalue=&ddsub=&cr=4&csb=FY&cs=DESC&pball=)
+[![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
 
 ## Installation.
 1. Download (https://github.com/brain-life/encode).
@@ -103,3 +105,61 @@ This code allows you to compute compute the fascicles weights for two different 
   >>  demo_LiFE.m
 ```
 
+### Output data structure
+```
+#### fe fields
+• fe.name: [text], customized name of the structure.
+• fe.type: [text], type description.
+• fe.life: [1 × 1 struct], results of the LiFE method, see fe.life fields description below.
+• fe.fg: [1 × 1 struct], input fiber group (connectome) information, see fe.fg fields description below.
+• fe.roi: [1 × 1 struct], input fiber group (connectome) information, see fe.roi fields description below.
+• fe.path: [1 × 1 struct], paths to input data (connectome, dMRI data, etc.).
+• fe.rep: [1×1 struct], dMRI data for a repeated measurement if available. In this dataset, a repeated measurement is provided for STN only. For HCP3T and HCP7T a copy of the unique measurement is stored in this field. See details of fields in 2nd level description below.
+
+####fe.life fields
+• fe.life.M.Phi: [Na × Nv × Nf sptensor], sparse array Φ encoding the
+connectome.
+• fe.life.M.Nphi: Discretization number in azimuth, default = 360.
+• fe.life.M.Ntheta: Discretization number in elevation, default = 360.
+• fe.life.M.orient: [3 × Na double], matrix containing in its columns the orientations for each Dictionary element.
+• fe.life.M.DictSig: [Nθ × Na double], Dictionary matrix containing in its columns the canonical diffusion kernel (demeaned) at different orienta- tions.
+• fe.life.xform.img2acpc: [4 × 4 double], Image to ACPC affine trans- form.
+• fe.life.xform.acpc2img: [4 × 4 double], ACPC to image affine trans- form.
+• fe.life.fibers: not used.
+• fe.life.diffusion_signal_img: [Nv × Nθ double], dMRI data.
+• fe.life.diffusion_S0_img: [Nv × 10 double], diffusion signal measured at b = 0 (ten times). Usually, we compute S0(v) by averaging over the ten available values.
+• fe.life.bvecs: [Nθ × 3 double], each row indicates the gradient 3D di- rection.
+• fe.life.bvals: [Nθ × 1 double], each row indicates the used b-value for each gradient.
+• fe.life.bvecsindices: [Nθ × 1 int], indices for measurements with non- zero b-value.
+• fe.life.imagedim: [Nx , Ny , Nz , Nm ], size of the input 4D dMRI dataset where (Nx,Ny,Nz) are the the sizes in each cordinate, x, y and z, respec- tivelly; and Nm correspond to the number of measurements with b = 0 and b ̸= 0.
+• fe.life.voxel2FNpair: not used.
+• fe.life.modelTensor: [λ1 , λ2 , λ3 ], parameters of the Diffusion Tensor
+(DT) model used to generate the Dictionary of diffusion kernels.
+• fe.life.fit: this field contains the results of applying the LiFE method, see description below.
+
+####fe.life.fit fields
+• fe.life.fit.randState: saved by the optimization algorithm.
+• fe.life.fit.results: saved by the optimization algorithm.
+• fe.life.fit.weights: [Nf × 1 double], fascicles weights obtained as a result of the optimization.
+• fe.life.fit.params.fitMethod: [text], name of used optimization method, default is “bbnls”.
+
+####fe.fg fields
+• fe.fg.name: [text], name of Fiber Group (connectome).
+• fe.fg.colorRgb: [R, G, B], color specification for visualization.
+• fe.fg.thickness: [double], thickness specificattion for visualization.
+• fe.fg.visible: [binary], parameter for visualization.
+• fe.fg.seeds: Seeds used by MRTRIX software to generate the connec- tome.
+• fe.fg.seedRadius: MRTRIX parameter.
+• fe.fg.seedVoxelOffsets: MRTRIX parameter.
+• fe.fg.params: additional MRTRIX parameters.
+• fe.fg.fibers: {Nf ×1 cell}, set of fascicles (streamlines), generated with a tractography algorithm. Each cell contains the x,y,z coordinates a list of 3D points describing the trajectory of a single fascicle.
+
+####fe.roi fields
+• fe.roi.name: [text], name of ROI.
+• fe.roi.color: [R, G, B], color specification for visualization.
+• fe.roi.coords: [Nv ×3 double], voxel coordinates, each row specifies the spatial location of a single voxel.
+• fe.roi.visible: [binary], parameter for visualization.
+• fe.roi.mesh: not used.
+• fe.roi.dirty: parameter for visualization
+• fe.roi.query_id: not used.
+```
