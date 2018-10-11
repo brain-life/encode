@@ -120,8 +120,7 @@ This code allows you to compute compute the fascicles weights for two different 
 
 #### fe.life fields
 ```
-• fe.life.M.Phi: [Na × Nv × Nf sptensor], sparse array Φ encoding the
-connectome.
+• fe.life.M.Phi: [Na × Nv × Nf sptensor], sparse array Φ encoding the connectome.
 • fe.life.M.Nphi: Discretization number in azimuth, default = 360.
 • fe.life.M.Ntheta: Discretization number in elevation, default = 360.
 • fe.life.M.orient: [3 × Na double], matrix containing in its columns the orientations for each Dictionary element.
@@ -134,10 +133,9 @@ connectome.
 • fe.life.bvecs: [Nθ × 3 double], each row indicates the gradient 3D di- rection.
 • fe.life.bvals: [Nθ × 1 double], each row indicates the used b-value for each gradient.
 • fe.life.bvecsindices: [Nθ × 1 int], indices for measurements with non- zero b-value.
-• fe.life.imagedim: [Nx , Ny , Nz , Nm ], size of the input 4D dMRI dataset where (Nx,Ny,Nz) are the the sizes in each cordinate, x, y and z, respec- tivelly; and Nm correspond to the number of measurements with b = 0 and b ̸= 0.
+• fe.life.imagedim: [Nx , Ny , Nz , Nm ], size of the input 4D dMRI dataset where (Nx,Ny,Nz) are the the sizes in each coordinate, x, y and z, respec- tivelly; and Nm correspond to the number of measurements with b = 0 and b ̸= 0.
 • fe.life.voxel2FNpair: not used.
-• fe.life.modelTensor: [λ1 , λ2 , λ3 ], parameters of the Diffusion Tensor
-(DT) model used to generate the Dictionary of diffusion kernels.
+• fe.life.modelTensor: [λ1 , λ2 , λ3 ], parameters of the Diffusion Tensor (DT) model used to generate the Dictionary of diffusion kernels.
 • fe.life.fit: this field contains the results of applying the LiFE method, see description below.
 ```
 
