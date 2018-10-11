@@ -30,7 +30,7 @@ We provide demos to expain how to:
 
 
 ## Funding.
-[![NIH-5UL1TR001108-05 ](https://img.shields.io/badge/NIH_5UL1TR001108-05-green.svg)](https://projectreporter.nih.gov/project_info_details.cfm?aid=9283642&icde=41600065&ddparam=&ddvalue=&ddsub=&cr=4&csb=FY&cs=DESC&pball=)
+[![NIH-5UL1TR-001108_05 ](https://img.shields.io/badge/NIH_5UL1TR-001108_05-green.svg)](https://projectreporter.nih.gov/project_info_details.cfm?aid=9283642&icde=41600065&ddparam=&ddvalue=&ddsub=&cr=4&csb=FY&cs=DESC&pball=)
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
 
 ## Installation.
@@ -105,7 +105,7 @@ This code allows you to compute compute the fascicles weights for two different 
   >>  demo_LiFE.m
 ```
 
-### Output data structure
+### 9. Output data structure contained in fe.mat
 
 #### fe fields
 ```
@@ -115,7 +115,7 @@ This code allows you to compute compute the fascicles weights for two different 
 • fe.fg: [1 × 1 struct], input fiber group (connectome) information, see fe.fg fields description below.
 • fe.roi: [1 × 1 struct], input fiber group (connectome) information, see fe.roi fields description below.
 • fe.path: [1 × 1 struct], paths to input data (connectome, dMRI data, etc.).
-• fe.rep: [1×1 struct], dMRI data for a repeated measurement if available. In this dataset, a repeated measurement is provided for STN only. For HCP3T and HCP7T a copy of the unique measurement is stored in this field. See details of fields in 2nd level description below.
+• fe.rep: [1×1 struct], dMRI data for a repeated measurement if available. 
 ```
 
 #### fe.life fields
