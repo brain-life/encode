@@ -20,8 +20,6 @@ We provide demos to expain how to:
 
 ## License.
 #### Copyright (2017), [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com and [Franco Pestilli](https://psych.indiana.edu/directory/faculty/pestilli-franco.html), frakkopesto@gmail.com
- 
-## [Documentation].
 
 ## [Stable code release](https://github.com/brain-life/encode/releases/tag/v0.45).
 
