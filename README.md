@@ -19,18 +19,18 @@ We provide demos to expain how to:
 * Perform statistical inference on white-matter connectomes: Compare white-matter connectomes, show the evidence for white-matter tracts and connections between brain areas.
 
 ## License.
-#### Copyright (2017), [Franco Pestilli](http://francopestilli.com/), frakkopesto@gmail.com, [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com
+#### Copyright (2017), [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com and [Franco Pestilli](https://psych.indiana.edu/directory/faculty/pestilli-franco.html), frakkopesto@gmail.com
  
-## [Documentation](TBA).
+## [Documentation].
 
-## [Stable code release](TBA).
+## [Stable code release](https://github.com/brain-life/encode/releases/tag/v0.45).
 
 ## How to cite the software.
-[Caiafa, C. and Pestilli, F.](Multidimensional encoding of brain connectomes) Multidimensional encoding of brain connectomes (forthcoming.)
-
+[Caiafa, C. and Pestilli, F. Multidimensional encoding of brain connectomes. Scientific Reports. volume 7, Article number: 11491 (2017)](https://www.nature.com/articles/s41598-017-09250-w)
+[Caiafa, C., Sporns, O., Saykin, A., and Pestill, F., Unified representation of tractography and diffusion-weighted MRI data using sparse multidimensional arrays. Advances in Neural Information Processing Systems 30 (NIPS 2017)](http://papers.nips.cc/paper/7021-unified-representation-of-tractography-and-diffusion-weighted-mri-data-using-sparse-multidimensional-arrays)
 
 ## Funding.
-[![NIH-5UL1TR-001108_05 ](https://img.shields.io/badge/NIH_5UL1TR-001108_05-green.svg)](https://projectreporter.nih.gov/project_info_details.cfm?aid=9283642&icde=41600065&ddparam=&ddvalue=&ddsub=&cr=4&csb=FY&cs=DESC&pball=)
+[![NIH-5UL1TR-001108_05](https://img.shields.io/badge/NIH_5UL1TR-001108_05-green.svg)](https://projectreporter.nih.gov/project_info_details.cfm?aid=9283642&icde=41600065&ddparam=&ddvalue=&ddsub=&cr=4&csb=FY&cs=DESC&pball=)
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
 
 ## Installation.
@@ -105,7 +105,7 @@ This code allows you to compute compute the fascicles weights for two different 
   >>  demo_LiFE.m
 ```
 
-### 9. Output data structure contained in fe.mat
+### 9. Description of the output data structure (fe.mat)
 
 #### fe fields
 ```
