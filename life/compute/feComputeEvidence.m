@@ -42,7 +42,7 @@ se.j.std   = nan;
 
 % Earth Mover's Distance:
 % Note: This can be very slow and my require large amounts of memory for more than 1000 voxels
-fprintf('[%s] Computing the Earth Mover''s distance... \n',mfilename)
+% fprintf('[%s] Computing the Earth Mover''s distance... \n',mfilename)
 se.em.name = sprintf('Earth Mover''s distance: http://en.wikipedia.org/wiki/Earth_mover''s_distance');
 
 try % Using Rubinov c-code fastest
@@ -62,7 +62,7 @@ se.em.std  = nan;
 clear tmp_emp
 
 % Strenght of evidence (effect size)
-fprintf('[%s] Computing the Strength of Evidence... ',mfilename)
+% fprintf('[%s] Computing the Strength of Evidence... ',mfilename)
 se.s.name = sprintf('strength of evidence, d-prime: http://en.wikipedia.org/wiki/Effect_size');
 se.s.nboots = 5000; 
 se.s.nmontecarlo = 5;
