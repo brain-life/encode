@@ -220,9 +220,9 @@ switch strrep(lower(param),' ','')
     % Returns the unique image coordinates of all the fibers as an Nx3
     % matrix of integers.
     % val = round(horzcat(fg.fibers{:})'); 
-    val = round(horzcat(fg.fibers{:})')+1;
+    val = ceil(horzcat(fg.fibers{:})')+1;
     val = unique(val,'rows');
-  
+    
     case {'allimagecoords'}
     %   coords = fefgGet(fgIMG,'all image coords');
     %
@@ -271,7 +271,7 @@ switch strrep(lower(param),' ','')
     fprintf('[%s] Computing nodes-to-voxels..',mfilename)
 
     % Find the roiCoord for each node in each fiber.
-    nFiber = fefgGet(fg,'n fibers');
+    tic,nFiber = fefgGet(fg,'n fibers');
     val    = cell(nFiber,1);
     
    parfor ii=1:nFiber
