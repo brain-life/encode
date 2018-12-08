@@ -111,8 +111,8 @@ Ntheta       = feGet(fe,'Ntheta');
 fibers = cell2mat(fibers(:)'); 
 
 % Compute voxels
-voxel_coord = ceil(fibers) + 1;
-%voxel_coord(voxel_coord==0)=1;
+voxel_coord = round(fibers) + 1;
+voxel_coord(voxel_coord<1)=1;
 cols = sub2ind(imgsize, voxel_coord(1,:)', voxel_coord(2,:)', voxel_coord(3,:)');
 
 % Compute atoms
