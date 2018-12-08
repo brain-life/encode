@@ -220,9 +220,9 @@ switch strrep(lower(param),' ','')
     % Returns the unique image coordinates of all the fibers as an Nx3
     % matrix of integers.
     % val = round(horzcat(fg.fibers{:})'); 
-    val = round(horzcat(fg.fibers{:})')+1;
+    val = ceil(horzcat(fg.fibers{:})')+1;
     val = unique(val,'rows');
-  
+    
     case {'allimagecoords'}
     %   coords = fefgGet(fgIMG,'all image coords');
     %
