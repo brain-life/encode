@@ -271,7 +271,7 @@ switch strrep(lower(param),' ','')
     fprintf('[%s] Computing nodes-to-voxels..',mfilename)
 
     % Find the roiCoord for each node in each fiber.
-    nFiber = fefgGet(fg,'n fibers');
+    tic,nFiber = fefgGet(fg,'n fibers');
     val    = cell(nFiber,1);
     
    parfor ii=1:nFiber

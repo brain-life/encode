@@ -41,7 +41,7 @@ function checkMexCompiled(varargin)
     mexfilename = [pathstr{1} filesep name{1} '.' mexext]; % Deduce mex file name based on current platform
 
     if strcmp(pathstr{1},'') || strcmp(pathstr{2},'')% source file not found
-        error([source_file ': not found'])
+        error([source_file{1} source_file{2} ': not found'])
     elseif exist(mexfilename,'file')~=3 || get_mod_date(mexfilename)<get_mod_date(filename{1})
          % if source file does not exist or it was modified after the mex file
         disp(['Compiling "' name ext '".'])
