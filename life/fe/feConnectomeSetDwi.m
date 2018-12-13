@@ -41,6 +41,15 @@ fe  = feSet(fe, sprintf('diffusion bvals %s',tag), ...
             dwiGet(dwi, 'diffusion bvals'));
 fe  = feSet(fe, sprintf('bvecs indices %s',tag),   ...
             dwiGet(dwi, 'diffusionimagenums'));
+        
+        
+dim = dwi.nifti.dim;
+coords = fe.roi.coords;
+coords(coords<1)=1;
+coords(coords(:,1)>dim(1), 1)=dim(1);
+coords(coords(:,2)>dim(2), 2)=dim(2);
+coords(coords(:,3)>dim(3), 3)=dim(3);
+fe.roi.coords = coords;
 
 % Extract the dwi signal at the coordinates of the connectome
 fe  = feSet(fe, sprintf('diffusion signal image %s',tag), ...
