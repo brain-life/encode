@@ -112,7 +112,13 @@ fibers = cell2mat(fibers(:)');
 
 % Compute voxels
 voxel_coord = round(fibers) + 1;
+
+% Clip coordinates to within imgsize
 voxel_coord(voxel_coord<1)=1;
+voxel_coord(1, voxel_coord(1,:)>imgsize(1))=imgsize(1);
+voxel_coord(2, voxel_coord(2,:)>imgsize(2))=imgsize(2);
+voxel_coord(3, voxel_coord(3,:)>imgsize(3))=imgsize(3);
+
 cols = sub2ind(imgsize, voxel_coord(1,:)', voxel_coord(2,:)', voxel_coord(3,:)');
 
 % Compute atoms

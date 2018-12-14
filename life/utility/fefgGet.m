@@ -221,7 +221,6 @@ switch strrep(lower(param),' ','')
     % matrix of integers.
     % val = round(horzcat(fg.fibers{:})'); 
     val = round(horzcat(fg.fibers{:})')+1;
-    val(val<1)=1;
     val = unique(val,'rows');
     
     case {'allimagecoords'}
