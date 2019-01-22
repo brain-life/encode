@@ -54,7 +54,7 @@ nNodesMax = round(MAXMEM*15000000/32000000);
 nTotalNodes = fefgGet(fe.fg,'n total nodes');
 nFibers      = feGet(fe,'n fibers');
 nBatch = ceil(nTotalNodes/nNodesMax); % Number of batch
-nFib_Batch = round(nFibers/nBatch); % Number of fibers per batch
+nFib_Batch = ceil(nFibers/nBatch); % Number of fibers per batch
 
 disp(['nNodesMax =',num2str(nNodesMax),', Total number of nodes = ',num2str(nTotalNodes),',  number of batch computation = ',num2str(nBatch)])
 
