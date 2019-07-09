@@ -25,7 +25,7 @@ end
 [ rmse_wVL, rmse_woVL, nFib_tract, nFib_PN, nVoxels] = feComputeVirtualLesion(fe, fascicleIndices);
 
 % After that we compute the actual virtual lesion.
-se = feComputeEvidence(rmse_wVL,rmse_woVl);
+se = feComputeEvidence(rmse_woVl,rmse_wVL);
 
 % Make plots of the results.
 fig(1).name = sprintf('rmse_distributions_%s',mfilename);
