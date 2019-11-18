@@ -29,17 +29,22 @@ end
 % Set MAXMEM available
 MAXMEM = getenv('MAXMEM'); % read setting from enviroment in kb
 if MAXMEM
-    disp(['MAXMEM set to ',MAXMEM]);
-    MAXMEM = str2num(MAXMEM);
+   disp(['MAXMEM set to ',MAXMEM]);
+   MAXMEM = str2num(MAXMEM);
 elseif (isunix||ismac)
-    disp('MAXMEM not set, need to calculate (UNIX or MacOS)')
-    [~,out] = system('cat /proc/meminfo |grep MemFree');
-    textcell = regexp(out,'\d*','Match');
-    MAXMEM = str2num(textcell{1});
+   disp('MAXMEM not set, need to calculate (UNIX or MacOS)')
+   if ismac
+      cmd1 = 'sysctl -a hw | grep memsize';
+   else
+      cmd1 = 'cat /proc/meminfo | grep MemFree';
+   end
+   [~,out] = system(cmd1);
+   textcell = regexp(out,'\d*','Match');
+   MAXMEM = str2num(textcell{1});
 elseif ispc
-    disp('MAXMEM not set, need to calculate (PC)')
-    user = memory;
-    MAXMEM = user.MaxPossibleArrayBytes/1024; % Max mem for arrays in Kb
+   disp('MAXMEM not set, need to calculate (PC)')
+   user = memory;
+   MAXMEM = user.MaxPossibleArrayBytes/1024; % Max mem for arrays in Kb
 end
 
 if ~MAXMEM 
