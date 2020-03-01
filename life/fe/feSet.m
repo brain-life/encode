@@ -19,8 +19,10 @@ function fe = feSet(fe,param,val,varargin)
 %----------
 %
 %
-%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
+%  Copyright (2020) Indiana University
+%
+%  Franco Pestilli frakkopesto@gmail.com and 
+%  Cesar F. Caiafa ccaiafa@gmail.com
 
 % Check for input parameters
 if notDefined('fe'),    error('fe structure required'); end

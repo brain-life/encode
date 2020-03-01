@@ -7,9 +7,11 @@ function fe = feBuildDictionaries(fe,Nphi,Ntheta)
 % Norient = (Nphi-2)(Ntheta-2) + 1. The first column in orient is a vector
 % pointing out to the zenith (spin-up) the rest of columns are vectors
 % covering the half sphere.
-
-%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
+%
+%  Copyright (2020) Indiana University
+%
+%  Franco Pestilli frakkopesto@gmail.com and 
+%  Cesar F. Caiafa ccaiafa@gmail.com
 
 tic
 fprintf(['\n[%s] Computing demeaned and non-demeaned difussivities dictionaries in a (',num2str(Nphi),'x',num2str(Ntheta),')-grid', ' ...'],mfilename); 

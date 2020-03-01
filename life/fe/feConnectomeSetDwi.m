@@ -17,8 +17,10 @@ function fe = feConnectomeSetDwi(fe,dwiFileName,isrepeat)
 % fe = feConnectomeSetDwi(fe,dwiFileName,1); % Set the repeated measure
 %                                            % data
 %
-%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
+%  Copyright (2020) Indiana University
+%
+%  Franco Pestilli frakkopesto@gmail.com and 
+%  Cesar F. Caiafa ccaiafa@gmail.com
 
 % Check inputs
 if notDefined('isrepeat'), isrepeat=0;end
@@ -35,11 +37,14 @@ fe  = feSet(fe, sprintf('dwi%sfile',tag),dwiFileName);
 dwi = feGet(fe, sprintf('dwi%s',tag));
 
 % Store the bvecs, bvals and the indices for the new file.
-fe  = feSet(fe, sprintf('diffusion bvecs %s',tag), ...
+fe  = feSet(fe, ...
+            sprintf('diffusion bvecs %s',tag), ...
             dwiGet(dwi, 'diffusion bvecs'));
-fe  = feSet(fe, sprintf('diffusion bvals %s',tag), ...
+fe  = feSet(fe, ...
+            sprintf('diffusion bvals %s',tag), ...
             dwiGet(dwi, 'diffusion bvals'));
-fe  = feSet(fe, sprintf('bvecs indices %s',tag),   ...
+fe  = feSet(fe, ...
+            sprintf('bvecs indices %s',tag),   ...
             dwiGet(dwi, 'diffusionimagenums'));
         
 dim = dwi.nifti.dim;
@@ -51,7 +56,8 @@ coords(coords(:,3)>dim(3), 3)=dim(3);
 fe.roi.coords = coords;
 
 % Extract the dwi signal at the coordinates of the connectome
-fe  = feSet(fe, sprintf('diffusion signal image %s',tag), ...
+fe  = feSet(fe, ...
+            sprintf('diffusion signal image %s',tag), ...
             dwiGet(dwi, 'diffusion signal image',feGet(fe,'roi coords')) );
           
 % Extract the non-diffusion direction signal at the coordinates of the

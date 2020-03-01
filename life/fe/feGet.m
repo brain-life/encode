@@ -10,10 +10,10 @@ function val = feGet(fe,param,varargin)
 %              location the the connectome coordinates for which there is
 %              a match in the coords
 %
+%  Copyright (2020) Indiana University
 %
-%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
-%
+%  Franco Pestilli frakkopesto@gmail.com and 
+%  Cesar F. Caiafa ccaiafa@gmail.com
 %
 %---------- List of arguments ----
 % Name of the current fe structure.
@@ -407,6 +407,11 @@ function val = feGet(fe,param,varargin)
 % anatomyfile = feGet(fe, 't1 file')
 %
 % End of feGet.m parameters, 
+%
+%  Copyright (2020) Indiana University
+%
+%  Franco Pestilli frakkopesto@gmail.com and 
+%  Cesar F. Caiafa ccaiafa@gmail.com
    
 val = [];
 
@@ -912,6 +917,7 @@ switch param
     % dSig = feGet(fe,'dsigdemeaned',coords);
     nVoxels = feGet(fe,'nVoxels');
     nBvecs  = feGet(fe,'nBvecs');
+    
     dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
     val     = (dSig - reshape(repmat( ...
       mean(reshape(dSig, nBvecs, nVoxels),1),...

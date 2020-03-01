@@ -6,10 +6,10 @@ function fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepe
 % We allow a set of (paramName,val) pairs in the varargin that will be
 % executed as fe = feSet(fe,paramName,val)
 %
-% Example: 
+%  Copyright (2020) Indiana University
 %
-%  Copyright (2019), Franco Pestilli (Indiana Univ.)  email: pestillifranco@gmail.com and
-%  Cesar F. Caiafa (CONICET) ccaiafa@gmail.com
+%  Franco Pestilli frakkopesto@gmail.com and 
+%  Cesar F. Caiafa ccaiafa@gmail.com
 
 %feOpenLocalCluster
 

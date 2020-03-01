@@ -1,5 +1,5 @@
 function [fh, fe] = demo_LiFE()
-%% Example of initialization and fitting LiFE model
+% Example of initialization and fitting of the LiFE model
 %
 % This demo function illustrates how to:
 %  - A - Set up a LiFE structure, identified as 'fe' (fascicle evaluation) in
@@ -51,11 +51,10 @@ function [fh, fe] = demo_LiFE()
 %  hardaware. This code has been tested with: 
 %
 %
-%  Copyright (2013-2014), Franco Pestilli, Stanford University, frakkopesto@gmail.com.
-% 
-%  Copyright (2016), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa
-%  (CONICET)
-%  email: frakkopesto@gmail.com and ccaiafa@gmail.com
+%  Copyright (2020) Indiana University
+%
+%  Franco Pestilli frakkopesto@gmail.com and 
+%  Cesar F. Caiafa ccaiafa@gmail.com
 
 % Intialize a local matlab cluster if the parallel toolbox is available.
 % This helps speeding up computations espacially for large conenctomes.
