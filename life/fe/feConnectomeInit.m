@@ -8,8 +8,8 @@ function fe = feConnectomeInit(dwiFile,fgFileName,feFileName,savedir,dwiFileRepe
 %
 % Example: 
 %
-%  Copyright (2015), Franco Pestilli (Indiana Univ.) - Cesar F. Caiafa (CONICET)
-%  email: pestillifranco@gmail.com and ccaiafa@gmail.com
+%  Copyright (2019), Franco Pestilli (Indiana Univ.)  email: pestillifranco@gmail.com and
+%  Cesar F. Caiafa (CONICET) ccaiafa@gmail.com
 
 %feOpenLocalCluster
 
@@ -37,7 +37,7 @@ if isstruct(fgFileName),  n  = fgFileName.name;
 else                   [~,n] = fileparts(fgFileName);
 end
 
-if notDefined('feFileName'),
+if notDefined('feFileName')
   feFileName = sprintf('%s-%s', datestr(now,30),n);
 end
 fe = feSet(fe, 'name',feFileName);

@@ -502,14 +502,24 @@ switch param
     %
     % val = feGet(fe,'bvecs');
     val = fe.life.bvecs;
+ 
+  case {'nbvecs'}
+    % Number of BVECS (normally organized as nBvecs X 3)
+    %
+    % val = feGet(fe,'n bvals');
+    val = size(feGet(fe,'bvecs'),1);
     
+    if val == 3
+        error('[%s] only 3 bvecs found, this is a very small numer. Likely a mistake.',mfilename); 
+    end
+
   case {'bvecsindices'}
     % Indices to the diffusion directions in the DWi 4th Dimension.
     %
     % val = feGet(fe,'bvecs indices');
     val = fe.life.bvecsindices;
     
-  case {'nbvecs','nbvals'}
+  case {'nbvals'}
     % Number of B0's
     %
     % val = feGet(fe,'n bvals');
@@ -535,7 +545,7 @@ switch param
     % val =feGet(fe,'dsiinvoxdemeaned');
     % val =feGet(fe,'dsiinvoxdemeaned',voxelsIndices);
     % val =feGet(fe,'dsiinvoxdemeaned',coords);
-    nBvecs     = feGet(fe,'nBvecs');
+    nBvecs       = feGet(fe,'nBvecs');
     voxelIndices = feGet(fe,'voxelsindices',varargin);
     val = fe.life.diffusion_signal_img(voxelIndices,:) - repmat(mean(fe.life.diffusion_signal_img(voxelIndices,:), 2),1,nBvecs);
     keyboard

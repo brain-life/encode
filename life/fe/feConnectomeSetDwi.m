@@ -25,7 +25,7 @@ if notDefined('isrepeat'), isrepeat=0;end
 
 % Build a tag for the calls to feSet.
 if isrepeat, tag = sprintf('repeat');
-else         tag = sprintf('');
+else,        tag = sprintf('');
 end
 
 % Set the ile name in the structure
@@ -41,7 +41,6 @@ fe  = feSet(fe, sprintf('diffusion bvals %s',tag), ...
             dwiGet(dwi, 'diffusion bvals'));
 fe  = feSet(fe, sprintf('bvecs indices %s',tag),   ...
             dwiGet(dwi, 'diffusionimagenums'));
-        
         
 dim = dwi.nifti.dim;
 coords = fe.roi.coords;
