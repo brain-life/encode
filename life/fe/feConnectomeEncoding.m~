@@ -27,11 +27,11 @@ if verLessThan('matlab','9.2')
     set(s.matlab.desktop.workspace, 'ArraySizeLimitEnabled',false);
 end
 
-% Get the Available System Memory (RAM)
+% Set MAXMEM available
 MAXMEM = getenv('MAXMEM'); % read setting from enviroment in kb
 if MAXMEM
    disp(['MAXMEM set to ',MAXMEM]);
-   MAXMEM = str2double(MAXMEM);
+   MAXMEM = str2num(MAXMEM);
 elseif (isunix||ismac)
    disp('MAXMEM not set, need to calculate (UNIX or MacOS)')
    if ismac
@@ -41,7 +41,7 @@ elseif (isunix||ismac)
    end
    [~,out] = system(cmd1);
    textcell = regexp(out,'\d*','Match');
-   MAXMEM = str2double(textcell{1});
+   MAXMEM = str2num(textcell{1});
 elseif ispc
    disp('MAXMEM not set, need to calculate (PC)')
    user = memory;
@@ -58,7 +58,7 @@ end
 nNodesMax    = round(MAXMEM*15000000/32000000); 
 nTotalNodes  = fefgGet(fe.fg,'n total nodes');
 nFibers      = feGet(fe,'n fibers');
-
+keyboard
 nBatch       = max([5,ceil(nTotalNodes/nNodesMax)]); % Number of batches
 nFib_Batch   = ceil(nFibers/nBatch); % Number of fibers per batch
 
