@@ -10,7 +10,7 @@ function val = feGet(fe,param,varargin)
 %              location the the connectome coordinates for which there is
 %              a match in the coords
 %
-%  Copyright (2020) Indiana University
+%  Copyright (2020) The University of Texas at Austin
 %
 %  Franco Pestilli frakkopesto@gmail.com and 
 %  Cesar F. Caiafa ccaiafa@gmail.com
