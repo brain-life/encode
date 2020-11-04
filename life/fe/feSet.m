@@ -88,10 +88,12 @@ switch param
     fe.life.bvecsindices = val;
   case {'bvals','diffusionbvals'}
     fe.life.bvals = val;
-  case {'nbvals','numberuniquediffusionbvals'}
-    fe.life.bvals_n = val;
-  case {'indexbvals','indexdiffusionbvals'}
-    fe.life.bvals_index = val;
+  case {'nshells','numberofshells'}
+  % This is the number of unique shells for multishell data
+    fe.life.shells_n = val;
+  case {'shellindex','indextoeachshellbves'}
+  % This is the index to the bvecs associated to each unique shell  
+    fe.life.shells_index = val;
   case {'diffusionsignalimage','dsi', 'diffusion_signal_img'}
     fe.life.diffusion_signal_img = val;
   case {'b0signalimage','b0img', 'diffusion_s0_im','s0image'}
@@ -166,10 +168,12 @@ switch param
   case {'bvalsrepeat','diffusionbvalsrepeat'}
     % fe = feSet(fe,'bvalsrepeat')
     fe.rep.bvals = val;
-  case {'nbvalsrepeat','numberuniquediffusionbvalsrepeat'}
-    fe.rep.bvals_n = val;
-  case {'indexbvalsrepeat','indexdiffusionbvalsrepeat'}
-    fe.rep.bvals_index = val;
+  case {'nshellsrepeat','numberofshellsrepeat'}
+  % This is the number of unique shells for multishell data
+    fe.rep.shells_n = val;
+  case {'shellindexrepeat','indextoeachshellbvecsrepeat'}
+  % This is the index to the bvecs associated to each unique shell  
+    fe.rep.shells_index = val;
   case {'imgsizerepeat'}
     fe.rep.imagedim = val;
 
