@@ -19,7 +19,7 @@ function fe = feSet(fe,param,val,varargin)
 %----------
 %
 %
-%  Copyright (2020) Indiana University
+%  Copyright (2020) The University of Texas at Austin
 %
 %  Franco Pestilli frakkopesto@gmail.com and 
 %  Cesar F. Caiafa ccaiafa@gmail.com
@@ -91,7 +91,7 @@ switch param
   case {'nshells','numberofshells'}
   % This is the number of unique shells for multishell data
     fe.life.shells_n = val;
-  case {'shellindex','indextoeachshellbves'}
+  case {'shellindex','indextoeachshellbvecs'}
   % This is the index to the bvecs associated to each unique shell  
     fe.life.shells_index = val;
   case {'diffusionsignalimage','dsi', 'diffusion_signal_img'}
