@@ -45,6 +45,11 @@ DictSig = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 
 D = diag(fe.life.modelTensor); % diagonal matix with diffusivities
 
+%[ shells, ~, shellindex ] = unique(round(bvals)); % round to get around noise in shells - FRAGILE FIX
+
+ubv = feGet(fe, 'nshells');
+ubi = feGet(fe, 'shellindex');
+
 % Compute each dictionary column for a different kernel orientation
 for j=1:Norient
     [Rot,~, ~] = svd(orient(:,j)); % Compute the eigen vectors of the kernel orientation
@@ -52,7 +57,13 @@ for j=1:Norient
     Q = Rot*D*Rot';
     %DictTensors(:,j) = Q(:);
     Dict(:,j) = exp(- bvals .* diag(bvecs*Q*bvecs')); % Compute the signal contribution of a fiber in the kernel orientation divided S0
-    DictSig(:,j) = Dict(:,j) - mean(Dict(:,j)); % demeaned signal
+    
+    % for every shell
+    for k=1:size(ubv, 1) 
+        si = ubi == ubv(k); % find the indices for the shell
+        DictSig(si,j) = Dict(si,j) - median(Dict(si,j)); % demedianed signal by shell (used to demean)
+    end
+    
 end
 
 fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,Dict,DictSig});
