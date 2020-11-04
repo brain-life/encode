@@ -17,7 +17,7 @@ function fe = feConnectomeSetDwi(fe,dwiFileName,isrepeat)
 % fe = feConnectomeSetDwi(fe,dwiFileName,1); % Set the repeated measure
 %                                            % data
 %
-%  Copyright (2020) Indiana University
+%  Copyright (2020) The Universityof Texas at Austin
 %
 %  Franco Pestilli frakkopesto@gmail.com and 
 %  Cesar F. Caiafa ccaiafa@gmail.com
