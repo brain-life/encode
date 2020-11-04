@@ -87,7 +87,11 @@ switch param
     % feSet(fe,'bvecsindices');
     fe.life.bvecsindices = val;
   case {'bvals','diffusionbvals'}
-    fe.life.bvals = val;    
+    fe.life.bvals = val;
+  case {'nbvals','numberuniquediffusionbvals'}
+    fe.life.bvals_n = val;
+  case {'indexbvals','indexdiffusionbvals'}
+    fe.life.bvals_index = val;
   case {'diffusionsignalimage','dsi', 'diffusion_signal_img'}
     fe.life.diffusion_signal_img = val;
   case {'b0signalimage','b0img', 'diffusion_s0_im','s0image'}
@@ -99,13 +103,12 @@ switch param
   case {'roivoxels','roicoords'}
     % What space?  What form for the coords?
     % Always in IMG coords in LiFE.
-    fe.roi.coords = val;
+    fe.roi.coords = val;    
   
-    
-    %% The LiFE model
+  % The LiFE model
   case 'mfiber'
-    fe.life.Mfiber = val;             % Fiber portion of M matrix
-  case {'measuredsignalfull', 'dsigmeasured'}      % Measured signal in ROI
+    fe.life.Mfiber = val;  % Fiber portion of M matrix
+  case {'measuredsignalfull', 'dsigmeasured'} % Measured signal in ROI
     fe.life.dSig  = val;
   case 'fit'
     fe.life.fit = val;
@@ -114,7 +117,7 @@ switch param
   case 'xvalfit'
     fe.life.xvalfit = val;
   
-    %% Connectome fibers information.
+  % Connectome fibers information.
   case {'numberofuniquefibersineachvoxel','uniquefibersnum','numberofuniquefibers','numuniquef'}
     fe.life.fibers.unique.num = val;
   case {'indextouniquefibersineachvoxel','uniquefibersindex','uniqueindex','indexesofuniquefibers','indexuniquef','uniquefibers'}
@@ -163,9 +166,13 @@ switch param
   case {'bvalsrepeat','diffusionbvalsrepeat'}
     % fe = feSet(fe,'bvalsrepeat')
     fe.rep.bvals = val;
+  case {'nbvalsrepeat','numberuniquediffusionbvalsrepeat'}
+    fe.rep.bvals_n = val;
+  case {'indexbvalsrepeat','indexdiffusionbvalsrepeat'}
+    fe.rep.bvals_index = val;
   case {'imgsizerepeat'}
     fe.rep.imagedim = val;
-    
+
   case {'anatomyfile'}
     fe.path.anatomy = val;
   case 'dwifile'
