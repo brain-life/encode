@@ -501,6 +501,18 @@ switch param
     %
     % sdir = feGet(fe,'savedir');
     val = fe.path.savedir;
+
+  case {'nshells','numberofshells','numshells'}
+    % This is the number of unique shells for multishell data
+    %
+    % val = feGet(fe,'nshells');
+    val = fe.life.shells_n;
+
+  case {'shellindex','indextoeachshellbvecs'}
+  % This is the index to the bvecs associated to each unique shell  
+    %
+    % val = feGet(fe,'nshshellindexells');
+    val = fe.life.shells_index;
     
   case {'bvecs'}
     % Diffusion directions.
