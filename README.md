@@ -152,7 +152,7 @@ This code allows you to compute compute the fascicles weights for two different 
 • fe.fg.colorRgb: [R, G, B], color specification for visualization.
 • fe.fg.thickness: [double], thickness specificattion for visualization.
 • fe.fg.visible: [binary], parameter for visualization.
-• fe.fg.seeds: Seeds used by MRTRIX software to generate the connec- tome.
+• fe.fg.seeds: Seeds used by MRTRIX software to generate the connectome.
 • fe.fg.seedRadius: MRTRIX parameter.
 • fe.fg.seedVoxelOffsets: MRTRIX parameter.
 • fe.fg.params: additional MRTRIX parameters.
