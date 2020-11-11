@@ -1310,7 +1310,7 @@ switch param
     val       = sqrt(mean((measured - predicted).^2,1));
     val       = val(feGet(fe,'voxelsindices',varargin));
    
-  case {'voxrmses0norm'}
+  case {'voxrmses0norm'} % CAN THIS BE OPTIMIZED FOR A MULTISHELL?
       % A volume of RMSE normalized by the S0 value in each voxel.
       rmse = feGet(fe,'vox rmse');
       s0   = feGet(fe,'b0signalimage')';

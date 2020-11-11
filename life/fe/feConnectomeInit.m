@@ -81,9 +81,9 @@ else % Default to stick and ball
   axialDiffusion  = 1;
   radialDiffusion = 0;
 end
-dParms(1) =  axialDiffusion; 
-dParms(2) = radialDiffusion; 
-dParms(3) = radialDiffusion;
+dParms(1) =  axialDiffusion;  % DEFINE THESE AS SEPARATE PER SHELL
+dParms(2) = radialDiffusion;  % FIGURE OUT HOW TO PASS A DIAGONAL ARRAY PER SHELL
+dParms(3) = radialDiffusion;  % MAKE DEFAULTS KIND TO ABSENCE, PASS nX3 ARRAY TO CONVERT TO DIAGONAL, USED IN feBuildDictionary
 Nphi = N;
 Ntheta = N;
 fe = feSet(fe,'model tensor',dParms);
