@@ -14,7 +14,7 @@ function fe = feBuildDictionaries(fe,Nphi,Ntheta)
 %  Cesar F. Caiafa ccaiafa@gmail.com
 
 tic
-fprintf(['\n[%s] Computing demeaned and non-demeaned difussivities dictionaries in a (',num2str(Nphi),'x',num2str(Ntheta),')-grid', ' ...'],mfilename); 
+fprintf(['\n[%s] Computing demeaned and non-demeaned diffusivities dictionaries in a (',num2str(Nphi),'x',num2str(Ntheta),')-grid', ' ...'],mfilename); 
 fprintf('took: %2.3fs.\n',toc)
 
 % Compute orientation vectors
@@ -43,30 +43,94 @@ Dict = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 DictSig = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 %DictTensors = zeros(9,Norient); % Initialize Tensors Dictionary matrix
 
-D = diag(fe.life.modelTensor); % diagonal matix with diffusivities
-% THIS WILL GO IN THE LOOP BELOW
+% catch Kurtosis estimates for debugging
+akc = zeros(nBvecs,Norient);
+KDict = zeros(nBvecs,Norient); 
 
 %[ shells, ~, shellindex ] = unique(round(bvals)); % round to get around noise in shells - FRAGILE FIX
 
+% pull the shell information
 ubv = feGet(fe, 'nshells');
 ubi = feGet(fe, 'shellindex');
 
 % Compute each dictionary column for a different kernel orientation
 for j=1:Norient
-    [Rot,~, ~] = svd(orient(:,j)); % Compute the eigen vectors of the kernel orientation
     
-    Q = Rot*D*Rot'; % THIS GETS PULLED BY SHELL
-    %DictTensors(:,j) = Q(:);
-    Dict(:,j) = exp(- bvals .* diag(bvecs*Q*bvecs')); % Compute the signal contribution of a fiber in the kernel orientation divided S0
-    % THIS CAN BE MODIFIED - HARD-CODED TENSOR - COULD BE DKI?
+    % Compute the eigen vectors of the kernel orientation
+    [Rot,~, ~] = svd(orient(:,j));
     
-    % for every shell - THIS INCORPORATES EVERYTHING BUT ROT
-    for k=1:size(ubv, 1) 
-        si = ubi == ubv(k); % find the indices for the shell
-        DictSig(si,j) = Dict(si,j) - median(Dict(si,j)); % demedianed signal by shell (used to demean)
+    % for every shell
+    for k=1:size(ubv, 1)
+        
+        % find the indices for the shell
+        si = ubi == ubv(k); 
+        
+        % create diagonal matix with diffusivities for current shell
+        % this assumes tensor fits for shell are entered in the order this will parse them in
+        D = diag(fe.life.modelTensor(k,:)); 
+        
+        % estimate Q for tensor values in shell
+        Q = Rot*D*Rot';
+        
+        % logical starts here: if kurtosis run these steps, else just fill in tensor
+        
+        % mean diffusivity of tensor?
+        md = mean(diag(D));
+        
+        % pull tensor / kurtosis parameters for hard indexing of equations
+        dt = fe.life.modelTensor(k,:);
+        kt = fe.life.modelKurtosis;
+        
+        % apparent diffusion coefficient from dipy - 
+        adc = bvecs(si,1) .* bvecs(si,1) * dt(1) + ...
+              2 * bvecs(si,1) .* bvecs(si,2) * dt(2) + ...
+              bvecs(si,2) .* bvecs(si,2) .* dt(3) + ...
+              2 * bvecs(si,1) .* bvecs(si,3) * 0 + ...
+              2 * bvecs(si,2) .* bvecs(si,3) * 0 + ...
+              bvecs(si,3) .* bvecs(si,3) * 0;
+       
+        % apparent diffusion variance from dipy
+        % reordered to ensure match of kt params from mrtrix3
+        adv = ...
+        bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* kt(1) + ...       % xxxx
+        bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(2) + ...       % yyyy
+        bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(3) + ...       % zzzz
+        4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* kt(4) + ...   % xxxy
+        4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* kt(5) + ...   % xxxz
+        4 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(6) + ...   % xyyy
+        4 * bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(7) + ...   % xzzz
+        4 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(8) + ...   % yyyz
+        4 * bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(9) + ...   % yzzz
+        6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* kt(10) + ...  % xxyy
+        6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* kt(11) + ...  % xxzz
+        6 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(12) + ...  % yyzz
+        12 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* kt(13) + ... % xxyz
+        12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(14) + ... % xyyz
+        12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(15);      % xyzz
+        
+        % zero out noisy (bad) adc estimates
+        adc(adc < 0) = 0;
+    
+        % estimate apparent kutosis coefficient - store in temp var
+        takc = adv .* ((md / adc).^2)'; % always finds same param at 20/50, rest are zeros?
+    
+        % zero out noisy (bad) akc estimates - use tmp to avoid indexing of large matrix
+        takc(takc < -3/7) = -3/7;
+        
+        akc(si,j) = takc;
+        
+        % Compute the signal contribution of a fiber in the kernel orientation divided S0
+        Dict(si,j)  = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)')); 
+        KDict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si,j))/6);
+        
+        % demedianed signal by shell (used to demean)
+        DictSig(si,j) = Dict(si,j) - median(Dict(si,j)); 
+        
     end
     
 end
+
+disp('Done.');
 
 fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,Dict,DictSig});
 

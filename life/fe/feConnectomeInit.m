@@ -60,7 +60,7 @@ if ~notDefined('dwiFileRepeated')
   fe = feConnectomeSetDwi(fe,dwiFileRepeated,1);
 end
 
-%% Anatomy Install the path tot he anatomical high-resolution file.
+%% Anatomy Install the path to the anatomical high-resolution file.
 if ~notDefined('anatomyFile')
   fe = feSet(fe,'anatomy file',anatomyFile);
 end
@@ -74,19 +74,28 @@ end
 %tic
 if ~isempty(varargin)
   N = varargin{1}(1);
-  axialDiffusion  = varargin{2}(1);
-  radialDiffusion = varargin{2}(2);  
+  tensorParams = varargin{2};
+  kurtosisPars = varargin{3};
+  %axialDiffusion  = varargin{2}(1);
+  %radialDiffusion = varargin{2}(2);
+  %radialDiffusion2 = varargin{2}(3);
 else % Default to stick and ball
   N = 360;   
+  % very default tensor settings
   axialDiffusion  = 1;
   radialDiffusion = 0;
+  tensorModel = [ axialDiffusion radialDiffusion radialDiffusion ]; 
+  tensorParams = [];
+  kurtosisPars = [];
+  nshells =  feGet(fe, 'nshells');
+  for i=1:nshells
+      tensorParams = [ tensorParams; tensorModel ];
+  end
 end
-dParms(1) =  axialDiffusion;  % DEFINE THESE AS SEPARATE PER SHELL
-dParms(2) = radialDiffusion;  % FIGURE OUT HOW TO PASS A DIAGONAL ARRAY PER SHELL
-dParms(3) = radialDiffusion;  % MAKE DEFAULTS KIND TO ABSENCE, PASS nX3 ARRAY TO CONVERT TO DIAGONAL, USED IN feBuildDictionary
 Nphi = N;
 Ntheta = N;
-fe = feSet(fe,'model tensor',dParms);
+fe = feSet(fe,'model tensor',tensorParams); % TENSOR PARAMS NEEDS TO BE SANITIZED BETTER
+fe.life.modelKurtosis = kurtosisPars; % add as feSet fxn?
 fe = feBuildDictionaries(fe,Nphi,Ntheta);
 
 %% Encode Connectome in multidimensional tensor
