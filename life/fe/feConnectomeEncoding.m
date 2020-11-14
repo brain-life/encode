@@ -144,9 +144,6 @@ A = sparse(cols,tubes,ones(nTotalNodes,1),nTotalVoxels,nFibers);
 roi_coords = feGet(fe,'roicoords');
 roi_ind = sub2ind(imgsize,roi_coords(:,1)',roi_coords(:,2)',roi_coords(:,3)');
 
-% SIGNAL NORMALIZATION NEEDS TO HAPPEN BY SHELL IN THIS OPERATION
-% IT DOES NOT CURRENTLY
-
 % Restrict the Sparse Tensor and matrix A to the ROI voxels only
 Phi = Phi(:,roi_ind,:); % reduce tensor in 3rd dimension to roi voxels only
 A = A(roi_ind,:);

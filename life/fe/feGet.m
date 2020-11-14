@@ -566,7 +566,7 @@ switch param
     voxelIndices = feGet(fe,'voxelsindices',varargin);
     val = fe.life.diffusion_signal_img(voxelIndices,:) - repmat(mean(fe.life.diffusion_signal_img(voxelIndices,:), 2),1,nBvecs);
     keyboard
-    % THis seems to be wrong
+    % THis seems to be wrong - DOES NOT DO MULTISHELL CORRECTLY
     
   case {'b0signalimage','b0vox'}
     % Get the diffusion signal at 0 diffusion weighting (B0) for this voxel
@@ -929,11 +929,22 @@ switch param
     % dSig = feGet(fe,'dsigdemeaned',coords);
     nVoxels = feGet(fe,'nVoxels');
     nBvecs  = feGet(fe,'nBvecs');
+    shells  = feGet(fe,'shellindex');
+    nshell  = feGet(fe,'nshells');
     
-    dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
-    val     = (dSig - reshape(repmat( ...
-      mean(reshape(dSig, nBvecs, nVoxels),1),...
-      nBvecs,1), size(dSig)))';
+    % THIS IS DEMEANING ACROSS SHELL
+    dSig = fe.life.diffusion_signal_img;
+    %dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
+    
+    % loop over shells for demeaing
+    for shell = 1:size(nshell, 1)
+        s = nshell(shell); % index into listed shell for good logic
+        dSigMean = mean(dSig(:, shells == s), 2);
+        dSig(:, shells == s) = dSig(:, shells == s) - dSigMean;
+    end
+    %val = (dSig - reshape(repmat(mean(reshape(dSig, nBvecs, nVoxels),1),nBvecs,1), size(dSig)))';
+    val = reshape(dSig, [nVoxels*nBvecs,1]);
+    
     % Return a subset of voxels
     if ~isempty(varargin)
       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
@@ -1140,7 +1151,7 @@ switch param
     % res = feGet(fe,'res sig full');
     % res = feGet(fe, 'res sig full',coords);
     % res = feGet(fe, 'res sig full',voxelIndex);
-    val = (feGet(fe,'dsig full')    - feGet(fe,'psig full')');
+    val = (feGet(fe,'dsig full') - feGet(fe,'psig full')');
     if ~isempty(varargin)
       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
       % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
@@ -1314,7 +1325,7 @@ switch param
       % A volume of RMSE normalized by the S0 value in each voxel.
       rmse = feGet(fe,'vox rmse');
       s0   = feGet(fe,'b0signalimage')';
-      % Some voxels can have a S0=0. We replace the S0 in these voxles with
+      % Some voxels can have a S0=0. We replace the S0 in these voxels with
       % a NaN. 
       idx = (s0 == 0);
       rmse(idx) = nan(size(find(idx)));
@@ -1655,7 +1666,6 @@ switch param
   otherwise
     help('feGet')
     fprintf('[feGet] Unknown parameter << %s >>...\n',param);
-    keyboard
 end
 
 end % END MAIN FUNCTION
