@@ -39,19 +39,74 @@ nBvecs       = feGet(fe,'nBvecs');
 bvecs        = feGet(fe,'bvecs');                      % bvecs
 bvals        = feGet(fe,'bvals');                      % bvals
 
+%bvals = bvals * 1000;
+
 Dict = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 DictSig = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 %DictTensors = zeros(9,Norient); % Initialize Tensors Dictionary matrix
 
 % catch Kurtosis estimates for debugging
-akc = zeros(nBvecs,Norient);
-KDict = zeros(nBvecs,Norient); 
-
-%[ shells, ~, shellindex ] = unique(round(bvals)); % round to get around noise in shells - FRAGILE FIX
+%KDict = zeros(nBvecs,Norient); 
+akc = zeros(nBvecs,1);
 
 % pull the shell information
 ubv = feGet(fe, 'nshells');
 ubi = feGet(fe, 'shellindex');
+
+% pull diffusion tensor
+dt = feGet(fe, 'model tensor');
+
+% pull kurtosis fit - needs feGet
+kt = fe.life.modelKurtosis;
+
+% build apparent kurtosis coefficient - akc
+for i=1:size(ubv,1)
+    
+    % pull tensor parameters for hard indexing of equations
+    sdt = dt(i,:);
+    
+    % find the indices for the shell
+    si = ubi == ubv(i); 
+        
+    % mean diffusivity of tensor from forward model
+    md = mean(sdt);
+        
+    % apparent diffusion coefficient - matches dipy
+    adc = bvecs(si,1) .* bvecs(si,1) * sdt(1) + ...
+          2 * bvecs(si,1) .* bvecs(si,2) * sdt(2) + ...
+          bvecs(si,2) .* bvecs(si,2) .* sdt(3) + ...
+          2 * bvecs(si,1) .* bvecs(si,3) * 0 + ... % only store primary eigenvalues in
+          2 * bvecs(si,2) .* bvecs(si,3) * 0 + ... % LiFE prediction. These are 0.
+          bvecs(si,3) .* bvecs(si,3) * 0;
+    
+    % apparent diffusion variance - matches dipy
+    adv = ...
+          bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* kt(1) + ...       % xxxx
+          bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(2) + ...       % yyyy
+          bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(3) + ...       % zzzz
+          4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* kt(4) + ...   % xxxy
+          4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* kt(5) + ...   % xxxz
+          4 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(6) + ...   % xyyy
+          4 * bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(7) + ...   % xzzz
+          4 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(8) + ...   % yyyz
+          4 * bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(9) + ...   % yzzz
+          6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* kt(10) + ...  % xxyy
+          6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* kt(11) + ...  % xxzz
+          6 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(12) + ...  % yyzz
+          12 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* kt(13) + ... % xxyz
+          12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(14) + ... % xyyz
+          12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(15);      % xyzz
+    
+    % zero out noisy (bad) adc estimates
+    adc(adc < 0) = 0;
+    
+    % estimate apparent kutosis coefficient - matches dipy
+    akc(si) = adv .* ((md ./ adc).^2);
+    
+    % zero out noisy (bad) akc estimates
+    akc(akc < -3/7) = -3/7;
+    
+end
 
 % Compute each dictionary column for a different kernel orientation
 for j=1:Norient
@@ -60,7 +115,7 @@ for j=1:Norient
     [Rot,~, ~] = svd(orient(:,j));
     
     % for every shell
-    for k=1:size(ubv, 1)
+    for k=1:size(ubv,1)
         
         % find the indices for the shell
         si = ubi == ubv(k); 
@@ -72,65 +127,24 @@ for j=1:Norient
         % estimate Q for tensor values in shell
         Q = Rot*D*Rot';
         
-        % logical starts here: if kurtosis run these steps, else just fill in tensor
-        
-        % mean diffusivity of tensor?
-        md = mean(diag(D));
-        
-        % pull tensor / kurtosis parameters for hard indexing of equations
-        dt = fe.life.modelTensor(k,:);
-        kt = fe.life.modelKurtosis;
-        
-        % apparent diffusion coefficient from dipy - 
-        adc = bvecs(si,1) .* bvecs(si,1) * dt(1) + ...
-              2 * bvecs(si,1) .* bvecs(si,2) * dt(2) + ...
-              bvecs(si,2) .* bvecs(si,2) .* dt(3) + ...
-              2 * bvecs(si,1) .* bvecs(si,3) * 0 + ...
-              2 * bvecs(si,2) .* bvecs(si,3) * 0 + ...
-              bvecs(si,3) .* bvecs(si,3) * 0;
-       
-        % apparent diffusion variance from dipy
-        % reordered to ensure match of kt params from mrtrix3
-        adv = ...
-        bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* kt(1) + ...       % xxxx
-        bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(2) + ...       % yyyy
-        bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(3) + ...       % zzzz
-        4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* kt(4) + ...   % xxxy
-        4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* kt(5) + ...   % xxxz
-        4 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(6) + ...   % xyyy
-        4 * bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(7) + ...   % xzzz
-        4 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(8) + ...   % yyyz
-        4 * bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(9) + ...   % yzzz
-        6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* kt(10) + ...  % xxyy
-        6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* kt(11) + ...  % xxzz
-        6 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(12) + ...  % yyzz
-        12 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* kt(13) + ... % xxyz
-        12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(14) + ... % xyyz
-        12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(15);      % xyzz
-        
-        % zero out noisy (bad) adc estimates
-        adc(adc < 0) = 0;
-    
-        % estimate apparent kutosis coefficient - store in temp var
-        takc = adv .* ((md / adc).^2)'; % always finds same param at 20/50, rest are zeros?
-    
-        % zero out noisy (bad) akc estimates - use tmp to avoid indexing of large matrix
-        takc(takc < -3/7) = -3/7;
-        
-        akc(si,j) = takc;
-        
         % Compute the signal contribution of a fiber in the kernel orientation divided S0
         Dict(si,j)  = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)')); 
-        KDict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si,j))/6);
+        %Dict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si))/6);
         
-        % demedianed signal by shell (used to demean)
-        DictSig(si,j) = Dict(si,j) - median(Dict(si,j)); 
+        % demeaned signal by shell
+        DictSig(si,j) = Dict(si,j) - mean(Dict(si,j)); 
         
     end
     
 end
 
-disp('Done.');
+% figure; hold on;
+% for ii = 1:5000
+%     plot(Dict(:, ii), KDict(:, ii), '.', 'color', 'k');
+% end
+% title('Predicted Diffusion x Predicted Kurtosis');
+% xlabel('Diffusion');
+% ylabel('Kurtosis');
 
 fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,Dict,DictSig});
 
