@@ -59,7 +59,7 @@ fe  = feSet(fe, ...
 % We extract the bvalues and find the unique of them and assign them to each shell.
 bvals = feGet(fe,'bvals');
 [nshells, ~, shellindex] = unique(round(bvals));
-fe  = feSet(fe, 'nshells', nshells);
+fe  = feSet(fe, 'nshells', length(nshells));
 fe  = feSet(fe, 'shellindex', shellindex);
 
 dim = dwi.nifti.dim;

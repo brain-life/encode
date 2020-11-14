@@ -931,14 +931,14 @@ switch param
     nBvecs  = feGet(fe,'nBvecs');
     shells  = feGet(fe,'shellindex');
     nshell  = feGet(fe,'nshells');
-    
+    ushell  = unique(shells);
     % THIS IS DEMEANING ACROSS SHELL
     dSig = fe.life.diffusion_signal_img;
     %dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
     
     % loop over shells for demeaing
-    for shell = 1:size(nshell, 1)
-        s = nshell(shell); % index into listed shell for good logic
+    for shell = 1:nshell
+        s = ushell(shell); % index into listed shell for good logic
         dSigMean = mean(dSig(:, shells == s), 2);
         dSig(:, shells == s) = dSig(:, shells == s) - dSigMean;
     end
