@@ -52,6 +52,7 @@ akc = zeros(nBvecs,1);
 % pull the shell information
 ubv = feGet(fe, 'nshells');
 ubi = feGet(fe, 'shellindex');
+ubl = unique(ubi);
 
 % pull diffusion tensor
 dt = feGet(fe, 'model tensor');
@@ -60,13 +61,13 @@ dt = feGet(fe, 'model tensor');
 kt = fe.life.modelKurtosis;
 
 % build apparent kurtosis coefficient - akc
-for i=1:size(ubv,1)
+for i=1:ubv
     
     % pull tensor parameters for hard indexing of equations
     sdt = dt(i,:);
     
     % find the indices for the shell
-    si = ubi == ubv(i); 
+    si = ubi == ubl(i); 
         
     % mean diffusivity of tensor from forward model
     md = mean(sdt);
@@ -115,10 +116,10 @@ for j=1:Norient
     [Rot,~, ~] = svd(orient(:,j));
     
     % for every shell
-    for k=1:size(ubv,1)
+    for k=1:ubv
         
         % find the indices for the shell
-        si = ubi == ubv(k); 
+        si = ubi == ubl(k); 
         
         % create diagonal matix with diffusivities for current shell
         % this assumes tensor fits for shell are entered in the order this will parse them in
@@ -128,8 +129,8 @@ for j=1:Norient
         Q = Rot*D*Rot';
         
         % Compute the signal contribution of a fiber in the kernel orientation divided S0
-        Dict(si,j)  = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)')); 
-        %Dict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si))/6);
+        %Dict(si,j)  = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)')); 
+        Dict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si))/6);
         
         % demeaned signal by shell
         DictSig(si,j) = Dict(si,j) - mean(Dict(si,j)); 
