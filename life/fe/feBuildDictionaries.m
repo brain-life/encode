@@ -39,6 +39,7 @@ nBvecs       = feGet(fe,'nBvecs');
 bvecs        = feGet(fe,'bvecs');                      % bvecs
 bvals        = feGet(fe,'bvals');                      % bvals
 
+%bvecs(:,1) = -bvecs(:,1); % better observed x predicted correlation
 %bvals = bvals * 1000;
 
 Dict = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
@@ -46,7 +47,8 @@ DictSig = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 %DictTensors = zeros(9,Norient); % Initialize Tensors Dictionary matrix
 
 % catch Kurtosis estimates for debugging
-%KDict = zeros(nBvecs,Norient); 
+KDict = zeros(nBvecs,Norient); 
+KDictSig = zeros(nBvecs,Norient); 
 akc = zeros(nBvecs,1);
 
 % pull the shell information
@@ -106,7 +108,7 @@ for i=1:ubv
     
     % zero out noisy (bad) akc estimates
     akc(akc < -3/7) = -3/7;
-    
+        
 end
 
 % Compute each dictionary column for a different kernel orientation
@@ -123,17 +125,18 @@ for j=1:Norient
         
         % create diagonal matix with diffusivities for current shell
         % this assumes tensor fits for shell are entered in the order this will parse them in
-        D = diag(fe.life.modelTensor(k,:)); 
+        D = diag(dt(k,:));
         
         % estimate Q for tensor values in shell
         Q = Rot*D*Rot';
         
         % Compute the signal contribution of a fiber in the kernel orientation divided S0
-        %Dict(si,j)  = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)')); 
-        Dict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si))/6);
+        Dict(si,j)  = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)')); 
+        KDict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si))/6);
         
         % demeaned signal by shell
         DictSig(si,j) = Dict(si,j) - mean(Dict(si,j)); 
+        KDictSig(si,j) = KDict(si,j) - mean(KDict(si,j));
         
     end
     
@@ -148,5 +151,10 @@ end
 % ylabel('Kurtosis');
 
 fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,Dict,DictSig});
+
+% hard add kurtosis dictionaries / akc for debugging
+fe.life.M.KDict = KDict;
+fe.life.M.KDictSig = KDictSig;
+fe.life.M.akc = akc; 
 
 end
