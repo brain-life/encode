@@ -933,18 +933,21 @@ switch param
     shells  = feGet(fe,'shellindex');
     nshell  = feGet(fe,'nshells');
     ushell  = unique(shells);
-    % THIS IS DEMEANING ACROSS SHELL
-    dSig = fe.life.diffusion_signal_img;
-    %dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
+    
+    % HOPEFULLY THIS WORKS NOW - NEEDED TO BE TRANSPOSED
+    dSig = fe.life.diffusion_signal_img';
     
     % loop over shells for demeaing
     for shell = 1:nshell
         s = ushell(shell); % index into listed shell for good logic
-        dSigMean = mean(dSig(:, shells == s), 2);
-        dSig(:, shells == s) = dSig(:, shells == s) - dSigMean;
+        dSigMean = mean(dSig(shells == s, :));
+        dSig(shells == s, :) = dSig(shells == s, :) - repmat(dSigMean, [ sum(shells == s) 1 ]);
     end
-    %val = (dSig - reshape(repmat(mean(reshape(dSig, nBvecs, nVoxels),1),nBvecs,1), size(dSig)))';
     val = reshape(dSig, [nVoxels*nBvecs,1]);
+    
+    % % original demeaning operation
+    %dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
+    %val = (dSig - reshape(repmat(mean(reshape(dSig, nBvecs, nVoxels),1),nBvecs,1), size(dSig)))';
     
     % Return a subset of voxels
     if ~isempty(varargin)
