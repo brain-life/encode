@@ -934,7 +934,8 @@ switch param
     nshell  = feGet(fe,'nshells');
     ushell  = unique(shells);
     
-    % HOPEFULLY THIS WORKS NOW - NEEDED TO BE TRANSPOSED
+    % this works now - data needs to be transposed from how it's stored to
+    % match the unwound data used during prediction
     dSig = fe.life.diffusion_signal_img';
     
     % loop over shells for demeaing
