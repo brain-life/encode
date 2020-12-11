@@ -1668,6 +1668,11 @@ switch param
         s0 = fe.life.s0;
         val = ones(nTheta,1)*s0' + D*B; % with iso          
         
+  case 'dwioffset'
+      val = fe.life.xform.dwi_offset;
+  case 'anatoffset'
+      val = fe.life.xform.anat_offset;
+      
   otherwise
     help('feGet')
     fprintf('[feGet] Unknown parameter << %s >>...\n',param);

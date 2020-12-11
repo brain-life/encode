@@ -30,6 +30,9 @@ fe = feSet(fe,'savedir',savedir);
 tempNi = niftiRead(dwiFile);
 fe = feSet(fe, 'img2acpc xform', tempNi.qto_xyz);
 fe = feSet(fe, 'acpc2img xform', inv(tempNi.qto_xyz));
+
+% set the offset for files as well, then clear it
+fe = feSet(fe, 'dwi offset', tempNi.qto_xyz(1:3,4)');
 clear tempNi
 
 % Set up the fe name
@@ -62,7 +65,39 @@ end
 
 %% Anatomy Install the path to the anatomical high-resolution file.
 if ~notDefined('anatomyFile')
-  fe = feSet(fe,'anatomy file',anatomyFile);
+    
+    fe = feSet(fe,'anatomy file',anatomyFile);
+    
+    try
+        tempNi = niftiRead(anatomyFile);
+    catch
+        error('Anatomy file unable to be opened with niftiRead()');
+    end
+    
+    fe = feSet(fe, 'anat offset', tempNi.qto_xyz(1:3,4)');
+    clear tempNi
+    
+    % add check to file headers for consistent orientation between dwi / anat
+    
+    % load minimum data for check - ignore repeat dwi for now
+    doff = feGet(fe, 'dwi offset');
+    aoff = feGet(fe, 'anat offset');
+    
+    % check x dimension is consistently signed
+    if ~(all([ doff(1) aoff(1) ] < 0) || all([ doff(1) aoff(1) ] > 0))
+        warning('POTENTIAL X-FLIP - qoffset_x is different between the dwi and anatomy files.');
+    end
+    
+    % check y dimension is consistently signed
+    if ~(all([ doff(2) aoff(2) ] < 0) || all([ doff(2) aoff(2) ] > 0))
+        warning('POTENTIAL Y-FLIP - qoffset_y is different between the dwi and anatomy files.');
+    end
+    
+    % check z dimension is consistently signed
+    if ~(all([ doff(3) aoff(3) ] < 0) || all([ doff(3) aoff(3) ] > 0))
+        warning('POTENTIAL Z-FLIP - qoffset_z is different between the dwi and anatomy files.');
+    end
+    
 end
 
 %% Precompute Dictionary of orientations and canonical demeaned signals
