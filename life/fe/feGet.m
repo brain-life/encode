@@ -1667,11 +1667,25 @@ switch param
         
         s0 = fe.life.s0;
         val = ones(nTheta,1)*s0' + D*B; % with iso          
-        
+  
+  case {'modelkurtosis'}
+      val = fe.life.modelKurtosis;
+  case {'akc'}
+      val = fe.life.M.akc;
+  case {'dwi2acpc'}
+      val = fe.life.xform.img2acpc;
+  case {'dwi2img'}
+      val = fe.life.xform.acpc2img;      
+  case {'anat2acpc'}
+      val = fe.life.xform.anat2acpc;
+  case {'anat2img'}
+      val = fe.life.xform.anat2img;      
   case 'dwioffset'
-      val = fe.life.xform.dwi_offset;
+      tmp = feGet(fe, 'dwi2acpc');
+      val = tmp(1:3,4)';
   case 'anatoffset'
-      val = fe.life.xform.anat_offset;
+      tmp = feGet(fe, 'anat2acpc');
+      val = tmp(1:3,4)';
       
   otherwise
     help('feGet')

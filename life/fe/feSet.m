@@ -217,11 +217,19 @@ switch param
     fe.life.M.tracts{Ntracts+1}.ind = find(val.index==0);
     fe.life.M.tracts{Ntracts+1}.name = 'not a tract'; 
             
-  case 'dwioffset'
-      fe.life.xform.dwi_offset = val;
-  case 'anatoffset'
-      fe.life.xform.anat_offset = val;
-      
+  case {'xformanat2acpc','anat2acpc','anat2acpcxform'}
+    fe.life.xform.anat2acpc = val;
+  case {'xformacpc2anat','acpc2anat','acpc2anatxform'}
+    fe.life.xform.acpc2anat = val;
+%   case 'dwioffset'
+%     fe.life.xform.dwi_offset = val;
+%   case 'anatoffset'
+%     fe.life.xform.anat_offset = val;
+  case {'modelkurtosis'}
+    fe.life.modelKurtosis = val;
+  case {'akc'}
+    fe.life.M.akc = val;
+
   otherwise
     error('Unknown parameter %s\n',param);
 end
