@@ -171,4 +171,4 @@ This code allows you to compute compute the fascicles weights for two different 
 ```
 
 ### Notes
-This software is not compatible with Matlab 2014b, but only with later versions of MatLab.
+This software is currently compatible with Matlab 2020b or higher and *only* with Mac OSX and Linux (Ubuntu/Fedora).
