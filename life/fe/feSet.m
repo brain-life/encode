@@ -90,7 +90,7 @@ switch param
     fe.life.bvals = val;
   case {'nshells','numberofshells'}
   % This is the number of unique shells for multishell data
-    fe.life.shells_n = val;
+    fe.life.nshells = val;
   case {'shellindex','indextoeachshellbvecs'}
   % This is the index to the bvecs associated to each unique shell  
     fe.life.shells_index = val;
@@ -170,7 +170,7 @@ switch param
     fe.rep.bvals = val;
   case {'nshellsrepeat','numberofshellsrepeat'}
   % This is the number of unique shells for multishell data
-    fe.rep.shells_n = val;
+    fe.rep.nshells = val;
   case {'shellindexrepeat','indextoeachshellbvecsrepeat'}
   % This is the index to the bvecs associated to each unique shell  
     fe.rep.shells_index = val;

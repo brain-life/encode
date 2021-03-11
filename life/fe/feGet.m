@@ -506,13 +506,27 @@ switch param
     % This is the number of unique shells for multishell data
     %
     % val = feGet(fe,'nshells');
-    val = fe.life.shells_n;
+    
+    % if nshells isn't present, it's an old single shell structure
+    if ~isfield(fe.life, 'nshells')
+        val = 1; % fill in structure and set the value to 1
+        feSet(fe, 'nshells', val); % add it to the structure
+    else % otherwise pull the value set during encoding
+        val = fe.life.nshells;
+    end
 
   case {'shellindex','indextoeachshellbvecs'}
   % This is the index to the bvecs associated to each unique shell  
     %
     % val = feGet(fe,'nshshellindexells');
-    val = fe.life.shells_index;
+    
+    % if shellsindex isn't present, it's an old single shell structure
+    if ~isfield(fe.life, 'shells_index') 
+        val = ones(feGet(fe, 'nbvals'), 1); % fill in all ones for the index
+        feSet(fe, 'shellindex', val); % add it to the structure
+    else % otherwise pull the value set during encoding
+        val = fe.life.shells_index;
+    end
     
   case {'bvecs'}
     % Diffusion directions.
