@@ -22,6 +22,7 @@ We provide demos to explain how to:
 #### Copyright (2017), [Cesar Caiafa](http://web.fi.uba.ar/~ccaiafa), ccaiafa@gmail.com and [Franco Pestilli](https://psych.indiana.edu/directory/faculty/pestilli-franco.html), frakkopesto@gmail.com
 
 ## [Stable code release](https://github.com/brain-life/encode/releases/tag/v0.45).
+## [![View Linear Fascicle Evaluation (LiFE) on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/88698-linear-fascicle-evaluation-life)
 
 ## How to cite the software.
 [Caiafa, C. and Pestilli, F. Multidimensional encoding of brain connectomes. Scientific Reports. volume 7, Article number: 11491 (2017)](https://www.nature.com/articles/s41598-017-09250-w).
