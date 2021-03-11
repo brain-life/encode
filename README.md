@@ -3,16 +3,16 @@
 ![alt tag](https://cloud.githubusercontent.com/assets/11638664/18526917/8a73562c-7a90-11e6-93d6-7bd5055b1f32.png)
 
 # About
-This software implements a framework to encode structural brain connectomes into multidimensional arrays. These arrays are commonly referred to as [tensors](https://arxiv.org/abs/1403.4462). Encoding Connectomes provides an agile framework for computing over connectome edges and nodes efficiently. We provide several examples of operations that can be performed using the framework.
+This software implements a framework to encode structural brain connectomes into multidimensional arrays. These arrays are commonly referred to as tensors. Encoding Connectomes provides an agile framework for computing over connectome edges and nodes efficiently. We provide several examples of operations that can be performed using the framework.
 
-One major application of the tensor encoding is the implementaion of the [Linear Fascicle Evaluation method](http://francopestilli.github.io/life/), in short [LiFE](http://www.nature.com/nmeth/journal/v11/n10/abs/nmeth.3098.html). The tensor encoding method allows implementing LiFE with dramatic reduction in storage requirements, up to 40x compression factors. Furtheremore, connectome encoding allows performing multiple computational neuroanatomy operations such as tract-dissections, virtual lesions, and connectivity estimates very efficiently using the machine-friendly array operators. 
+One major application of the tensor encoding is the implementation of the [Linear Fascicle Evaluation method](http://francopestilli.github.io/life/), in short LiFE. The tensor encoding method allows implementing [LiFE](http://www.nature.com/nmeth/journal/v11/n10/abs/nmeth.3098.html) with a dramatic reduction in storage requirements, up to 40x compression factors. Furthermore, connectome encoding allows performing multiple computational neuroanatomy operations such as tract-dissections, virtual lesions, and connectivity estimates very efficiently using machine-friendly array operators.
 
-We provide demos to expain how to:
- (1) Load and encode diffusion-weighted data and tractography models of white matter fascicles, as well as perform multidimensional arrays operations. 
- (2) Build and optimize a Linear Fascicle Evaluation model. 
- (4) Perform neuronatomical segmentations, computational neuroanatomy operations and virtual lesions using the connectome encoding framework.
- (4) Reproduce some fo the figures of article describing the method implemented in thsi toolbox: Caiafa and Pestilli, forthcoming.
-
+We provide demos to explain how to: 
+  (1) Load and encode diffusion-weighted data and tractography models of white matter fascicles, as well as perform multidimensional arrays operations. 
+  (2) Build and optimize a Linear Fascicle Evaluation model. 
+  (3) Perform neuroanatomical segmentation, computational neuroanatomy operations, and virtual lesions using the connectome encoding framework. 
+  (4) Reproduce some of the figures of an article describing the method implemented in this toolbox:  Caiafa, C.F., Pestilli, F. Multidimensional encoding of brain connectomes. Sci Rep 7, 11491 (2017). https://doi.org/10.1038/s41598-017-09250-w
+  
 ## Application.
 * Encoding of brain conenctome and associated phenotypes into multidimensional arrays.
 * Evaluate the evidence supporting white-matter connectomes generated using [magnetic resonance diffusion-weighted imaging](http://en.wikipedia.org/wiki/Diffusion_MRI) and [computational tractography ](http://en.wikipedia.org/wiki/Tractography).
