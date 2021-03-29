@@ -1,4 +1,4 @@
-function se = feComputeEvidence_new(rmse1, rmse2, nbins, nmc, nboots)
+function se = feComputeEvidence_fixed(rmse1, rmse2, nbins, nmc, nboots)
 % Computes a series of distance metrics between two RMSE distribtions.
 %
 % Compute summary statistics on to characterize the lesion,:
