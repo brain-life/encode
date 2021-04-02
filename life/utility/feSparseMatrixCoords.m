@@ -27,14 +27,19 @@ nfib = size(M.Phi, 3);
 % indicating which streamline the entries (subscripts, values) they
 % correspond to.
 
-disp([ 'Converting ' num2str(nfib) ' streamlines in Phi to sparse matrix coordinates...' ]);
+fprintf('Converting %d streamlines in Phi to sparse matrix coordinates...\n', nfib);
 
 % initialize the output
-out = [];
-%out = nan(xxx, 4); % preallocate output for speed, but I don't know what that is...
+%out = [];
+out = cell(nfib, 1);
 
 % for every streamline
 for fib = 1:nfib
+    
+    % print out every 1000th streamline as an update
+    if mod(fib, 1000) == 0
+        fprintf('Running streamline %d\n', fib);
+    end
     
     % pull the slice of the model tensor for the streamline
     slc = M.Phi(:,:,fib);
@@ -53,10 +58,15 @@ for fib = 1:nfib
     iter = [ mm.subs, idx, mm.vals ];
     
     % append this streamline to the output matrix
-    out = [ out; iter ];
-    %out(zzz, :) = iter; % need zzz to be indices of out for the streamline
+    %out = [ out; iter ];
+    out{fib} = iter;
     
 end
+
+fprintf('Stacking the streamline data into sparse matrix coordinates...\n');
+
+% merge the output
+out = cat(1, out{:});
 
 %
 % concerns / things to note
