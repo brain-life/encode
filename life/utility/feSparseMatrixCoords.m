@@ -6,7 +6,7 @@ function [ out ] = feSparseMatrixCoords(M)
 %
 % INPUTS:
 %   M   - The model object from an initialized ENCODE object
-%         example: M = feGet(fe, 'model';
+%         example: M = feGet(fe, 'model');
 %
 % OUTPUT:
 %   out - The conversion of the 3d sparse tensor and dictionary to the 
@@ -31,12 +31,12 @@ disp([ 'Converting ' num2str(nfib) ' streamlines in Phi to sparse matrix coordin
 
 % initialize the output
 out = [];
-%out = nan(size(M.Phi.vals,1), 4); % preallocate output to final size
+%out = nan(xxx, 4); % preallocate output for speed, but I don't know what that is...
 
 % for every streamline
 for fib = 1:nfib
     
-    % pull the slice of the tensor
+    % pull the slice of the model tensor for the streamline
     slc = M.Phi(:,:,fib);
     
     % use the sptensor toolbox to multiply the slice by the dictionary for
@@ -44,15 +44,15 @@ for fib = 1:nfib
     mm = ttm(slc, M.DictSig, 1);
     
     % create the index to identify the streamline in the new matrix
-    idx = ones(size(mm.vals)) * ii;
+    idx = ones(size(mm.vals)) * fib;
     
     % for this streamline, store the values from the sparse product:
     % - x (dictionary) / y (voxel) subscripts into the sparse model matrix
-    % - the index of the streamline being for this value
-    % - the value stored at that entry
+    % - the index of the streamline for these values
+    % - the value stored at each entry
     iter = [ mm.subs, idx, mm.vals ];
-
-    % append this streamline to the output
+    
+    % append this streamline to the output matrix
     out = [ out; iter ];
     %out(zzz, :) = iter; % need zzz to be indices of out for the streamline
     
@@ -73,10 +73,10 @@ end
 % doesn't appear to be the case (their documentation / notation is bad).
 %
 % Further, the tensor-matrix multiplication doesn't work for these types 
-% (handling sparse objects sparsely). So many attempts to work on the 3d
-% tensor directly resulted in comically large memory overflows. Which is
-% weird, because they have a @sptensor/ttm function that ought to handle
-% sparse tensors correctly. Maybe it worked in an older version of matlab?
+% (handling sparse objects sparsely). So attempts to work on the 3d tensor 
+% directly resulted in comically large memory overflows. Which is weird, 
+% because they have a @sptensor/ttm function that ought to handle sparse 
+% tensors correctly. Maybe it worked in an older version of matlab?
 %
 
 end
