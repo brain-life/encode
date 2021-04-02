@@ -62,7 +62,9 @@ nFibers      = feGet(fe,'n fibers');
 nBatch       = max([5,ceil(nTotalNodes/nNodesMax)]); % Number of batches
 nFib_Batch   = ceil(nFibers/nBatch); % Number of fibers per batch
 
-disp(['Max number of nodes per batch',num2str(nNodesMax),', Total number of nodes = ',num2str(nTotalNodes),'.  Building the model in ',num2str(nBatch),' batches'])
+disp(['Max number of nodes per batch: ',num2str(nNodesMax)]);
+disp(['Total number of nodes = ',num2str(nTotalNodes)]);
+disp(['Building the model in ',num2str(nBatch),' batches.']);
 
 fprintf('\n');
 for n=1:nBatch

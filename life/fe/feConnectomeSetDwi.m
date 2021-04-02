@@ -48,18 +48,18 @@ fe  = feSet(fe, ...
             dwiGet(dwi, 'diffusionimagenums'));
             
 % Handling multishell data. 
-% The original model was only able to handl single-shell. 
+% The original model was only able to handle single-shell. 
 % This new version will handle also multishell data.
 % 
 % To handle multishell data we will store the number of shells encoded
 % for the data (1,2,3, etc) and the indices to the bvecs for each shell 
 % (this will NOT assume that the number of BVECS is equal for each shell
-% (say 30 diffusion directiosn for each shell).
+% (say 30 diffusion directions for each shell).
 
 % We extract the bvalues and find the unique of them and assign them to each shell.
 bvals = feGet(fe,'bvals');
 [nshells, ~, shellindex] = unique(round(bvals));
-fe  = feSet(fe, 'nshells', nshells);
+fe  = feSet(fe, 'nshells', length(nshells));
 fe  = feSet(fe, 'shellindex', shellindex);
 
 dim = dwi.nifti.dim;

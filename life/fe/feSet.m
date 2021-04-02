@@ -90,7 +90,7 @@ switch param
     fe.life.bvals = val;
   case {'nshells','numberofshells'}
   % This is the number of unique shells for multishell data
-    fe.life.shells_n = val;
+    fe.life.nshells = val;
   case {'shellindex','indextoeachshellbvecs'}
   % This is the index to the bvecs associated to each unique shell  
     fe.life.shells_index = val;
@@ -170,7 +170,7 @@ switch param
     fe.rep.bvals = val;
   case {'nshellsrepeat','numberofshellsrepeat'}
   % This is the number of unique shells for multishell data
-    fe.rep.shells_n = val;
+    fe.rep.nshells = val;
   case {'shellindexrepeat','indextoeachshellbvecsrepeat'}
   % This is the index to the bvecs associated to each unique shell  
     fe.rep.shells_index = val;
@@ -217,6 +217,19 @@ switch param
     fe.life.M.tracts{Ntracts+1}.ind = find(val.index==0);
     fe.life.M.tracts{Ntracts+1}.name = 'not a tract'; 
             
+  case {'xformanat2acpc','anat2acpc','anat2acpcxform'}
+    fe.life.xform.anat2acpc = val;
+  case {'xformacpc2anat','acpc2anat','acpc2anatxform'}
+    fe.life.xform.acpc2anat = val;
+%   case 'dwioffset'
+%     fe.life.xform.dwi_offset = val;
+%   case 'anatoffset'
+%     fe.life.xform.anat_offset = val;
+  case {'modelkurtosis'}
+    fe.life.modelKurtosis = val;
+  case {'akc'}
+    fe.life.M.akc = val;
+
   otherwise
     error('Unknown parameter %s\n',param);
 end

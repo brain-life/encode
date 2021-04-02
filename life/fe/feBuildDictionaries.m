@@ -14,7 +14,7 @@ function fe = feBuildDictionaries(fe,Nphi,Ntheta)
 %  Cesar F. Caiafa ccaiafa@gmail.com
 
 tic
-fprintf(['\n[%s] Computing demeaned and non-demeaned difussivities dictionaries in a (',num2str(Nphi),'x',num2str(Ntheta),')-grid', ' ...'],mfilename); 
+fprintf(['\n[%s] Computing demeaned and non-demeaned diffusivities dictionaries in a (',num2str(Nphi),'x',num2str(Ntheta),')-grid', ' ...'],mfilename); 
 fprintf('took: %2.3fs.\n',toc)
 
 % Compute orientation vectors
@@ -43,29 +43,125 @@ Dict = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 DictSig = zeros(nBvecs,Norient); % Initialize Signal Dictionary matrix
 %DictTensors = zeros(9,Norient); % Initialize Tensors Dictionary matrix
 
-D = diag(fe.life.modelTensor); % diagonal matix with diffusivities
+% catch Kurtosis estimates for debugging
+%KDict = zeros(nBvecs,Norient); 
+%KDictSig = zeros(nBvecs,Norient); 
 
-%[ shells, ~, shellindex ] = unique(round(bvals)); % round to get around noise in shells - FRAGILE FIX
-
+% pull the shell information
 ubv = feGet(fe, 'nshells');
 ubi = feGet(fe, 'shellindex');
+ubl = unique(ubi);
+
+% pull diffusion tensor
+dt = feGet(fe, 'model tensor');
+
+% pull kurtosis fit
+kt = feGet(fe, 'model Kurtosis');
+
+% if data is single shell
+if ubv == 1 || all(isnan(kt))
+    
+    % akc is invalid, set to nan
+    akc = nan(nBvecs,1); 
+
+% if data is multishell
+else
+    
+    % preallocate akc parameters to 0
+    akc = zeros(nBvecs,1);
+            
+    % build apparent kurtosis coefficient - akc
+    for i=1:ubv
+        
+        % pull tensor parameters for hard indexing of equations
+        sdt = dt(i,:);
+        
+        % find the indices for the shell
+        si = ubi == ubl(i);
+        
+        % mean diffusivity of tensor from forward model
+        md = mean(sdt);
+        
+        % apparent diffusion coefficient - matches dipy
+        adc = bvecs(si,1) .* bvecs(si,1) * sdt(1) + ...
+            2 * bvecs(si,1) .* bvecs(si,2) * sdt(2) + ...
+            bvecs(si,2) .* bvecs(si,2) .* sdt(3) + ...
+            2 * bvecs(si,1) .* bvecs(si,3) * 0 + ... % only store primary eigenvalues in
+            2 * bvecs(si,2) .* bvecs(si,3) * 0 + ... % LiFE prediction. These are 0.
+            bvecs(si,3) .* bvecs(si,3) * 0;
+        
+        % apparent diffusion variance - matches dipy
+        adv = ...
+            bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* kt(1) + ...       % xxxx
+            bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(2) + ...       % yyyy
+            bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(3) + ...       % zzzz
+            4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* kt(4) + ...   % xxxy
+            4 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* kt(5) + ...   % xxxz
+            4 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* kt(6) + ...   % xyyy
+            4 * bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(7) + ...   % xzzz
+            4 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(8) + ...   % yyyz
+            4 * bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* bvecs(si,3) .* kt(9) + ...   % yzzz
+            6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* kt(10) + ...  % xxyy
+            6 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,3) .* bvecs(si,3) .* kt(11) + ...  % xxzz
+            6 * bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(12) + ...  % yyzz
+            12 * bvecs(si,1) .* bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* kt(13) + ... % xxyz
+            12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,2) .* bvecs(si,3) .* kt(14) + ... % xyyz
+            12 * bvecs(si,1) .* bvecs(si,2) .* bvecs(si,3) .* bvecs(si,3) .* kt(15);      % xyzz
+        
+        % zero out noisy (bad) adc estimates
+        adc(adc < 0) = 0;
+        
+        % estimate apparent kutosis coefficient - matches dipy
+        akc(si) = adv .* ((md ./ adc).^2);
+        
+        % zero out noisy (bad) akc estimates
+        akc(akc < -3/7) = -3/7;
+        
+    end
+    
+end
 
 % Compute each dictionary column for a different kernel orientation
 for j=1:Norient
-    [Rot,~, ~] = svd(orient(:,j)); % Compute the eigen vectors of the kernel orientation
     
-    Q = Rot*D*Rot';
-    %DictTensors(:,j) = Q(:);
-    Dict(:,j) = exp(- bvals .* diag(bvecs*Q*bvecs')); % Compute the signal contribution of a fiber in the kernel orientation divided S0
+    % Compute the eigen vectors of the kernel orientation
+    [Rot,~, ~] = svd(orient(:,j));
     
     % for every shell
-    for k=1:size(ubv, 1) 
-        si = ubi == ubv(k); % find the indices for the shell
-        DictSig(si,j) = Dict(si,j) - median(Dict(si,j)); % demedianed signal by shell (used to demean)
+    for k=1:ubv
+        
+        % find the indices for the shell
+        si = ubi == ubl(k); 
+        
+        % create diagonal matix with diffusivities for current shell
+        % this assumes tensor fits for shell are entered in the order this will parse them in
+        D = diag(dt(k,:));
+        
+        % estimate Q for tensor values in shell
+        Q = Rot*D*Rot';
+        
+        % STORE SEPARATE? THIS WILL GREATLY INCREASE THE SIZE
+        
+        % Compute the signal contribution of a fiber in the kernel orientation divided S0
+        if all(kt == 0) || all(isnan(kt)) % if kurtosis is zeroed b/c it's invalid / requested
+            Dict(si,j)  = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)')); 
+        else % if kurtosis parameters are passed
+            Dict(si,j) = exp(-bvals(si) .* diag(bvecs(si,:)*Q*bvecs(si,:)') + (-bvals(si).^2 .* diag(bvecs(si,:)*Q*bvecs(si,:)').^2 .* akc(si))/6);
+        end
+        
+        % demeaned signal by shell
+        DictSig(si,j) = Dict(si,j) - mean(Dict(si,j)); 
+        %KDictSig(si,j) = KDict(si,j) - mean(KDict(si,j));
+        
     end
     
 end
 
 fe = feSet(fe,'dictionary parameters',{Nphi,Ntheta,orient,Dict,DictSig});
+fe = feSet(fe,'akc',akc);
+
+% hard add kurtosis dictionaries / akc for debugging
+%fe.life.M.KDict = KDict;
+%fe.life.M.KDictSig = KDictSig;
 
 end

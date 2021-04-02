@@ -506,13 +506,27 @@ switch param
     % This is the number of unique shells for multishell data
     %
     % val = feGet(fe,'nshells');
-    val = fe.life.shells_n;
+    
+    % if nshells isn't present, it's an old single shell structure
+    if ~isfield(fe.life, 'nshells')
+        val = 1; % fill in structure and set the value to 1
+        feSet(fe, 'nshells', val); % add it to the structure
+    else % otherwise pull the value set during encoding
+        val = fe.life.nshells;
+    end
 
   case {'shellindex','indextoeachshellbvecs'}
   % This is the index to the bvecs associated to each unique shell  
     %
     % val = feGet(fe,'nshshellindexells');
-    val = fe.life.shells_index;
+    
+    % if shellsindex isn't present, it's an old single shell structure
+    if ~isfield(fe.life, 'shells_index') 
+        val = ones(feGet(fe, 'nbvals'), 1); % fill in all ones for the index
+        feSet(fe, 'shellindex', val); % add it to the structure
+    else % otherwise pull the value set during encoding
+        val = fe.life.shells_index;
+    end
     
   case {'bvecs'}
     % Diffusion directions.
@@ -566,7 +580,8 @@ switch param
     voxelIndices = feGet(fe,'voxelsindices',varargin);
     val = fe.life.diffusion_signal_img(voxelIndices,:) - repmat(mean(fe.life.diffusion_signal_img(voxelIndices,:), 2),1,nBvecs);
     keyboard
-    % THis seems to be wrong
+    % THIS IS WRONG - DOES NOT DO MULTISHELL CORRECTLY
+    % BUT IS IT USED ANYWHERE?
     
   case {'b0signalimage','b0vox'}
     % Get the diffusion signal at 0 diffusion weighting (B0) for this voxel
@@ -929,11 +944,26 @@ switch param
     % dSig = feGet(fe,'dsigdemeaned',coords);
     nVoxels = feGet(fe,'nVoxels');
     nBvecs  = feGet(fe,'nBvecs');
+    shells  = feGet(fe,'shellindex');
+    nshell  = feGet(fe,'nshells');
+    ushell  = unique(shells);
     
-    dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
-    val     = (dSig - reshape(repmat( ...
-      mean(reshape(dSig, nBvecs, nVoxels),1),...
-      nBvecs,1), size(dSig)))';
+    % this works now - data needs to be transposed from how it's stored to
+    % match the unwound data used during prediction
+    dSig = fe.life.diffusion_signal_img';
+    
+    % loop over shells for demeaing
+    for shell = 1:nshell
+        s = ushell(shell); % index into listed shell for good logic
+        dSigMean = mean(dSig(shells == s, :));
+        dSig(shells == s, :) = dSig(shells == s, :) - repmat(dSigMean, [ sum(shells == s) 1 ]);
+    end
+    val = reshape(dSig, [nVoxels*nBvecs,1]);
+    
+    % % original demeaning operation
+    %dSig = reshape(fe.life.diffusion_signal_img',[1,nVoxels*nBvecs]);
+    %val = (dSig - reshape(repmat(mean(reshape(dSig, nBvecs, nVoxels),1),nBvecs,1), size(dSig)))';
+    
     % Return a subset of voxels
     if ~isempty(varargin)
       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
@@ -1140,7 +1170,7 @@ switch param
     % res = feGet(fe,'res sig full');
     % res = feGet(fe, 'res sig full',coords);
     % res = feGet(fe, 'res sig full',voxelIndex);
-    val = (feGet(fe,'dsig full')    - feGet(fe,'psig full')');
+    val = (feGet(fe,'dsig full') - feGet(fe,'psig full')');
     if ~isempty(varargin)
       % voxelIndices     = feGet(fe,'voxelsindices',varargin);
       % voxelRowsToKeep  = feGet(fe,'voxel rows',voxelIndices);
@@ -1310,11 +1340,11 @@ switch param
     val       = sqrt(mean((measured - predicted).^2,1));
     val       = val(feGet(fe,'voxelsindices',varargin));
    
-  case {'voxrmses0norm'}
+  case {'voxrmses0norm'} % CAN THIS BE OPTIMIZED FOR A MULTISHELL?
       % A volume of RMSE normalized by the S0 value in each voxel.
       rmse = feGet(fe,'vox rmse');
       s0   = feGet(fe,'b0signalimage')';
-      % Some voxels can have a S0=0. We replace the S0 in these voxles with
+      % Some voxels can have a S0=0. We replace the S0 in these voxels with
       % a NaN. 
       idx = (s0 == 0);
       rmse(idx) = nan(size(find(idx)));
@@ -1651,11 +1681,29 @@ switch param
         
         s0 = fe.life.s0;
         val = ones(nTheta,1)*s0' + D*B; % with iso          
-        
+  
+  case {'modelkurtosis'}
+      val = fe.life.modelKurtosis;
+  case {'akc'}
+      val = fe.life.M.akc;
+  case {'dwi2acpc'}
+      val = fe.life.xform.img2acpc;
+  case {'dwi2img'}
+      val = fe.life.xform.acpc2img;      
+  case {'anat2acpc'}
+      val = fe.life.xform.anat2acpc;
+  case {'anat2img'}
+      val = fe.life.xform.anat2img;      
+  case 'dwioffset'
+      tmp = feGet(fe, 'dwi2acpc');
+      val = tmp(1:3,4)';
+  case 'anatoffset'
+      tmp = feGet(fe, 'anat2acpc');
+      val = tmp(1:3,4)';
+      
   otherwise
     help('feGet')
     fprintf('[feGet] Unknown parameter << %s >>...\n',param);
-    keyboard
 end
 
 end % END MAIN FUNCTION
